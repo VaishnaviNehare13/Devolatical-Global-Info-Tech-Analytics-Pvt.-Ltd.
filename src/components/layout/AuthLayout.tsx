@@ -52,10 +52,9 @@ export const AuthLayout: React.FC = () => {
           </p>
         </div>
 
-        {/* Trust Banner */}
         <div className="flex items-center space-x-2 text-xs text-slate-400 border-t border-white/10 pt-6">
           <ShieldCheck className="h-5 w-5 text-accent" />
-          <span>Secure SOC 2 compliant environment. 256-bit SSL encryption active.</span>
+          <span>Designed with enterprise security best practices. 256-bit SSL encryption active.</span>
         </div>
       </div>
 

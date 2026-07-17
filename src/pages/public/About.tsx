@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Card } from '../../components/ui/Card';
 import { Timeline, type TimelineEvent } from '../../components/ui/Timeline';
 import { Globe, Users, Target, Cpu, HardDrive } from 'lucide-react';
@@ -14,13 +15,13 @@ export const About: React.FC = () => {
     { id: 1, date: '2018', title: 'Company Inception', description: 'Devolatical Global was founded with a core team of 5 architects in New York focusing on Spark analytics consulting.' },
     { id: 2, date: '2020', title: 'Global Tech Hub Launch', description: 'Established our primary global engineering headquarters in Mumbai, scaling teams to 120+ senior developers.' },
     { id: 3, date: '2022', title: 'SaaS Platform Release', description: 'Unveiled our proprietary data ingestion engine and telemetry SaaS pipelines, servicing Fortune 500 banks.' },
-    { id: 4, date: '2025', title: 'SOC 2 Type II Certified', description: 'Completed independent audit validations verifying strict data security and compliance benchmarks.' }
+    { id: 4, date: '2025', title: 'Compliance Ready', description: 'Aligned infrastructure with strict data security guidelines and enterprise compliance benchmarks.' }
   ];
 
   const team = [
     { name: 'Sarah Jenkins', role: 'Chief Executive Officer', bio: 'Former VP of Enterprise Data at IBM. 18+ years leading global tech delivery pipelines.', initials: 'SJ' },
     { name: 'Vikram Mehta', role: 'Chief Technology Officer', bio: 'Principal software architect and former Databricks core committer. Specialist in distributed systems.', initials: 'VM' },
-    { name: 'Marcus Vance', role: 'Chief Security Officer', bio: 'Former cyber security lead at Stripe. Expert in SOC 2 compliance frameworks and penetrative audits.', initials: 'MV' }
+    { name: 'Marcus Vance', role: 'Chief Security Officer', bio: 'Former cyber security lead at Stripe. Expert in enterprise compliance frameworks and penetrative audits.', initials: 'MV' }
   ];
 
   const labsList = [
@@ -147,12 +148,39 @@ export const About: React.FC = () => {
           </div>
         </div>
         
-        {/* Simple map illustration box */}
-        <div className="h-64 bg-slate-100 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-secondary/5 filter blur-3xl" />
-          <Globe className="h-20 w-20 text-slate-300 dark:text-slate-700 animate-spin-slow" />
-          <span className="absolute bottom-4 right-4 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-            2 Operations Hubs active
+        {/* Interactive World Map regional coverage representation */}
+        <div className="h-64 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-center relative overflow-hidden p-6 shadow-card">
+          <div className="absolute inset-0 bg-secondary/5 filter blur-3xl pointer-events-none" />
+          
+          <svg className="w-full h-full text-slate-200 dark:text-slate-800" viewBox="0 0 320 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* World continents contours simulated */}
+            <path d="M10 40 Q30 25 70 45 T140 35 T200 60 T270 30 L260 90 L200 110 L150 80 L80 100 L20 80 Z" fill="currentColor" opacity="0.12" />
+            
+            {/* Connection Arches */}
+            <path d="M 65 55 Q 140 10 210 75" fill="none" stroke="#0F62FE" strokeWidth="1.5" strokeDasharray="4 4" />
+            <motion.circle
+              cx="65"
+              cy="55"
+              r="3"
+              fill="#00C2FF"
+              animate={{ cx: [65, 210], cy: [55, 75] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+
+            {/* Pins */}
+            {/* NY HQ */}
+            <circle cx="65" cy="55" r="4.5" fill="#0F62FE" />
+            <circle cx="65" cy="55" r="9" stroke="#0F62FE" strokeWidth="1" className="animate-ping" fill="none" />
+            <text x="65" y="45" textAnchor="middle" className="text-[7.5px] font-bold text-slate-400 font-mono" fill="currentColor">New York (HQ)</text>
+
+            {/* Mumbai BKC */}
+            <circle cx="210" cy="75" r="4.5" fill="#00C2FF" />
+            <circle cx="210" cy="75" r="9" stroke="#00C2FF" strokeWidth="1" className="animate-ping" fill="none" />
+            <text x="210" y="67" textAnchor="middle" className="text-[7.5px] font-bold text-slate-400 font-mono" fill="currentColor">Mumbai Hub</text>
+          </svg>
+
+          <span className="absolute bottom-4 right-4 text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+            // active_network_map.diag
           </span>
         </div>
       </section>

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { Search, ChevronLeft, ChevronRight, BookOpen, Share2, Eye, TrendingUp } from 'lucide-react';
+import { Modal } from '../../components/ui/Modal';
+import { Search, ChevronLeft, ChevronRight, BookOpen, Share2, Eye, TrendingUp, Clock, User } from 'lucide-react';
 import { useToast } from '../../components/ui/Toast';
 
 interface ArticleItem {
@@ -10,6 +11,7 @@ interface ArticleItem {
   title: string;
   category: 'Cloud' | 'Data Science' | 'Security';
   summary: string;
+  content: string;
   date: string;
   readTime: string;
   author: string;
@@ -23,6 +25,7 @@ export const Insights: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<'All' | 'Cloud' | 'Data Science' | 'Security'>('All');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
 
   const articles: ArticleItem[] = [
     {
@@ -30,6 +33,7 @@ export const Insights: React.FC = () => {
       title: 'Scaling Apache Spark Ingestion: Ingestion Limits and Optimizations',
       category: 'Data Science',
       summary: 'Learn how to optimize partition indexes and connection pooling thresholds to support workloads exceeding 50k events per second.',
+      content: 'Distributed partition alignments and memory parameter modifications are critical when processing workloads scaling beyond 50,000 active telemetry streams per second. This technical briefing details how we optimized Apache Spark data pipelines by adjusting executor limits, partition thresholds, and connection pools. By decoupling staging layers using Apache Kafka buffers, we achieved sub-10ms ledger sync intervals under real-world performance benchmarks. We recommend deploying dynamic worker allocation triggers to prevent executor resource locks during peak clickstream events.',
       date: '2026-07-15',
       readTime: '6 min read',
       author: 'Vikram Mehta',
@@ -38,9 +42,10 @@ export const Insights: React.FC = () => {
     },
     {
       id: 'art-2',
-      title: 'Achieving SOC 2 Compliance on AWS: A Complete Security Guide',
+      title: 'Achieving Compliance Readiness on AWS: A Complete Security Guide',
       category: 'Security',
       summary: 'Discover key IAM security configurations, automatic trace logs audits, and database encryption rules required for compliance.',
+      content: 'Establishing a compliance-ready security framework on Amazon Web Services requires strict auditing of identity controls, access roles, and database encryption patterns. In this guide, we review how to automate audit logging across VPC endpoints, restrict database queries using IAM keys, and configure Wazuh and Cloudflare WAF layers at the edge to secure multi-tenant SaaS software architectures. We also outline automated compliance drift alert scripts that check IAM privilege bounds on a daily cycle.',
       date: '2026-07-02',
       readTime: '8 min read',
       author: 'Marcus Vance',
@@ -52,6 +57,7 @@ export const Insights: React.FC = () => {
       title: 'Kubernetes Multi-Cloud Scaling: High Availability Orchestration',
       category: 'Cloud',
       summary: 'Set up cross-region DNS mappings, virtual private networks (VPN), and cluster setups across AWS and Azure environments.',
+      content: 'Configuring high-availability clusters spanning separate cloud environments (AWS EKS and Azure AKS) introduces cross-region latency challenges. This analysis details our blueprint for cross-cloud virtual networks (VPN), high-throughput Kafka buffering streams, and automated geo-DNS failover logic. The resulting infrastructure maintains 99.99% availability limits under peak mock trading traffic. Multi-cluster federation scripts automate workload failover processes seamlessly when cloud providers experience regional splits.',
       date: '2026-06-20',
       readTime: '10 min read',
       author: 'Sarah Jenkins',
@@ -63,6 +69,7 @@ export const Insights: React.FC = () => {
       title: 'Designing Lakehouse Architectures with Delta Lake and dbt',
       category: 'Data Science',
       summary: 'Standardize schema definitions and model analytics metrics using dbt pipelines feeding Delta Lake formats.',
+      content: 'Delta Lake and dbt provide a standardized semantic layer to model complex financial metrics. This paper walks through building a multi-hop (Bronze-Silver-Gold) ingestion lakehouse. We show how to write clean, modular dbt transformation scripts that run on Snowflake to prevent connection bottlenecks and maintain strict data catalogs. Furthermore, we outline metadata pruning policies that reduce overall parquet directory file overheads in Amazon S3 buckets.',
       date: '2026-06-05',
       readTime: '7 min read',
       author: 'Vikram Mehta',
@@ -85,8 +92,9 @@ export const Insights: React.FC = () => {
   const totalPages = Math.ceil(filteredArticles.length / 3);
   const paginatedArticles = filteredArticles.slice((currentPage - 1) * 3, currentPage * 3);
 
-  const handleRead = (title: string) => {
-    showToast(`Loading full document briefing for: ${title}`, 'info');
+  const handleRead = (article: ArticleItem) => {
+    showToast(`Loading full document briefing...`, 'info');
+    setSelectedArticle(article);
   };
 
   const handleShare = (title: string, e: React.MouseEvent) => {
@@ -141,7 +149,7 @@ export const Insights: React.FC = () => {
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => handleRead(featuredArticle.title)}
+                onClick={() => handleRead(featuredArticle)}
               >
                 Read Featured
               </Button>
@@ -229,7 +237,7 @@ export const Insights: React.FC = () => {
                       variant="outline"
                       size="sm"
                       className="cursor-pointer text-xs"
-                      onClick={() => handleRead(art.title)}
+                      onClick={() => handleRead(art)}
                     >
                       Read Briefing
                     </Button>
@@ -276,10 +284,16 @@ export const Insights: React.FC = () => {
               <span className="text-[10px] font-bold uppercase tracking-wider">Trending Briefings</span>
             </div>
             <div className="space-y-3">
-              <p className="text-xs text-slate-650 dark:text-slate-350 hover:text-secondary cursor-pointer leading-snug">
-                1. Achieving SOC 2 Compliance on AWS: A Complete Security Guide
+              <p
+                onClick={() => handleRead(articles[1])}
+                className="text-xs text-slate-650 dark:text-slate-350 hover:text-secondary cursor-pointer leading-snug"
+              >
+                1. Achieving Compliance Readiness on AWS: A Complete Security Guide
               </p>
-              <p className="text-xs text-slate-650 dark:text-slate-350 hover:text-secondary cursor-pointer leading-snug">
+              <p
+                onClick={() => handleRead(articles[2])}
+                className="text-xs text-slate-650 dark:text-slate-350 hover:text-secondary cursor-pointer leading-snug"
+              >
                 2. Kubernetes Multi-Cloud Scaling: High Availability Orchestration
               </p>
             </div>
@@ -308,6 +322,44 @@ export const Insights: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Article Reader Modal */}
+      <Modal
+        isOpen={selectedArticle !== null}
+        onClose={() => setSelectedArticle(null)}
+        title={selectedArticle?.title}
+        className="max-w-2xl"
+      >
+        {selectedArticle && (
+          <div className="space-y-5 text-sm leading-relaxed max-h-[70vh] overflow-y-auto pr-1">
+            {/* Meta bar */}
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 font-semibold border-b border-slate-50 dark:border-slate-805/40 pb-3">
+              <span className="flex items-center"><User className="h-4 w-4 mr-1 text-secondary" /> By {selectedArticle.author} ({selectedArticle.authorRole})</span>
+              <span>•</span>
+              <span className="flex items-center"><Clock className="h-4 w-4 mr-1 text-accent" /> {selectedArticle.readTime}</span>
+              <span>•</span>
+              <span>Published: {selectedArticle.date}</span>
+            </div>
+
+            {/* Content text */}
+            <div className="text-slate-600 dark:text-slate-450 text-sm space-y-4">
+              <p>{selectedArticle.content}</p>
+              <p>For inquiries relating to this system configuration blueprint, or to request custom architecture mappings for your cloud deployments, please contact our principal systems engineering team.</p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end pt-4 border-t border-slate-50 dark:border-slate-805/40">
+              <Button
+                variant="secondary"
+                className="cursor-pointer text-xs"
+                onClick={() => setSelectedArticle(null)}
+              >
+                Close Reader
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

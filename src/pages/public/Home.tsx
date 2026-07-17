@@ -51,7 +51,7 @@ export const Home: React.FC = () => {
               Architecting Intelligent <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">Data Ecosystems</span>
             </h1>
             <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
-              Provision security-first ingestion pipelines, real-time analytics dashboards, and custom SaaS platforms. Orchestrate your global data on a SOC 2 certified environment.
+              Provision security-first ingestion pipelines, real-time analytics dashboards, and custom SaaS platforms. Orchestrate your global data on a compliance-ready security architecture.
             </p>
           </motion.div>
 

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../../components/ui/Card';
+import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { TextArea } from '../../components/ui/TextArea';
 import { Button } from '../../components/ui/Button';
 import { Accordion } from '../../components/ui/Accordion';
 import { useToast } from '../../components/ui/Toast';
-import { Calendar, Map } from 'lucide-react';
+import { Calendar, Mail, Clock, AlertTriangle, Globe } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const { showToast } = useToast();
@@ -63,12 +63,12 @@ export const Contact: React.FC = () => {
     {
       id: 'faq-1',
       title: 'What compliance standards are active on Devolatical systems?',
-      content: 'Our entire ingestion infrastructure, databases, and portals are SOC 2 Type II certified. All customer data stores deploy AES-256 TLS/SSL encryption natively and comply fully with HIPAA and GDPR requirements.'
+      content: 'Our entire ingestion infrastructure, databases, and portals are designed around SOC 2 and ISO 27001 guidelines. All customer data stores deploy AES-256 TLS/SSL encryption natively and comply with HIPAA and GDPR requirements.'
     },
     {
       id: 'faq-2',
       title: 'Do you offer 24/7 engineering operations support?',
-      content: 'Yes. Our global engineering hub in MumbaiBKC BKC operates 24/7/365 telemetry monitoring logs, providing dedicated technical accounts support with active SLA response times under 15 minutes.'
+      content: 'Yes. Our global engineering hub in Mumbai BKC operates 24/7/365 telemetry monitoring logs, providing dedicated technical accounts support with active SLA response times under 15 minutes.'
     },
     {
       id: 'faq-3',
@@ -90,16 +90,46 @@ export const Contact: React.FC = () => {
         </p>
       </section>
 
+      {/* Contact parameter widgets */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
+          <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
+            <Mail className="h-5 w-5 text-secondary" />
+            <span>Communications Hub</span>
+          </div>
+          <p className="text-xs text-slate-500">Sales Inquiries: <span className="font-semibold text-slate-700 dark:text-slate-350">inquire@devolatical.com</span></p>
+          <p className="text-xs text-slate-500">Tech Support: <span className="font-semibold text-slate-700 dark:text-slate-350">support@devolatical.com</span></p>
+        </Card>
+
+        <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
+          <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
+            <Clock className="h-5 w-5 text-accent" />
+            <span>Business Operations</span>
+          </div>
+          <p className="text-xs text-slate-500">Sales: 9:00 AM - 6:00 PM EST (Mon-Fri)</p>
+          <p className="text-xs text-slate-500">Engineering: 24/7/365 Telemetry monitoring</p>
+        </Card>
+
+        <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
+          <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            <span>Priority Emergency Pager</span>
+          </div>
+          <p className="text-xs text-slate-500">Urgent SLA incident report line:</p>
+          <p className="text-xs font-semibold text-slate-700 dark:text-slate-350">+1 (800) 555-DEVO</p>
+        </Card>
+      </div>
+
       {/* Main Grid: Form and Contact Details */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Inquiry Form */}
         <div className="lg:col-span-7 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Enterprise Inquiry Form</CardTitle>
-              <CardDescription>File technical requests straight to our engineering sales queue.</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <Card className="border border-slate-100 dark:border-slate-800">
+            <div className="p-6 border-b border-slate-50 dark:border-slate-800/40">
+              <h3 className="font-bold text-slate-800 dark:text-white text-base">Enterprise Inquiry Form</h3>
+              <p className="text-xs text-slate-400 mt-1">File technical requests straight to our engineering sales queue.</p>
+            </div>
+            <div className="p-6">
               <form onSubmit={handleInquiry} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
@@ -147,23 +177,23 @@ export const Contact: React.FC = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <Button type="submit" variant="secondary" className="w-full justify-center">
+                <Button type="submit" variant="secondary" className="w-full justify-center text-xs">
                   Submit Project Request
                 </Button>
               </form>
-            </CardContent>
+            </div>
           </Card>
         </div>
 
         {/* Contact info & Scheduler */}
         <div className="lg:col-span-5 space-y-6">
           {/* Scheduler Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Schedule Discovery Session</CardTitle>
-              <CardDescription>Book a direct 15-minute slot with a principal system architect.</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <Card className="border border-slate-100 dark:border-slate-800">
+            <div className="p-6 border-b border-slate-50 dark:border-slate-800/40">
+              <h3 className="font-bold text-slate-800 dark:text-white text-base">Schedule Discovery Session</h3>
+              <p className="text-xs text-slate-400 mt-1">Book a direct 15-minute slot with a principal system architect.</p>
+            </div>
+            <div className="p-6">
               <form onSubmit={handleBooking} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -195,33 +225,52 @@ export const Contact: React.FC = () => {
                     </select>
                   </div>
                 </div>
-                <Button type="submit" variant="outline" className="w-full justify-center">
+                <Button type="submit" variant="outline" className="w-full justify-center text-xs">
                   <Calendar className="mr-2 h-4 w-4 text-secondary" />
                   <span>Book Calendar Slot</span>
                 </Button>
               </form>
-            </CardContent>
+            </div>
           </Card>
 
-          {/* Map Representation */}
-          <Card className="h-64 flex flex-col justify-between overflow-hidden relative">
-            <div className="absolute inset-0 bg-secondary/5 filter blur-2xl pointer-events-none" />
-            <div className="p-4 relative z-10 flex flex-col h-full justify-between">
-              <div className="flex items-center space-x-2 text-slate-400">
-                <Map className="h-5 w-5 text-secondary" />
-                <span className="text-xs font-bold uppercase tracking-wider">Office Maps Location</span>
-              </div>
-              <div className="text-xs text-slate-500 space-y-1">
-                <p className="font-bold text-slate-800 dark:text-white">Suite 4200, 1 World Trade Center</p>
-                <p>New York, NY 10007, USA</p>
-              </div>
+          {/* Interactive World Map SVG representation */}
+          <Card className="h-64 flex flex-col justify-between overflow-hidden relative border border-slate-100 dark:border-slate-800 p-6">
+            <div className="absolute inset-0 bg-secondary/5 filter blur-3xl pointer-events-none" />
+            <div className="flex items-center space-x-2 text-slate-400 mb-4 z-10">
+              <Globe className="h-5 w-5 text-secondary" />
+              <span className="text-xs font-bold uppercase tracking-wider">Office Regional Presence</span>
+            </div>
+            
+            {/* Minimalist World Map with glowing points */}
+            <div className="h-28 relative flex items-center justify-center bg-slate-50 dark:bg-dark/40 border border-slate-100 dark:border-slate-850/50 rounded-xl overflow-hidden mb-4">
+              <svg className="w-full h-full text-slate-250 dark:text-slate-800" viewBox="0 0 300 120" fill="none">
+                {/* Simulated continents outlines */}
+                <path d="M20 30 Q40 20 80 40 T150 30 T220 50 T280 20 L270 90 L210 110 L160 80 L90 100 L30 80 Z" fill="currentColor" opacity="0.15" />
+                
+                {/* Glowing Office Pins */}
+                {/* NY Pin */}
+                <circle cx="65" cy="45" r="4" fill="#0F62FE" />
+                <circle cx="65" cy="45" r="8" stroke="#0F62FE" strokeWidth="1" className="animate-ping" fill="none" />
+                <text x="65" y="35" textAnchor="middle" className="text-[7px] font-bold text-slate-500 font-mono" fill="currentColor">New York (HQ)</text>
+
+                {/* Mumbai BKC Pin */}
+                <circle cx="210" cy="70" r="4" fill="#00C2FF" />
+                <circle cx="210" cy="70" r="8" stroke="#00C2FF" strokeWidth="1" className="animate-ping" fill="none" />
+                <text x="210" y="60" textAnchor="middle" className="text-[7px] font-bold text-slate-500 font-mono" fill="currentColor">Mumbai BKC</text>
+              </svg>
+            </div>
+
+            <div className="text-[10px] text-slate-500 flex justify-between items-center z-10 border-t border-slate-50 dark:border-slate-850/50 pt-3">
+              <span>New York (HQ)</span>
+              <span className="text-slate-400 font-mono">•</span>
+              <span>Mumbai Tech Hub</span>
             </div>
           </Card>
         </div>
       </div>
 
       {/* FAQ Accordion Section */}
-      <section className="space-y-8 border-t border-slate-100 dark:border-slate-800/80 pt-16 max-w-3xl">
+      <section className="space-y-8 border-t border-slate-100 dark:border-slate-850/50 pt-16 max-w-3xl">
         <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
           Frequently Answered Queries
         </h2>

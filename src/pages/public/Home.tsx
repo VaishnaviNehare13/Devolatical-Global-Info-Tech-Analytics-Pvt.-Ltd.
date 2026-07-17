@@ -75,9 +75,9 @@ export const Home: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Right Column: Globe & Interactive Dashboard */}
+        {/* Right Column: Globe & Surrounding Metrics */}
         <div className="lg:col-span-5 flex justify-center relative">
-          <div className="w-full max-w-[450px]">
+          <div className="w-full max-w-[500px]">
             <CustomGlobe />
           </div>
         </div>
@@ -87,13 +87,13 @@ export const Home: React.FC = () => {
       <section className="bg-slate-900 py-10 overflow-hidden text-slate-500">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            Trusted by global enterprise vendors
+            Trusted by global enterprise clients
           </span>
           <div className="flex flex-wrap items-center gap-8 justify-center opacity-60">
-            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">DATABRICKS</span>
-            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">IBM</span>
-            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">SNOWFLAKE</span>
-            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">STRIPE</span>
+            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">VERTEX SYSTEMS</span>
+            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">AETHER FINANCIAL</span>
+            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">NOVA HEALTHCARE</span>
+            <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">NEXUS LOGISTICS</span>
           </div>
         </div>
       </section>

@@ -31,9 +31,18 @@ export const AdminLayout: React.FC = () => {
       <aside className="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 flex-shrink-0">
         {/* Brand */}
         <div className="p-6 border-b border-slate-800 flex items-center space-x-3">
-          <div className="h-9 w-9 rounded-lg bg-gradient-to-tr from-secondary to-accent flex items-center justify-center text-white font-bold text-sm shadow-glow">
-            D
-          </div>
+          <svg className="h-8 w-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="adminLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#002E5B" />
+                <stop offset="50%" stopColor="#0F62FE" />
+                <stop offset="100%" stopColor="#00C2FF" />
+              </linearGradient>
+            </defs>
+            <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#adminLogoGrad)" strokeWidth="6" strokeLinejoin="round" />
+            <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#adminLogoGrad)" opacity="0.85" />
+            <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
+          </svg>
           <div className="flex flex-col">
             <span className="font-heading font-bold text-sm leading-none tracking-wide text-white uppercase">
               Devolatical
@@ -100,9 +109,18 @@ export const AdminLayout: React.FC = () => {
       {/* Mobile Header Menu Trigger */}
       <header className="lg:hidden h-16 bg-slate-900 text-white flex items-center justify-between px-6 z-30">
         <div className="flex items-center space-x-3">
-          <div className="h-8 w-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold text-xs">
-            D
-          </div>
+          <svg className="h-7 w-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="adminMobLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#002E5B" />
+                <stop offset="50%" stopColor="#0F62FE" />
+                <stop offset="100%" stopColor="#00C2FF" />
+              </linearGradient>
+            </defs>
+            <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#adminMobLogoGrad)" strokeWidth="6" strokeLinejoin="round" />
+            <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#adminMobLogoGrad)" opacity="0.85" />
+            <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
+          </svg>
           <span className="font-heading font-bold text-sm text-white uppercase">
             Devolatical Admin
           </span>

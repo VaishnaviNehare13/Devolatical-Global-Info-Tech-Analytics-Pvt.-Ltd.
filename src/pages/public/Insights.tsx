@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { Search, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, BookOpen, Share2, Eye, TrendingUp } from 'lucide-react';
 import { useToast } from '../../components/ui/Toast';
 
 interface ArticleItem {
@@ -13,6 +13,8 @@ interface ArticleItem {
   date: string;
   readTime: string;
   author: string;
+  authorRole: string;
+  views: string;
 }
 
 export const Insights: React.FC = () => {
@@ -30,7 +32,9 @@ export const Insights: React.FC = () => {
       summary: 'Learn how to optimize partition indexes and connection pooling thresholds to support workloads exceeding 50k events per second.',
       date: '2026-07-15',
       readTime: '6 min read',
-      author: 'Vikram Mehta'
+      author: 'Vikram Mehta',
+      authorRole: 'Chief Technology Officer',
+      views: '1.2k views'
     },
     {
       id: 'art-2',
@@ -39,7 +43,9 @@ export const Insights: React.FC = () => {
       summary: 'Discover key IAM security configurations, automatic trace logs audits, and database encryption rules required for compliance.',
       date: '2026-07-02',
       readTime: '8 min read',
-      author: 'Marcus Vance'
+      author: 'Marcus Vance',
+      authorRole: 'Chief Security Officer',
+      views: '940 views'
     },
     {
       id: 'art-3',
@@ -48,7 +54,9 @@ export const Insights: React.FC = () => {
       summary: 'Set up cross-region DNS mappings, virtual private networks (VPN), and cluster setups across AWS and Azure environments.',
       date: '2026-06-20',
       readTime: '10 min read',
-      author: 'Sarah Jenkins'
+      author: 'Sarah Jenkins',
+      authorRole: 'Chief Executive Officer',
+      views: '2.1k views'
     },
     {
       id: 'art-4',
@@ -57,9 +65,14 @@ export const Insights: React.FC = () => {
       summary: 'Standardize schema definitions and model analytics metrics using dbt pipelines feeding Delta Lake formats.',
       date: '2026-06-05',
       readTime: '7 min read',
-      author: 'Vikram Mehta'
+      author: 'Vikram Mehta',
+      authorRole: 'Chief Technology Officer',
+      views: '800 views'
     }
   ];
+
+  // Featured spotlight article (first item in array)
+  const featuredArticle = articles[0];
 
   // Filtering Logic
   const filteredArticles = articles.filter((art) => {
@@ -76,6 +89,11 @@ export const Insights: React.FC = () => {
     showToast(`Loading full document briefing for: ${title}`, 'info');
   };
 
+  const handleShare = (title: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    showToast(`Link copied for: ${title}`, 'success');
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 space-y-16 text-left">
       {/* Page Header */}
@@ -89,8 +107,51 @@ export const Insights: React.FC = () => {
         </p>
       </section>
 
+      {/* Featured Spotlight Banner */}
+      {searchQuery === '' && activeCategory === 'All' && (
+        <section className="p-8 bg-slate-900 text-white rounded-2xl relative overflow-hidden flex flex-col justify-between min-h-[300px]">
+          <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-secondary/15 filter blur-3xl pointer-events-none" />
+          
+          <div className="space-y-4 max-w-2xl relative z-10">
+            <div className="flex items-center space-x-2">
+              <Badge variant="secondary" className="text-[10px]">FEATURED BRIEFING</Badge>
+              <span className="text-[10px] text-slate-400 font-mono">{featuredArticle.date}</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold font-heading text-white tracking-tight leading-tight">
+              {featuredArticle.title}
+            </h2>
+            <p className="text-sm text-slate-350 leading-relaxed">
+              {featuredArticle.summary}
+            </p>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-slate-800/80 relative z-10">
+            <div className="flex items-center space-x-3">
+              <div className="h-9 w-9 rounded-full bg-secondary text-white font-bold flex items-center justify-center text-xs">
+                VM
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">{featuredArticle.author}</p>
+                <p className="text-[10px] text-slate-400">{featuredArticle.authorRole}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <span className="text-xs text-slate-400 font-mono">{featuredArticle.readTime}</span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleRead(featuredArticle.title)}
+              >
+                Read Featured
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-6">
+      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-b border-slate-100 dark:border-slate-850/50 pb-6">
         {/* Categories */}
         <div className="flex space-x-2">
           {(['All', 'Cloud', 'Data Science', 'Security'] as const).map((cat) => (
@@ -133,33 +194,46 @@ export const Insights: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
           {paginatedArticles.length > 0 ? (
             paginatedArticles.map((art) => (
-              <Card key={art.id} hoverEffect className="p-8">
+              <Card key={art.id} hoverEffect className="p-6 border border-slate-100 dark:border-slate-800">
                 <div className="flex justify-between items-center mb-4">
                   <Badge variant="secondary" className="text-[9px]">
                     {art.category}
                   </Badge>
-                  <div className="flex items-center space-x-2 text-[10px] text-slate-400 font-semibold">
+                  <div className="flex items-center space-x-3 text-[10px] text-slate-400 font-semibold">
+                    <span className="flex items-center"><Eye className="h-3.5 w-3.5 mr-1" /> {art.views}</span>
+                    <span>•</span>
                     <span>{art.date}</span>
                     <span>•</span>
                     <span>{art.readTime}</span>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-850 dark:text-white mb-2 leading-snug">
+                <h3 className="text-lg font-bold text-slate-850 dark:text-white mb-2 leading-snug">
                   {art.title}
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed mb-6">
                   {art.summary}
                 </p>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-slate-400">By {art.author}</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="cursor-pointer"
-                    onClick={() => handleRead(art.title)}
-                  >
-                    Read Briefing
-                  </Button>
+                <div className="flex justify-between items-center pt-4 border-t border-slate-50 dark:border-slate-850/50">
+                  <div className="flex flex-col text-[10px] text-slate-400">
+                    <span className="font-bold text-slate-650 dark:text-slate-300">By {art.author}</span>
+                    <span>{art.authorRole}</span>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={(e) => handleShare(art.title, e)}
+                      className="p-2 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-400 hover:text-secondary hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="cursor-pointer text-xs"
+                      onClick={() => handleRead(art.title)}
+                    >
+                      Read Briefing
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))
@@ -193,9 +267,26 @@ export const Insights: React.FC = () => {
           )}
         </div>
 
-        {/* Sidebar Newsletter */}
+        {/* Sidebar Newsletters and Trending */}
         <div className="lg:col-span-4 space-y-6">
-          <Card className="bg-primary text-white p-6 relative overflow-hidden">
+          {/* Trending Card */}
+          <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-4">
+            <div className="flex items-center space-x-2 text-slate-400 pb-2 border-b border-slate-50 dark:border-slate-850/50">
+              <TrendingUp className="h-4 w-4 text-secondary animate-bounce" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Trending Briefings</span>
+            </div>
+            <div className="space-y-3">
+              <p className="text-xs text-slate-650 dark:text-slate-350 hover:text-secondary cursor-pointer leading-snug">
+                1. Achieving SOC 2 Compliance on AWS: A Complete Security Guide
+              </p>
+              <p className="text-xs text-slate-650 dark:text-slate-350 hover:text-secondary cursor-pointer leading-snug">
+                2. Kubernetes Multi-Cloud Scaling: High Availability Orchestration
+              </p>
+            </div>
+          </Card>
+
+          {/* Newsletter subscription */}
+          <Card className="bg-primary text-white p-6 relative overflow-hidden border border-transparent">
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-accent/20 filter blur-2xl pointer-events-none" />
             <BookOpen className="h-8 w-8 text-accent mb-4" />
             <h4 className="font-bold text-lg mb-2">Subscribe to Briefings</h4>
@@ -205,11 +296,11 @@ export const Insights: React.FC = () => {
             <input
               type="email"
               placeholder="workemail@corporate.com"
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-sm placeholder-white/50 text-white outline-none focus:border-accent mb-4"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-xs placeholder-white/50 text-white outline-none focus:border-accent mb-4"
             />
             <Button
               variant="secondary"
-              className="w-full justify-center cursor-pointer"
+              className="w-full justify-center cursor-pointer text-xs"
               onClick={() => showToast('Subscribed to briefings newsletter!', 'success')}
             >
               Subscribe Briefs

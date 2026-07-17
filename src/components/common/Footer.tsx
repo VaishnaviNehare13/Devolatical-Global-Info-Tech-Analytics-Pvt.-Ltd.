@@ -22,9 +22,18 @@ export const Footer: React.FC = () => {
         {/* Brand Details */}
         <div className="space-y-6">
           <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-lg bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold text-lg shadow-glow">
-              D
-            </div>
+            <svg className="h-9 w-9" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="footerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#002E5B" />
+                  <stop offset="50%" stopColor="#0F62FE" />
+                  <stop offset="100%" stopColor="#00C2FF" />
+                </linearGradient>
+              </defs>
+              <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#footerLogoGrad)" strokeWidth="6" strokeLinejoin="round" />
+              <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#footerLogoGrad)" opacity="0.85" />
+              <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
+            </svg>
             <div className="flex flex-col">
               <span className="font-heading font-bold text-base leading-none tracking-wide text-white uppercase">
                 Devolatical
@@ -138,9 +147,15 @@ export const Footer: React.FC = () => {
 
       {/* Underlay */}
       <div className="max-w-7xl mx-auto px-6 border-t border-slate-800/80 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
-        <div className="flex items-center space-x-2 mb-4 md:mb-0">
-          <ShieldCheck className="h-4 w-4 text-secondary" />
-          <span>© 2026 Devolatical Global Info-Tech & Analytics Pvt. Ltd. All rights reserved.</span>
+        <div className="flex flex-col md:flex-row items-center md:space-x-6 space-y-4 md:space-y-0 mb-4 md:mb-0">
+          <div className="flex items-center space-x-2">
+            <ShieldCheck className="h-4 w-4 text-secondary" />
+            <span>© 2026 Devolatical Global Info-Tech & Analytics Pvt. Ltd. All rights reserved.</span>
+          </div>
+          <div className="flex items-center space-x-3 text-[9px] font-mono tracking-wider text-slate-550">
+            <span className="px-2 py-0.5 border border-slate-800 rounded">SOC 2 TYPE II DESIGNED</span>
+            <span className="px-2 py-0.5 border border-slate-800 rounded">ISO 27001 KEY ALIGNMENT</span>
+          </div>
         </div>
         <div className="flex space-x-6">
           <Link to="/privacy" className="hover:text-slate-300 transition-colors">Privacy Policy</Link>

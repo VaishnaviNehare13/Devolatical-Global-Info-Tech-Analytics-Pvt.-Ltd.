@@ -74,9 +74,18 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-3 cursor-pointer">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold text-lg shadow-glow">
-            D
-          </div>
+          <svg className="h-9 w-9" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#002E5B" />
+                <stop offset="50%" stopColor="#0F62FE" />
+                <stop offset="100%" stopColor="#00C2FF" />
+              </linearGradient>
+            </defs>
+            <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#logoGrad)" strokeWidth="6" strokeLinejoin="round" />
+            <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#logoGrad)" opacity="0.85" />
+            <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
+          </svg>
           <div className="flex flex-col">
             <span className="font-heading font-bold text-base leading-none tracking-wide text-primary dark:text-white uppercase">
               Devolatical

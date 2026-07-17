@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Timeline, type TimelineEvent } from '../../components/ui/Timeline';
-import { Globe, Users, Target } from 'lucide-react';
+import { Globe, Users, Target, Cpu, HardDrive } from 'lucide-react';
 
 export const About: React.FC = () => {
   const values = [
@@ -21,6 +21,12 @@ export const About: React.FC = () => {
     { name: 'Sarah Jenkins', role: 'Chief Executive Officer', bio: 'Former VP of Enterprise Data at IBM. 18+ years leading global tech delivery pipelines.', initials: 'SJ' },
     { name: 'Vikram Mehta', role: 'Chief Technology Officer', bio: 'Principal software architect and former Databricks core committer. Specialist in distributed systems.', initials: 'VM' },
     { name: 'Marcus Vance', role: 'Chief Security Officer', bio: 'Former cyber security lead at Stripe. Expert in SOC 2 compliance frameworks and penetrative audits.', initials: 'MV' }
+  ];
+
+  const labsList = [
+    { title: 'Data Lakehouse Research Lab', desc: 'Benchmarking next-generation partition schemas, dbt models, and caching speeds for Snowflake integrations.' },
+    { title: 'AI Inference Acceleration Hub', desc: 'Optimizing tensor calculations, model weight compression, and latency parameters for custom PyTorch models.' },
+    { title: 'Cloud Orchestration Center', desc: 'Designing declarative Terraform blueprints and high-availability Kubernetes load balancing configurations.' }
   ];
 
   return (
@@ -43,31 +49,72 @@ export const About: React.FC = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {values.map((val) => (
-            <Card key={val.title}>
+            <Card key={val.title} className="p-6 border border-slate-100 dark:border-slate-800">
               <div className="p-3 bg-slate-50 dark:bg-dark border border-slate-100 dark:border-slate-800 rounded-lg w-fit mb-4">
                 {val.icon}
               </div>
-              <h4 className="font-bold text-slate-800 dark:text-white mb-2">{val.title}</h4>
+              <h4 className="font-bold text-slate-850 dark:text-white mb-2">{val.title}</h4>
               <p className="text-xs text-slate-500 leading-relaxed">{val.desc}</p>
             </Card>
           ))}
         </div>
       </section>
 
-      {/* 3. Leadership profiles */}
+      {/* 3. Engineering Culture & Labs */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-4 border-t border-slate-100 dark:border-slate-850/60">
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
+            Our Engineering Culture
+          </h2>
+          <p className="text-sm text-slate-500 leading-relaxed">
+            We operate with a "fail-fast, scale-correctly" culture. Our developers actively commit to public open-source initiatives and spend 20% of their sprints prototyping in our dedicated R&D labs.
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 border border-slate-100 dark:border-slate-800 rounded-xl bg-white dark:bg-dark-card shadow-sm space-y-2">
+              <Cpu className="h-5 w-5 text-secondary" />
+              <h4 className="font-bold text-slate-800 dark:text-white text-xs uppercase tracking-wide">Continuous R&D</h4>
+              <p className="text-[11px] text-slate-400">Regular benchmarking updates on active Spark clusters.</p>
+            </div>
+            
+            <div className="p-4 border border-slate-100 dark:border-slate-800 rounded-xl bg-white dark:bg-dark-card shadow-sm space-y-2">
+              <HardDrive className="h-5 w-5 text-accent" />
+              <h4 className="font-bold text-slate-800 dark:text-white text-xs uppercase tracking-wide">IaC Standardization</h4>
+              <p className="text-[11px] text-slate-400">Every deployment infrastructure is modeled declaratively.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Labs cards list */}
+        <div className="space-y-4">
+          <h3 className="font-heading font-semibold text-slate-500 text-xs uppercase tracking-wider">
+            Active Innovation Labs
+          </h3>
+          <div className="space-y-3">
+            {labsList.map((lab) => (
+              <div key={lab.title} className="p-4 bg-slate-50/50 dark:bg-dark/10 border border-slate-100 dark:border-slate-800 rounded-xl space-y-1">
+                <h4 className="text-sm font-bold text-slate-805 dark:text-white">{lab.title}</h4>
+                <p className="text-[11px] text-slate-500 leading-normal">{lab.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Leadership profiles */}
       <section className="space-y-8">
         <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
           Leadership Team
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {team.map((member) => (
-            <Card key={member.name} hoverEffect>
+            <Card key={member.name} hoverEffect className="p-6 border border-slate-100 dark:border-slate-800">
               <div className="flex items-center space-x-4 mb-4">
                 <div className="h-12 w-12 rounded-full bg-secondary text-white font-bold flex items-center justify-center text-base">
                   {member.initials}
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-800 dark:text-white leading-none">{member.name}</h4>
+                  <h4 className="font-bold text-slate-850 dark:text-white leading-none">{member.name}</h4>
                   <span className="text-[10px] text-slate-400 font-semibold uppercase mt-1 block">{member.role}</span>
                 </div>
               </div>
@@ -77,7 +124,7 @@ export const About: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Journey Timeline */}
+      {/* 5. Journey Timeline */}
       <section className="space-y-8 max-w-3xl">
         <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
           Our Journey
@@ -85,7 +132,7 @@ export const About: React.FC = () => {
         <Timeline events={journeyEvents} />
       </section>
 
-      {/* 5. Global offices footprint */}
+      {/* 6. Global offices footprint & Gallery */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-8 border-t border-slate-100 dark:border-slate-800/85">
         <div className="space-y-4">
           <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
@@ -96,7 +143,7 @@ export const About: React.FC = () => {
           </p>
           <div className="space-y-3.5 text-xs text-slate-600 dark:text-slate-400">
             <p><strong>New York (Headquarters):</strong> Suite 4200, 1 World Trade Center, New York, NY 10007</p>
-            <p><strong>Mumbai (Global Tech Hub):</strong> Levels 5-8, Godrej One, Bandra Kurla Complex, Mumbai, MH 400051</p>
+            <p><strong>Mumbai (Global Tech Hub):</strong> Levels 5-8, Godrej One, Bandra BKC, Mumbai, MH 400051</p>
           </div>
         </div>
         
@@ -112,4 +159,5 @@ export const About: React.FC = () => {
     </div>
   );
 };
+
 export default About;

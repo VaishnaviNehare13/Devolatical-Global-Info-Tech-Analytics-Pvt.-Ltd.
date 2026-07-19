@@ -45,13 +45,13 @@ export const Home: React.FC = () => {
             className="space-y-4"
           >
             <span className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-secondary/15 text-secondary dark:bg-secondary/25 uppercase tracking-widest">
-              ★ Enterprise Data Intelligence
+              ★ Enterprise Data & Analytics Consulting
             </span>
             <h1 className="text-4xl md:text-6xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight leading-none">
-              Architecting Intelligent <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">Data Ecosystems</span>
+              Evolving Enterprise Decisions with <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">Data Strategies</span>
             </h1>
             <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
-              Provision security-first ingestion pipelines, real-time analytics dashboards, and custom SaaS platforms. Orchestrate your global data on a compliance-ready security architecture.
+              We guide global organizations through digital transformations. We consult on data strategy, modern cloud platform migrations, and AI-driven business intelligence.
             </p>
           </motion.div>
 
@@ -63,13 +63,13 @@ export const Home: React.FC = () => {
           >
             <Link to="/contact">
               <Button variant="secondary" size="lg" className="w-full sm:w-auto justify-center">
-                <span>Initiate Consultation</span>
+                <span>Request Consultation</span>
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/services">
               <Button variant="outline" size="lg" className="w-full sm:w-auto justify-center">
-                Explore Services
+                Our Capabilities
               </Button>
             </Link>
           </motion.div>
@@ -87,7 +87,7 @@ export const Home: React.FC = () => {
       <section className="bg-slate-900 py-10 overflow-hidden text-slate-500">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            Trusted by global enterprise clients
+            Consulting with global organizations
           </span>
           <div className="flex flex-wrap items-center gap-8 justify-center opacity-60">
             <span className="font-heading font-extrabold text-base text-white tracking-widest uppercase">VERTEX SYSTEMS</span>
@@ -105,26 +105,26 @@ export const Home: React.FC = () => {
         </div>
         <div className="lg:col-span-6 space-y-6 text-left order-1 lg:order-2">
           <span className="text-xs font-bold text-secondary uppercase tracking-widest">
-            Data Lake Telemetry
+            Decision Intelligence
           </span>
           <h2 className="text-3xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight">
-            Verify Streaming Latency in Real-Time
+            Accelerate Business Performance via Analytics
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed">
-            Our ingestion engines process telemetry points at sub-millisecond intervals. Active health monitors automate server scales dynamically on traffic peaks.
+            Our consulting teams audit data architecture latency to build optimal semantic layers. We automate data catalogs to verify compliance and consistency.
           </p>
           <ul className="space-y-3.5 text-sm text-slate-600 dark:text-slate-400">
             <li className="flex items-center">
               <CheckCircle className="h-5 w-5 text-secondary mr-3 flex-shrink-0" />
-              <span>Apache Spark integration for streaming analytics.</span>
+              <span>Modern Snowflake and Delta Lake storage blueprints.</span>
             </li>
             <li className="flex items-center">
               <CheckCircle className="h-5 w-5 text-secondary mr-3 flex-shrink-0" />
-              <span>Automatic TLS encryption on data stores.</span>
+              <span>Data catalog and classification governance tools.</span>
             </li>
             <li className="flex items-center">
               <CheckCircle className="h-5 w-5 text-secondary mr-3 flex-shrink-0" />
-              <span>Multi-cloud failover strategies active.</span>
+              <span>Multi-region data distribution routing setups.</span>
             </li>
           </ul>
         </div>
@@ -137,25 +137,25 @@ export const Home: React.FC = () => {
             <h3 className="text-4xl font-extrabold text-primary dark:text-white font-heading">
               <Counter target={20} suffix="+" />
             </h3>
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Countries Covered</p>
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Sectors Consulted</p>
           </Card>
           <Card>
             <h3 className="text-4xl font-extrabold text-primary dark:text-white font-heading">
               <Counter target={100} suffix="+" />
             </h3>
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Active Clients</p>
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Enterprise Clients</p>
           </Card>
           <Card>
             <h3 className="text-4xl font-extrabold text-primary dark:text-white font-heading">
               <Counter target={500} suffix="+" />
             </h3>
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Projects Deployed</p>
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Platforms Deployed</p>
           </Card>
           <Card>
             <h3 className="text-4xl font-extrabold text-primary dark:text-white font-heading">
               <Counter target={99} suffix="%" />
             </h3>
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Client Satisfaction</p>
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-2">Retention Rate</p>
           </Card>
         </div>
       </section>
@@ -165,10 +165,10 @@ export const Home: React.FC = () => {
         <div className="text-center space-y-4 max-w-xl mx-auto">
           <span className="text-xs font-bold text-secondary uppercase tracking-widest">Our Capabilities</span>
           <h2 className="text-3xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight">
-            High-Impact Technical Solutions
+            Consulting Expertise Areas
           </h2>
           <p className="text-sm text-slate-400">
-            We deliver enterprise engineering capabilities covering cloud ecosystems, AI models, and secure software development.
+            We deliver technical advisory spanning strategic data frameworks, machine learning, and multi-cloud platforms.
           </p>
         </div>
 
@@ -177,9 +177,9 @@ export const Home: React.FC = () => {
             <div className="p-3 bg-secondary/10 text-secondary w-fit rounded-lg mb-4">
               <Database className="h-6 w-6" />
             </div>
-            <h4 className="font-bold text-slate-800 dark:text-white mb-2">Advanced Data Analytics</h4>
+            <h4 className="font-bold text-slate-800 dark:text-white mb-2">Data Strategy & Governance</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              We design and provision secure, real-time data warehouses, lakehouses, and ETL pipelines to ingestion.
+              Define target data operating models, metadata classifications, and master data ownership plans to reduce ingestion silos.
             </p>
           </Card>
 
@@ -187,9 +187,9 @@ export const Home: React.FC = () => {
             <div className="p-3 bg-indigo-500/10 text-indigo-500 w-fit rounded-lg mb-4">
               <Cpu className="h-6 w-6" />
             </div>
-            <h4 className="font-bold text-slate-800 dark:text-white mb-2">AI & Machine Learning</h4>
+            <h4 className="font-bold text-slate-800 dark:text-white mb-2">AI & Decision Intelligence</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Integrate custom predictive modeling engines, NLP algorithms, and automated analytics classification systems.
+              Integrate advanced forecasting neural networks, custom LLM agents, and semantic lookup databases to optimize corporate workflows.
             </p>
           </Card>
 
@@ -197,24 +197,24 @@ export const Home: React.FC = () => {
             <div className="p-3 bg-emerald-500/10 text-emerald-500 w-fit rounded-lg mb-4">
               <Zap className="h-6 w-6" />
             </div>
-            <h4 className="font-bold text-slate-800 dark:text-white mb-2">Custom Software Development</h4>
+            <h4 className="font-bold text-slate-800 dark:text-white mb-2">Modern Data Platforms & Cloud</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Deploy modular microservices architectures, robust API integrations, and premium web/mobile software platforms.
+              Architect scalable Delta Lake structures on multi-cloud environments (AWS, Azure) managed declaratively using Terraform code.
             </p>
           </Card>
         </div>
       </section>
 
-      {/* 6. Awards & Partnerships */}
+      {/* 6. Research & System Competence */}
       <section className="px-6 max-w-7xl mx-auto border-t border-slate-100 dark:border-slate-800/80 pt-16 grid grid-cols-1 md:grid-cols-2 gap-12">
         <div className="flex items-start space-x-4">
           <div className="p-3.5 bg-yellow-500/10 text-yellow-500 rounded-xl">
             <Award className="h-7 w-7" />
           </div>
           <div className="space-y-2">
-            <h4 className="font-bold text-slate-800 dark:text-white">Award-Winning Implementations</h4>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Devolatical Global was recognized as the "Best Enterprise Data Integrator" at the Global Tech Summit 2025.
+            <h4 className="font-bold text-slate-800 dark:text-white">Active Research & Advisory Contributions</h4>
+            <p className="text-sm text-slate-450 leading-relaxed">
+              Our consultants are active contributors to major open-source data standards bodies and publish peer-reviewed technical blueprints regularly.
             </p>
           </div>
         </div>
@@ -224,9 +224,9 @@ export const Home: React.FC = () => {
             <Target className="h-7 w-7" />
           </div>
           <div className="space-y-2">
-            <h4 className="font-bold text-slate-800 dark:text-white">Certified Global Partners</h4>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Our teams hold premium certifications for AWS Advanced Partner tier, Microsoft Gold Competency, and Google Cloud Partner status.
+            <h4 className="font-bold text-slate-800 dark:text-white">Decentralized Systems Competency</h4>
+            <p className="text-sm text-slate-450 leading-relaxed">
+              We design frameworks and deploy workloads across all major cloud environments, aligning storage with secure engineering best practices.
             </p>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
-import { Activity, Landmark, ShoppingBag, ArrowUpRight, Clock } from 'lucide-react';
+import { Activity, Landmark, ShoppingBag, ArrowUpRight, Clock, Target, CheckCircle2 } from 'lucide-react';
 
 interface CaseDetail {
   id: string;
@@ -11,9 +11,10 @@ interface CaseDetail {
   industry: 'Finance' | 'Healthcare' | 'Retail';
   title: string;
   summary: string;
-  problem: string;
-  solution: string;
-  results: string[];
+  problem: string; // Business Challenge
+  objectives: string[]; // Client Objectives
+  solution: string; // Solution Architecture
+  results: string[]; // Business Impact & ROI
   kpis: string[];
   tech: string[];
   testimonial: {
@@ -32,62 +33,77 @@ export const CaseStudies: React.FC = () => {
   const casesList: CaseDetail[] = [
     {
       id: 'case-finance',
-      client: 'Apex Global Assets',
+      client: 'Global Tier-1 Investment Bank',
       industry: 'Finance',
       title: 'Streaming Ingestion Scaling for Asset Transactions',
       summary: 'Re-engineered data lakehouse architecture to handle ingestion loads of 80k active transactions per second.',
-      problem: 'Legacy Oracle databases experienced connection pooling locks during peak trading hours, causing transaction latency spikes of up to 4.2 seconds.',
-      solution: 'Replaced core ingestion layers with AWS Kinesis streams feeding an auto-scaling Apache Spark structured streaming cluster that syncs directly into Snowflake Core.',
+      problem: 'Legacy databases experienced connection pooling locks during peak trading hours, causing transaction latency spikes and delayed portfolios update runs.',
+      objectives: [
+        'Consolidate transaction events from four regional financial centers.',
+        'Maintain 99.99% system availability under extreme traffic surges.',
+        'Minimize cloud storage overhead through active schema pruning.'
+      ],
+      solution: 'Replaced core ingestion layers with Kafka streaming brokers feeding an auto-scaling Apache Spark cluster that syncs directly into Snowflake Core tables.',
       results: [
         'Reduced ledger sync latencies from 4.2s to sub-10ms intervals.',
-        'Eliminated transaction pooling bottlenecks entirely.',
-        'Decreased cloud infrastructure cost metrics by 34%.'
+        'Eliminated transaction pooling bottlenecks, avoiding connection losses.',
+        'Decreased cloud infrastructure cost metrics by 34%, yielding an annual ROI of $1.2M.'
       ],
       kpis: ['Latency: Sub-10ms', 'Cost Save: 34%', 'System Uptime: 99.99%'],
       tech: ['AWS Kinesis', 'Apache Spark', 'Snowflake', 'Scala', 'Terraform'],
       testimonial: {
         quote: "Devolatical Global delivered our new database engine on time. Transaction locks have dropped to zero.",
         author: "Richard Caldwell",
-        role: "VP of Technology, Apex Assets"
+        role: "VP of Technology, Capital Assets Division"
       },
       timeline: ['Phase 1: Architecture Review (1 Wk)', 'Phase 2: Spark Cluster Design (2 Wks)', 'Phase 3: Real-Time Syncing (2 Wks)', 'Phase 4: Dynamic Load Trials (1 Wk)'],
       icon: <Landmark className="h-5 w-5 text-secondary" />
     },
     {
       id: 'case-healthcare',
-      client: 'Providence Clinical Labs',
+      client: 'Providence Clinical Research Network',
       industry: 'Healthcare',
       title: 'Compliance-Ready Patient Telemetry Warehousing',
-      summary: 'Provisioned a secure, encrypted real-time storage warehouse mapping HL7 FHIR metrics.',
-      problem: 'Data sharing between regional hospitals was delayed, impacting clinical research pipelines due to strict audit validation needs and security parameters.',
-      solution: 'Designed a secure microservices architecture deploying Node API gateways and AWS RDS database replication across multiple Availability Zones.',
-      results: [
-        'Established SOC 2 audit readiness trails.',
-        'Decreased diagnostic data delivery times by 40%.',
-        'Secure 256-bit encryption active on all records.'
+      summary: 'Provisioned a secure, compliance-ready storage warehouse mapping patient clinical records.',
+      problem: 'Data sharing between regional hospitals was delayed, impacting clinical research timelines due to strict audit validation needs and security parameters.',
+      objectives: [
+        'Establish automated audit readiness logs for security reviews.',
+        'Reduce diagnostics exchange times across systems by at least 30%.',
+        'Secure 256-bit encryption for all records on transport and at rest.'
       ],
-      kpis: ['Data Delivery: -40%', 'Encryption: AES-256', 'Compliance: HIPAA verified'],
-      tech: ['Node.js', 'PostgreSQL', 'AWS RDS', 'Docker', 'Terraform'],
+      solution: 'Designed secure API gateways deploying AWS RDS databases with multi-AZ replication, using Wazuh active threat monitoring logs.',
+      results: [
+        'Established automated compliance audit trails.',
+        'Decreased diagnostic data delivery times by 40% across clinics.',
+        'Hardened network defenses to pass independent validation tests.'
+      ],
+      kpis: ['Data Delivery: -40%', 'Encryption: AES-256', 'Compliance: HIPAA Ready'],
+      tech: ['Node.js', 'PostgreSQL', 'AWS GovCloud', 'Docker', 'Terraform'],
       testimonial: {
         quote: "Our compliance audits are now fully automated. The data exchange pipelines operate securely and smoothly.",
         author: "Dr. Amanda Ross",
-        role: "Director of Clinical Research"
+        role: "Director of Clinical Research Systems"
       },
-      timeline: ['Phase 1: Compliance Mapping (2 Wks)', 'Phase 2: Database Replication Setup (2 Wks)', 'Phase 3: Gateway Integrations (2 Wks)', 'Phase 4: Security Pentesting (1 Wk)'],
+      timeline: ['Phase 1: Compliance Mapping (2 Wks)', 'Phase 2: Database Replication Setup (2 Wks)', 'Phase 3: Gateway Integrations (2 Wks)', 'Phase 4: Security Verification (1 Wk)'],
       icon: <Activity className="h-5 w-5 text-red-500" />
     },
     {
       id: 'case-retail',
-      client: 'Velocity E-commerce',
+      client: 'Omnichannel Consumer Retailer',
       industry: 'Retail',
       title: 'Machine Learning Demand Forecasting and Personalization',
       summary: 'Developed clickstream analytics and ML recommendation pipelines scaling peak holiday volumes.',
       problem: 'Static demand forecasting models led to warehouse stock-outs during peak seasonal promotions, causing lost revenue sales and cart abandonment.',
-      solution: 'Provisioned Python predictive models running on Kubernetes clusters that process real-time visitor event metrics from Postgres databases.',
+      objectives: [
+        'Optimize inventory forecasting cycles using real-time transactions.',
+        'Maintain sub-50ms latency on personalized recommendation APIs.',
+        'Unify web and retail transactions under a single analytics layer.'
+      ],
+      solution: 'Provisioned Python forecasting engines running on Kubernetes clusters that process real-time visitor event metrics from Postgres databases.',
       results: [
-        'Improved demand prediction accuracies by 28%.',
-        'Warehouse inventory stock-outs reduced to near-zero levels.',
-        'Average cart order values increased by 14%.'
+        'Improved demand prediction accuracies by 28%, reducing stockouts.',
+        'Reduced warehouse stock-out rates to 0.2% globally.',
+        'Average cart order values increased by 14% due to personalized recommendation APIs.'
       ],
       kpis: ['Prediction accuracy: +28%', 'Order values: +14%', 'Stockout rate: 0.2%'],
       tech: ['Python', 'Kubernetes', 'TensorFlow', 'PostgreSQL', 'Metabase'],
@@ -214,21 +230,34 @@ export const CaseStudies: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Problem Statement</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Business Challenge</h4>
                 <p className="text-slate-500 text-xs">{selectedCase.problem}</p>
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Our Solution Architecture</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Solution Architecture</h4>
                 <p className="text-slate-500 text-xs">{selectedCase.solution}</p>
               </div>
+            </div>
+
+            {/* Client Objectives */}
+            <div className="space-y-2">
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Client Objectives</h4>
+              <ul className="space-y-1.5 text-xs text-slate-500">
+                {selectedCase.objectives.map((obj, idx) => (
+                  <li key={idx} className="flex items-center space-x-2">
+                    <Target className="h-3.5 w-3.5 text-secondary flex-shrink-0" />
+                    <span>{obj}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             {/* Timelines and Tech */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
               {/* Delivery Timeline */}
               <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2.5">Deployment Timeline</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2.5">Implementation Process</h4>
                 <ul className="space-y-1.5 text-xs text-slate-550 dark:text-slate-400">
                   {selectedCase.timeline.map((event, idx) => (
                     <li key={idx} className="flex items-center">
@@ -255,10 +284,13 @@ export const CaseStudies: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
               {/* Results */}
               <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">Metrics Gained</h4>
-                <ul className="space-y-1.5 text-xs text-slate-550 dark:text-slate-400 list-disc list-inside">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">Business Impact & ROI</h4>
+                <ul className="space-y-1.5 text-xs text-slate-550 dark:text-slate-400">
                   {selectedCase.results.map((r, idx) => (
-                    <li key={idx}>{r}</li>
+                    <li key={idx} className="flex items-start">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span>{r}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -284,4 +316,5 @@ export const CaseStudies: React.FC = () => {
     </div>
   );
 };
+
 export default CaseStudies;

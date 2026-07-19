@@ -3,15 +3,15 @@ import { Card } from '../../components/ui/Card';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Database, BarChart2, Cpu, Code, Cloud, Shield, ArrowUpRight, Clock } from 'lucide-react';
+import { Database, BarChart2, Cpu, Code, Cloud, Shield, ArrowUpRight, Clock, GitMerge, Layers, FileText } from 'lucide-react';
 import { useToast } from '../../components/ui/Toast';
 
 interface ServiceDetail {
   id: string;
   name: string;
-  desc: string;
+  desc: string; // Business Challenge
   businessValue: string;
-  technicalOverview: string;
+  technicalOverview: string; // Our Solution
   benefits: string[];
   tech: string[];
   architectureDesc: string;
@@ -28,94 +28,154 @@ export const Services: React.FC = () => {
 
   const servicesList: ServiceDetail[] = [
     {
-      id: 'data-analytics',
-      name: 'Advanced Data Analytics',
-      desc: 'Provision real-time streaming analytics, complex ETL data lakehouses, and high-volume ingestion schemas.',
-      businessValue: 'Reduces operational data pipeline costs by 34% on average while increasing insights resolution times.',
-      technicalOverview: 'Orchestrates Apache Spark streaming pipelines on auto-scaling compute clusters targeting unified Snowflake and Delta Lake storage systems.',
-      benefits: ['Sub-10ms data availability latencies', 'Elimination of connection pooling bottlenecks', 'Fully audited SOC 2 compliant storage'],
-      tech: ['Apache Spark', 'Snowflake', 'AWS Kinesis', 'dbt'],
-      architectureDesc: 'Decoupled storage and compute layers leveraging multi-AZ AWS clusters with integrated Apache Kafka buffering streams.',
-      process: ['Pipeline Ingestion Audit', 'Lakehouse Schema Modeling', 'ETL Cluster Provisioning', 'Telemetry Validation'],
-      deliverables: ['Custom ingestion terraform code', 'dbt modeling scripts', 'Real-time performance dashboards'],
-      outcomes: ['Near-zero data loss during network splits', 'Automated partition pruning for faster queries', 'Single source of truth for business reporting'],
-      timeline: '4 - 6 Weeks Deployment',
-      icon: <Database className="h-6 w-6 text-secondary animate-pulse" />
+      id: 'data-strategy',
+      name: 'Data Strategy & Advisory',
+      desc: 'Organizations struggle to align their technical data pipelines with high-level corporate growth goals, resulting in fragmented storage tools and lost strategic value.',
+      businessValue: 'Establishes clear metrics framework and maps data value streams to cut infrastructure spends by up to 25%.',
+      technicalOverview: 'We assess operational data maturity gaps, construct clear technical roadmaps, and configure target operating models for enterprise stakeholders.',
+      benefits: ['Business-IT operational alignment', 'Consolidated tool footprints', 'Maturity gaps analysis reports'],
+      tech: ['Maturity Matrices', 'Value Stream Maps', 'Strategic Playbooks'],
+      architectureDesc: 'Strategic frameworks mapping executive key performance indicators directly to distributed ingestion assets.',
+      process: ['Maturity Assessment', 'Stakeholder Mapping', 'Gap Analysis', 'Strategic Blueprinting'],
+      deliverables: ['Target Operating Model blueprint', 'Data capability matrix', 'Consolidated tooling plan'],
+      outcomes: ['Defined ownership guidelines', 'Strategic multi-year investment plans', 'Accelerated decision structures'],
+      timeline: '4 - 6 Weeks Assessment',
+      icon: <FileText className="h-6 w-6 text-secondary animate-pulse" />
+    },
+    {
+      id: 'data-architecture',
+      name: 'Enterprise Data Architecture',
+      desc: 'Legacy databases create rigid data silos that fail under high concurrent query loads and block modern real-time application pipelines.',
+      businessValue: 'Improves distributed query latency thresholds and decouples computing layers to prevent database locking.',
+      technicalOverview: 'We design unified semantic schemas, multi-hop lakehouse structures (Bronze-Silver-Gold), and scalable partition indexes.',
+      benefits: ['Sub-second reporting lookups', 'Dynamic computing isolation pools', 'High schema structure flexibility'],
+      tech: ['Snowflake', 'Databricks Delta Lake', 'dbt', 'ER Studio'],
+      architectureDesc: 'Decoupled multi-cloud storage networks employing columnar formats and automated compute auto-scaling thresholds.',
+      process: ['Schema Integrity Auditing', 'Lakehouse Model Design', 'Indexing optimizations', 'Load validation trials'],
+      deliverables: ['Semantic layer schemas', 'Partition index code templates', 'Data architecture blueprint'],
+      outcomes: ['Reduced read/write conflict rates', 'Lower data scanning costs', 'Robust database load recovery'],
+      timeline: '6 - 8 Weeks Blueprint',
+      icon: <Layers className="h-6 w-6 text-accent" />
+    },
+    {
+      id: 'data-engineering',
+      name: 'Data Engineering & ETL',
+      desc: 'Manual file transfers and slow batches cause critical pipeline delays, leading to stale telemetry and missed alert signals.',
+      businessValue: 'Transforms overnight processing into real-time streams, reducing sync latency from hours to milliseconds.',
+      technicalOverview: 'We construct high-availability Apache Spark ingestion scripts, automated Airflow DAG paths, and streaming Kafka queues.',
+      benefits: ['Continuous streaming pipelines', 'Fault-tolerant ingestion networks', 'Self-healing worker nodes configurations'],
+      tech: ['Apache Spark', 'Apache Airflow', 'Kafka', 'Python'],
+      architectureDesc: 'Multi-AZ Kubernetes worker node clusters handling stream ingestions decoupled from storage targets via buffering layers.',
+      process: ['Ingestion source mapping', 'ETL pipeline coding', 'Orchestration setup', 'Stress validation test'],
+      deliverables: ['Production Airflow DAG files', 'Spark deployment helm configs', 'Ingestion scaling codes'],
+      outcomes: ['Zero-downtime ledger ingestion runs', 'Auto-recovery on network timeout checks', 'Standardized source file conversions'],
+      timeline: '8 - 10 Weeks Integration',
+      icon: <Database className="h-6 w-6 text-indigo-500" />
+    },
+    {
+      id: 'data-governance',
+      name: 'Data Governance & Risk Management',
+      desc: 'Lack of tracking ownership results in poor data quality, compliance drift risks, and high vulnerability to regulatory penalties.',
+      businessValue: 'Protects business integrity, limits legal liability risks, and aligns storage models with privacy best practices.',
+      technicalOverview: 'We deploy automated data catalog catalogs, assign clear data stewardship guidelines, and configure audit logging networks.',
+      benefits: ['Automatic data lineage discovery', 'Enforced encryption policies', 'Stewardship responsibility maps'],
+      tech: ['Collibra', 'Apache Atlas', 'AWS Lake Formation', 'IAM Controls'],
+      architectureDesc: 'Role-based access architectures leveraging automated column-level mask policies and auditing logs.',
+      process: ['Privacy policy auditing', 'Catalog registry integration', 'IAM authorization setup', 'Audit verification test'],
+      deliverables: ['Data Catalog configuration scripts', 'Data lineage flow charts', 'Role governance guidelines'],
+      outcomes: ['Hardened access credentials setup', 'Clean, searchable data directory', 'Zero unmapped databases in staging'],
+      timeline: '5 - 7 Weeks Setup',
+      icon: <Shield className="h-6 w-6 text-emerald-500" />
+    },
+    {
+      id: 'data-integration',
+      name: 'Enterprise Data Integration',
+      desc: 'Fragmented SaaS platforms and legacy ERP systems fail to sync client telemetry, creating conflicting operational dashboards.',
+      businessValue: 'Unifies client datasets to establish a single operational truth, preventing billing and sales coordination mistakes.',
+      technicalOverview: 'We design high-frequency webhooks, robust REST/gRPC API bridges, and standardized CDC replication pipelines.',
+      benefits: ['Unified system sync pipelines', 'Sub-minute platform sync margins', 'Consolidated client profiles schema'],
+      tech: ['MuleSoft', 'gRPC APIs', 'Fivetran', 'AWS Lambda'],
+      architectureDesc: 'Event-driven serverless synchronization layers utilizing Kafka brokers to queue platform updates.',
+      process: ['API capability mappings', 'Integration gateway coding', 'CDC trigger activations', 'Data validation checks'],
+      deliverables: ['Custom API gateway codes', 'Fivetran connector configurations', 'Data mapping schemas'],
+      outcomes: ['Synchronized multi-platform accounts', 'Reduced manual sync efforts', 'Instant account update alerts'],
+      timeline: '6 - 8 Weeks Deployment',
+      icon: <GitMerge className="h-6 w-6 text-cyan-500" />
     },
     {
       id: 'bi',
-      name: 'Business Intelligence',
-      desc: 'Formulate responsive corporate analytics panels, executive KPI tracking systems, and automated reports.',
-      businessValue: 'Eliminates manually compiled reports, freeing up to 20 hours per week for business analysts.',
-      technicalOverview: 'Custom BI layer deployments mapping relational databases and Snowflake datastores directly to clean, cached visualizations.',
-      benefits: ['Unified data dashboards for operations', 'Automated email alerts on anomaly detection', 'Role-based access controls for security'],
-      tech: ['Tableau', 'Power BI', 'Metabase', 'SQL Server'],
-      architectureDesc: 'Direct-query architectures utilizing high-performance columnar caching layers to prevent database locks.',
-      process: ['Stakeholder Goal Mapping', 'Semantic Layer Design', 'Dashboard Prototyping', 'User Clearance Gate setup'],
-      deliverables: ['Responsive dashboard layouts', 'Auto-refresh script configs', 'KPI measurement frameworks'],
-      outcomes: ['Real-time visual monitoring of corporate revenue', 'SLA threshold alerts on telemetry indicators', 'Granular visual drill-down controls'],
-      timeline: '3 - 5 Weeks Deployment',
-      icon: <BarChart2 className="h-6 w-6 text-accent" />
+      name: 'Business Intelligence & BI',
+      desc: 'Business stakeholders struggle to make informed decisions due to slow, manually compiled spreadsheets and stale dashboard views.',
+      businessValue: 'Enables interactive visual forecasting, eliminating up to 20 hours of manual report compilation weekly.',
+      technicalOverview: 'We deploy enterprise-grade semantic layers, Tableau server caching policies, and clean reporting drill-downs.',
+      benefits: ['Interactive revenue tracking dashboards', 'Anomaly alert mail triggers', 'Self-service analytics layers'],
+      tech: ['Tableau', 'Power BI', 'SQL Server Analysis', 'dbt semantic layer'],
+      architectureDesc: 'Direct-query cached architectures utilizing high-performance memory blocks to bypass database stress.',
+      process: ['Goal metrics mapping', 'Semantic model design', 'Dashboard layout design', 'User access checks'],
+      deliverables: ['Production dashboard layout configs', 'Drill-down schema parameters', 'Metrics training manual'],
+      outcomes: ['Faster executive decision metrics', 'Transparent KPI tracking runs', 'Reduced ad-hoc SQL query load'],
+      timeline: '4 - 6 Weeks Dashboarding',
+      icon: <BarChart2 className="h-6 w-6 text-red-500" />
     },
     {
       id: 'ai-ml',
-      name: 'AI & Machine Learning',
-      desc: 'Deploy custom predictive modeling engines, NLP classification models, and generative intelligence layers.',
-      businessValue: 'Automates manual sorting operations to reduce customer ticket response times by 45%.',
-      technicalOverview: 'Custom ML model building, training pipelines, and inference API integrations leveraging Kubernetes GPU clusters.',
-      benefits: ['Automated predictive classification', 'Anomaly identification on streaming data', 'Real-time natural language query support'],
-      tech: ['TensorFlow', 'PyTorch', 'Python', 'OpenAI APIs'],
-      architectureDesc: 'Scalable model deployment layers utilizing RESTful API endpoints secured by OAuth 2.0 gates.',
-      process: ['Data Labeling & Audit', 'Model Training & Selection', 'API Endpoint Deployment', 'A/B testing trials'],
-      deliverables: ['Trained model binary weights', 'Deployment helm charts', 'Model drift warning logs'],
-      outcomes: ['Accurate demand forecasting parameters', 'Secured automated decision gates', 'Dynamic NLP query engines'],
+      name: 'AI & Machine Learning Consulting',
+      desc: 'Organizations cannot scale operations effectively without predictive modeling capabilities, leading to slow classification runs and high manual sorting times.',
+      businessValue: 'Automates manual screening tasks to drop customer resolution times by 45% using advanced LLMs.',
+      technicalOverview: 'We configure PyTorch model training pipelines, predictive clustering scripts, and custom LLM agent systems.',
+      benefits: ['Predictive sorting capability', 'Anomaly detection algorithms', 'Natural language data queries'],
+      tech: ['TensorFlow', 'PyTorch', 'Python', 'Hugging Face'],
+      architectureDesc: 'GPU-backed inference worker pools exposed via secure REST endpoints under JWT access permissions.',
+      process: ['Data tagging & validation', 'Model train iterations', 'Inference pipeline setup', 'A/B drift test evaluations'],
+      deliverables: ['Trained model deployment codes', 'Inference deployment Helm plans', 'Model tracking dashboards'],
+      outcomes: ['Accurate customer churn predictions', 'Dynamic data categorizations', 'Optimized sorting systems'],
       timeline: '8 - 12 Weeks Deployment',
-      icon: <Cpu className="h-6 w-6 text-indigo-500" />
+      icon: <Cpu className="h-6 w-6 text-yellow-500" />
     },
     {
-      id: 'custom-software',
-      name: 'Custom Software Development',
-      desc: 'Design modular microservices architectures, secure backend services, and high-fidelity portals.',
-      businessValue: 'Provides 100% intellectual property ownership, bypassing restrictive third-party SaaS subscription costs.',
-      technicalOverview: 'React/TypeScript applications built alongside scalable Golang/Go backend APIs on PostgreSQL datastores.',
-      benefits: ['Total codebase custom tailoring', 'Uncapped user scaling capabilities', 'SOC-2 compliant code security'],
-      tech: ['React.js', 'Node.js', 'Go', 'PostgreSQL'],
-      architectureDesc: 'Containerized microservices running on AWS Fargate clusters connected via gRPC communication protocols.',
-      process: ['UI/UX Design Alignment', 'Microservices API Mapping', 'Granular Code Development', 'Penetrative Audit reviews'],
-      deliverables: ['Production ready source repositories', 'Automated CI/CD YAML configurations', 'API documentation catalog'],
-      outcomes: ['High-performance responsive portal UI', 'Auto-scaling backend routes', 'Isolated database schemas'],
-      timeline: '6 - 10 Weeks Deployment',
-      icon: <Code className="h-6 w-6 text-emerald-500" />
+      id: 'cloud-analytics',
+      name: 'Cloud Analytics Migration',
+      desc: 'On-premises legacy data appliances cause high maintenance overheads, rigid resource sizing, and network performance splits.',
+      businessValue: 'Drives cloud elasticity benefits, shrinking total hardware maintenance costs by up to 30%.',
+      technicalOverview: 'We engineer secure VPC networks, terraform-backed compute nodes, and zero-downtime data migration scripts.',
+      benefits: ['Elastic scaling storage limits', '99.99% system availability paths', 'IaC standardized deployments'],
+      tech: ['AWS EMR', 'Azure Synapse', 'Terraform', 'Snowflake'],
+      architectureDesc: 'Multi-region VPC clouds deploying secure database replication pipelines (e.g. AWS DMS).',
+      process: ['Source appliance audit', 'Target cloud environment coding', 'Database staging syncs', 'Production DNS migration'],
+      deliverables: ['Infrastructure Terraform codes', 'Network setup diagrams', 'Migration validation scripts'],
+      outcomes: ['Zero-downtime storage cutover', 'Consolidated cloud costs control', 'Hardened database security settings'],
+      timeline: '8 - 10 Weeks Transition',
+      icon: <Cloud className="h-6 w-6 text-purple-500" />
     },
     {
-      id: 'cloud',
-      name: 'Cloud Infrastructure & Migration',
-      desc: 'Kubernetes environment provisioning, multi-cloud setups, and Infrastructure as Code automation.',
-      businessValue: 'Maintains zero-downtime migrations while reducing cloud spending averages by 28%.',
-      technicalOverview: 'Terraform-driven configurations to establish secure VPC networks, Kubernetes clusters, and storage buckets.',
-      benefits: ['Declarative infrastructure control', '99.99% system availability targets', 'Automated cloud budgeting rules'],
-      tech: ['AWS', 'Terraform', 'Kubernetes', 'Docker'],
-      architectureDesc: 'Multi-region failover network clusters deploying load balancers and RDS database replications.',
-      process: ['Cloud Environment Auditing', 'IaC Blueprint Construction', 'Pilot Stage Migrations', 'Production DNS Shift'],
-      deliverables: ['Terraform script repositories', 'Helm package configurations', 'Security network diagrams'],
-      outcomes: ['Zero-downtime global cutover', 'Standardized environment configurations', 'Auto-recovery node rules'],
-      timeline: '6 - 8 Weeks Deployment',
-      icon: <Cloud className="h-6 w-6 text-cyan-500" />
+      id: 'modern-data-platforms',
+      name: 'Modern Data Platforms',
+      desc: 'Rigid query tools prevent analysts from blending structured records with unstructured logs, creating fractured reports.',
+      businessValue: 'Consolidates all unstructured and structured business records under a single governance standard.',
+      technicalOverview: 'We deploy open-format lakehouse engines, Delta tables, and secure parquet directory partition layouts.',
+      benefits: ['Unified format structures', 'ACID transactions support', 'Flexible schema enforcement'],
+      tech: ['Delta Lake', 'Apache Iceberg', 'Trino', 'AWS Athena'],
+      architectureDesc: 'Open table format architectures decoupling query engines (Trino) from object storage buckets (S3).',
+      process: ['Staging format audits', 'Delta engine installations', 'Partition optimizations', 'Query validation checks'],
+      deliverables: ['Trino configuration profiles', 'Data partition script assets', 'Performance benchmark charts'],
+      outcomes: ['Faster analytics query execution', 'Consolidated storage standards', 'Lower infrastructure footprints'],
+      timeline: '6 - 8 Weeks Implementation',
+      icon: <Database className="h-6 w-6 text-pink-500" />
     },
     {
-      id: 'cybersec',
-      name: 'Cyber Security & Auditing',
-      desc: 'Active penetration testing, compliance preparedness audits, and network protection panels.',
-      businessValue: 'Prevents security breach exposures and readies companies for SOC 2 Type II audits quickly.',
-      technicalOverview: 'Network firewall inspections, SSO/SAML integrations, vulnerability logs, and encryption audits.',
-      benefits: ['Identified security vulnerabilities', 'Fully encrypted sensitive client database', 'Active network defense controls'],
-      tech: ['Wazuh', 'Kali Linux', 'Auth0', 'Cloudflare WAF'],
-      architectureDesc: 'Edge networks utilizing Cloudflare WAF layers alongside containerized intrusion logging systems.',
-      process: ['External Pentesting audits', 'IAM Compliance Mapping', 'Security Firewall Setup', 'Employee Security Trainings'],
-      deliverables: ['Vulnerability assessment reports', 'Edge configurations blueprints', 'SOC 2 auditing checklist'],
-      outcomes: ['Hardened enterprise APIs gates', 'Okta SSO user credentials integrations', 'Real-time threat tracking maps'],
-      timeline: '4 - 6 Weeks Deployment',
-      icon: <Shield className="h-6 w-6 text-red-500" />
+      id: 'digital-transformation',
+      name: 'Digital Transformation Consulting',
+      desc: 'Traditional industries struggle to navigate digitizations, leading to manual paper-based errors and slower customer deliveries.',
+      businessValue: 'Modernizes business procedures to accelerate cycle throughput and grow overall client satisfaction metrics.',
+      technicalOverview: 'We consult on customer portal setups, modern API-driven backends, and paperless database operations.',
+      benefits: ['Automated operational pipelines', 'Mobile accessibility support', 'Enhanced security validations'],
+      tech: ['React.js', 'Go API Backend', 'PostgreSQL', 'Docker'],
+      architectureDesc: 'Modern three-tier B2B portal architecture integrating SSO authentications and automated database syncing.',
+      process: ['Process value mapping', 'Portal UI prototyping', 'Secure database design', 'Deployment integrations'],
+      deliverables: ['Production B2B React code base', 'API route specifications', 'User experience mappings'],
+      outcomes: ['High customer portal retention', 'Fully automated ordering workflows', 'Modernized business identity'],
+      timeline: '10 - 12 Weeks Execution',
+      icon: <Code className="h-6 w-6 text-orange-500" />
     }
   ];
 
@@ -130,7 +190,7 @@ export const Services: React.FC = () => {
       <section className="space-y-4 max-w-2xl">
         <span className="text-xs font-bold text-secondary uppercase tracking-widest">Our Capabilities</span>
         <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight">
-          Enterprise Systems Engineering
+          Enterprise Systems & Advisory
         </h1>
         <p className="text-base text-slate-500 leading-relaxed">
           Devolatical Global delivers scalable technical services designed specifically to handle complex data, secure hosting, and modern application development.
@@ -151,7 +211,7 @@ export const Services: React.FC = () => {
               <h3 className="text-lg font-bold text-slate-850 dark:text-white mb-2 group-hover:text-secondary transition-colors">
                 {service.name}
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed mb-4">
+              <p className="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-3">
                 {service.desc}
               </p>
               
@@ -189,15 +249,15 @@ export const Services: React.FC = () => {
       >
         {selectedService && (
           <div className="space-y-6 text-sm leading-relaxed max-h-[75vh] overflow-y-auto pr-1">
-            {/* Overview */}
+            {/* Business Challenge */}
             <div>
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-1.5">Overview</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-1.5">Business Challenge</h4>
               <p className="text-slate-600 dark:text-slate-400">{selectedService.desc}</p>
             </div>
 
-            {/* Technical Scope */}
+            {/* Our Solution */}
             <div>
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-1.5">Technical Execution</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-1.5">Our Solution</h4>
               <p className="text-slate-600 dark:text-slate-400 text-xs bg-slate-50 dark:bg-dark/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
                 {selectedService.technicalOverview}
               </p>
@@ -228,7 +288,7 @@ export const Services: React.FC = () => {
 
               {/* Technologies */}
               <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">Supported Stack</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">Key Technologies</h4>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedService.tech.map((t, idx) => (
                     <Badge key={idx} variant="outline" className="text-[9px]">
@@ -252,7 +312,7 @@ export const Services: React.FC = () => {
 
               <div>
                 <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">Expected Outcomes</h4>
-                <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-450 list-disc list-inside">
+                <ul className="space-y-1 text-xs text-slate-650 dark:text-slate-400 list-disc list-inside">
                   {selectedService.outcomes.map((o, idx) => (
                     <li key={idx}>{o}</li>
                   ))}

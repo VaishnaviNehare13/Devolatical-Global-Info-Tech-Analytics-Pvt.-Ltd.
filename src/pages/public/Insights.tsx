@@ -3,13 +3,24 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
-import { Search, ChevronLeft, ChevronRight, BookOpen, Share2, Eye, TrendingUp, Clock, User } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, BookOpen, Share2, Eye, TrendingUp, Clock, User, Hash } from 'lucide-react';
 import { useToast } from '../../components/ui/Toast';
+
+type TrackCategory = 
+  | 'Data Strategy'
+  | 'Data Governance'
+  | 'Cloud Analytics'
+  | 'Business Intelligence'
+  | 'Artificial Intelligence'
+  | 'Machine Learning'
+  | 'Data Engineering'
+  | 'Digital Transformation'
+  | 'Enterprise Architecture';
 
 interface ArticleItem {
   id: string;
   title: string;
-  category: 'Cloud' | 'Data Science' | 'Security';
+  category: TrackCategory;
   summary: string;
   content: string;
   date: string;
@@ -17,13 +28,15 @@ interface ArticleItem {
   author: string;
   authorRole: string;
   views: string;
+  tags: string[];
+  relatedTopics: string[];
 }
 
 export const Insights: React.FC = () => {
   const { showToast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<'All' | 'Cloud' | 'Data Science' | 'Security'>('All');
+  const [activeCategory, setActiveCategory] = useState<'All' | TrackCategory>('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
 
@@ -31,50 +44,86 @@ export const Insights: React.FC = () => {
     {
       id: 'art-1',
       title: 'Scaling Apache Spark Ingestion: Ingestion Limits and Optimizations',
-      category: 'Data Science',
+      category: 'Data Engineering',
       summary: 'Learn how to optimize partition indexes and connection pooling thresholds to support workloads exceeding 50k events per second.',
       content: 'Distributed partition alignments and memory parameter modifications are critical when processing workloads scaling beyond 50,000 active telemetry streams per second. This technical briefing details how we optimized Apache Spark data pipelines by adjusting executor limits, partition thresholds, and connection pools. By decoupling staging layers using Apache Kafka buffers, we achieved sub-10ms ledger sync intervals under real-world performance benchmarks. We recommend deploying dynamic worker allocation triggers to prevent executor resource locks during peak clickstream events.',
       date: '2026-07-15',
       readTime: '6 min read',
-      author: 'Vikram Mehta',
-      authorRole: 'Chief Technology Officer',
-      views: '1.2k views'
+      author: 'Systems Engineering Group',
+      authorRole: 'Principal Engineering Advisory',
+      views: '1.2k views',
+      tags: ['Spark', 'ETL', 'Real-Time'],
+      relatedTopics: ['Ingestion Buffers', 'Partition Pruning']
     },
     {
       id: 'art-2',
       title: 'Achieving Compliance Readiness on AWS: A Complete Security Guide',
-      category: 'Security',
+      category: 'Data Governance',
       summary: 'Discover key IAM security configurations, automatic trace logs audits, and database encryption rules required for compliance.',
       content: 'Establishing a compliance-ready security framework on Amazon Web Services requires strict auditing of identity controls, access roles, and database encryption patterns. In this guide, we review how to automate audit logging across VPC endpoints, restrict database queries using IAM keys, and configure Wazuh and Cloudflare WAF layers at the edge to secure multi-tenant SaaS software architectures. We also outline automated compliance drift alert scripts that check IAM privilege bounds on a daily cycle.',
       date: '2026-07-02',
       readTime: '8 min read',
-      author: 'Marcus Vance',
-      authorRole: 'Chief Security Officer',
-      views: '940 views'
+      author: 'Compliance & Audit Group',
+      authorRole: 'Security Consulting Team',
+      views: '940 views',
+      tags: ['AWS', 'IAM', 'Security'],
+      relatedTopics: ['Audit Logs', 'Compliance Drift']
     },
     {
       id: 'art-3',
       title: 'Kubernetes Multi-Cloud Scaling: High Availability Orchestration',
-      category: 'Cloud',
+      category: 'Enterprise Architecture',
       summary: 'Set up cross-region DNS mappings, virtual private networks (VPN), and cluster setups across AWS and Azure environments.',
       content: 'Configuring high-availability clusters spanning separate cloud environments (AWS EKS and Azure AKS) introduces cross-region latency challenges. This analysis details our blueprint for cross-cloud virtual networks (VPN), high-throughput Kafka buffering streams, and automated geo-DNS failover logic. The resulting infrastructure maintains 99.99% availability limits under peak mock trading traffic. Multi-cluster federation scripts automate workload failover processes seamlessly when cloud providers experience regional splits.',
       date: '2026-06-20',
       readTime: '10 min read',
-      author: 'Sarah Jenkins',
-      authorRole: 'Chief Executive Officer',
-      views: '2.1k views'
+      author: 'Enterprise Architecture Lead',
+      authorRole: 'Principal Infrastructure Architect',
+      views: '2.1k views',
+      tags: ['Kubernetes', 'Multi-Cloud', 'K8s'],
+      relatedTopics: ['Failover Logic', 'Cluster Federation']
     },
     {
       id: 'art-4',
       title: 'Designing Lakehouse Architectures with Delta Lake and dbt',
-      category: 'Data Science',
+      category: 'Cloud Analytics',
       summary: 'Standardize schema definitions and model analytics metrics using dbt pipelines feeding Delta Lake formats.',
       content: 'Delta Lake and dbt provide a standardized semantic layer to model complex financial metrics. This paper walks through building a multi-hop (Bronze-Silver-Gold) ingestion lakehouse. We show how to write clean, modular dbt transformation scripts that run on Snowflake to prevent connection bottlenecks and maintain strict data catalogs. Furthermore, we outline metadata pruning policies that reduce overall parquet directory file overheads in Amazon S3 buckets.',
       date: '2026-06-05',
       readTime: '7 min read',
-      author: 'Vikram Mehta',
-      authorRole: 'Chief Technology Officer',
-      views: '800 views'
+      author: 'Systems Engineering Group',
+      authorRole: 'Principal Engineering Advisory',
+      views: '800 views',
+      tags: ['Delta Lake', 'dbt', 'Snowflake'],
+      relatedTopics: ['Semantic Layers', 'Metadata Pruning']
+    },
+    {
+      id: 'art-5',
+      title: 'Semantic Layer Mapping in Modern Business Intelligence',
+      category: 'Business Intelligence',
+      summary: 'Map raw telemetry models directly to optimized Power BI models using declarative dbt rules.',
+      content: 'BI platforms require clean, cached semantic layers to execute aggregations without causing locks on transactional nodes. In this briefing, we outline how we construct unified caching schemas on Snowflake, expose metric definitions using dbt Semantic Layer directives, and configure direct query caching speeds to keep executive dashboards responsive.',
+      date: '2026-05-28',
+      readTime: '5 min read',
+      author: 'Strategy & Advisory Practice',
+      authorRole: 'Managing Partners',
+      views: '710 views',
+      tags: ['Power BI', 'Semantic Layer', 'dbt'],
+      relatedTopics: ['Executive BI', 'Query Caching']
+    },
+    {
+      id: 'art-6',
+      title: 'Evolving Business Values: The Data Strategy Handbook',
+      category: 'Data Strategy',
+      summary: 'Evolve IT operations into strategic business outcome channels via structured data ownership schemas.',
+      content: 'Data strategy maps direct pathways between physical database pipelines and high-level business revenue. We define target operating frameworks that assign stewardship roles, establish unified data dictionaries, and outline multi-year cloud investments to consolidate system footprints.',
+      date: '2026-05-14',
+      readTime: '9 min read',
+      author: 'Strategy & Advisory Practice',
+      authorRole: 'Managing Partners',
+      views: '640 views',
+      tags: ['Data Strategy', 'Governance', 'Consulting'],
+      relatedTopics: ['Value Stream', 'Operating Models']
     }
   ];
 
@@ -101,6 +150,19 @@ export const Insights: React.FC = () => {
     e.stopPropagation();
     showToast(`Link copied for: ${title}`, 'success');
   };
+
+  const categoriesList: ('All' | TrackCategory)[] = [
+    'All',
+    'Data Strategy',
+    'Data Governance',
+    'Cloud Analytics',
+    'Business Intelligence',
+    'Artificial Intelligence',
+    'Machine Learning',
+    'Data Engineering',
+    'Digital Transformation',
+    'Enterprise Architecture'
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 space-y-16 text-left">
@@ -159,10 +221,10 @@ export const Insights: React.FC = () => {
       )}
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-b border-slate-100 dark:border-slate-850/50 pb-6">
-        {/* Categories */}
-        <div className="flex space-x-2">
-          {(['All', 'Cloud', 'Data Science', 'Security'] as const).map((cat) => (
+      <div className="flex flex-col gap-6 border-b border-slate-100 dark:border-slate-855/55 pb-6">
+        {/* Categories tabs wrap */}
+        <div className="flex flex-wrap gap-2">
+          {categoriesList.map((cat) => (
             <button
               key={cat}
               onClick={() => {
@@ -172,7 +234,7 @@ export const Insights: React.FC = () => {
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                 activeCategory === cat
                   ? 'bg-secondary text-white'
-                  : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                  : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-slate-50/50 dark:bg-dark/10'
               }`}
             >
               {cat}
@@ -181,7 +243,7 @@ export const Insights: React.FC = () => {
         </div>
 
         {/* Search */}
-        <div className="relative w-full md:w-80">
+        <div className="relative w-full md:w-80 self-end">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
@@ -218,9 +280,19 @@ export const Insights: React.FC = () => {
                 <h3 className="text-lg font-bold text-slate-850 dark:text-white mb-2 leading-snug">
                   {art.title}
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed mb-6">
+                <p className="text-xs text-slate-500 leading-relaxed mb-4">
                   {art.summary}
                 </p>
+
+                {/* Display Tags */}
+                <div className="flex flex-wrap gap-1 mb-6">
+                  {art.tags.map((tg, idx) => (
+                    <Badge key={idx} variant="outline" className="text-[8.5px] py-0.2">
+                      #{tg.toLowerCase()}
+                    </Badge>
+                  ))}
+                </div>
+
                 <div className="flex justify-between items-center pt-4 border-t border-slate-50 dark:border-slate-850/50">
                   <div className="flex flex-col text-[10px] text-slate-400">
                     <span className="font-bold text-slate-650 dark:text-slate-300">By {art.author}</span>
@@ -296,6 +368,12 @@ export const Insights: React.FC = () => {
               >
                 2. Kubernetes Multi-Cloud Scaling: High Availability Orchestration
               </p>
+              <p
+                onClick={() => handleRead(articles[4])}
+                className="text-xs text-slate-650 dark:text-slate-350 hover:text-secondary cursor-pointer leading-snug"
+              >
+                3. Semantic Layer Mapping in Modern Business Intelligence
+              </p>
             </div>
           </Card>
 
@@ -344,7 +422,21 @@ export const Insights: React.FC = () => {
             {/* Content text */}
             <div className="text-slate-600 dark:text-slate-450 text-sm space-y-4">
               <p>{selectedArticle.content}</p>
-              <p>For inquiries relating to this system configuration blueprint, or to request custom architecture mappings for your cloud deployments, please contact our principal systems engineering team.</p>
+
+              {/* Related Topics list inside reader */}
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center">
+                  <Hash className="h-3.5 w-3.5 text-secondary mr-1" />
+                  Related Analysis Topics
+                </h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedArticle.relatedTopics.map((topic, idx) => (
+                    <Badge key={idx} variant="outline" className="text-[9px]">
+                      {topic}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Actions */}
@@ -363,4 +455,5 @@ export const Insights: React.FC = () => {
     </div>
   );
 };
+
 export default Insights;

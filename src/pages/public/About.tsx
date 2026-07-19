@@ -19,9 +19,9 @@ export const About: React.FC = () => {
   ];
 
   const team = [
-    { name: 'Sarah Jenkins', role: 'Chief Executive Officer', bio: 'Former VP of Enterprise Data at IBM. 18+ years leading global tech delivery pipelines.', initials: 'SJ' },
-    { name: 'Vikram Mehta', role: 'Chief Technology Officer', bio: 'Principal software architect and former Databricks core committer. Specialist in distributed systems.', initials: 'VM' },
-    { name: 'Marcus Vance', role: 'Chief Security Officer', bio: 'Former cyber security lead at Stripe. Expert in enterprise compliance frameworks and penetrative audits.', initials: 'MV' }
+    { name: 'Strategy & Advisory Practice', role: 'Managing Partners', bio: 'Led by industry veterans with extensive experience advising global institutions on metadata alignment, data operating models, and digital transformation roadmaps.', initials: 'AP' },
+    { name: 'Systems Engineering Practice', role: 'Principal Architects', bio: 'Specializing in high-throughput distributed systems, Apache Spark stream ingestions, containerized Kubernetes nodes, and automated IaC deployments.', initials: 'SE' },
+    { name: 'Security & Compliance Practice', role: 'Certified Auditors', bio: 'Expert in secure identity credentials, IAM boundaries, encryption safeguards, and compliance-ready data pipeline architectures.', initials: 'SC' }
   ];
 
   const labsList = [
@@ -32,21 +32,21 @@ export const About: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 space-y-20 text-left">
-      {/* 1. Page Header */}
+      {/* 1. Page Header: Who We Are & Our Mission */}
       <section className="space-y-4 max-w-2xl">
-        <span className="text-xs font-bold text-secondary uppercase tracking-widest">About Devolatical Global</span>
+        <span className="text-xs font-bold text-secondary uppercase tracking-widest">Enterprise Consulting Partner</span>
         <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight">
-          Architecting Trust & Data Systems
+          Who We Are & Our Mission
         </h1>
         <p className="text-base text-slate-500 leading-relaxed">
-          Devolatical Global Info-Tech & Analytics Pvt. Ltd. was founded to build reliable, high-throughput cloud and software architectures. We serve as critical partners to multi-million-dollar enterprises globally.
+          Devolatical Global Info-Tech & Analytics Pvt. Ltd. is a premium enterprise data, AI, and analytics consulting firm. Our mission is to evolve complex legacy infrastructures into high-availability cloud data platforms that support secure decision intelligence.
         </p>
       </section>
 
       {/* 2. Core Values Grid */}
       <section className="space-y-8">
         <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
-          Our Operational Values
+          Our Delivery Approach
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {values.map((val) => (
@@ -61,14 +61,49 @@ export const About: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. Engineering Culture & Labs */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-4 border-t border-slate-100 dark:border-slate-850/60">
+      {/* 3. Consulting Methodology Section */}
+      <section className="space-y-8 border-t border-slate-100 dark:border-slate-850/60 pt-12">
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-secondary uppercase tracking-widest">Our Framework</span>
+          <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
+            Consulting Methodology
+          </h2>
+          <p className="text-sm text-slate-500 max-w-xl leading-relaxed">
+            We employ an iterative, business-aligned consulting framework to design architectures that scale and govern data effectively.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="p-5 bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800/80 rounded-xl space-y-2">
+            <span className="text-xl font-bold font-mono text-secondary">01</span>
+            <h4 className="font-bold text-sm text-slate-800 dark:text-white">Discovery & Audit</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">Assess the current data landscape, locate integration silos, and audit metadata structures.</p>
+          </div>
+          <div className="p-5 bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800/80 rounded-xl space-y-2">
+            <span className="text-xl font-bold font-mono text-secondary">02</span>
+            <h4 className="font-bold text-sm text-slate-800 dark:text-white">Architecture Blueprint</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">Map target data pipelines, define semantic model schemas, and establish security gates.</p>
+          </div>
+          <div className="p-5 bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800/80 rounded-xl space-y-2">
+            <span className="text-xl font-bold font-mono text-secondary">03</span>
+            <h4 className="font-bold text-sm text-slate-800 dark:text-white">Modern Execution</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">Provision containerized pipelines, sync cloud data warehouses, and configure BI dashboards.</p>
+          </div>
+          <div className="p-5 bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800/80 rounded-xl space-y-2">
+            <span className="text-xl font-bold font-mono text-secondary">04</span>
+            <h4 className="font-bold text-sm text-slate-800 dark:text-white">Active Governance</h4>
+            <p className="text-xs text-slate-500 leading-relaxed">Apply data catalogs, assign stewardship responsibilities, and monitor pipeline health.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Engineering Culture & Labs */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-12 border-t border-slate-100 dark:border-slate-850/60">
         <div className="space-y-6">
           <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
-            Our Engineering Culture
+            Data-Driven Innovation
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed">
-            We operate with a "fail-fast, scale-correctly" culture. Our developers actively commit to public open-source initiatives and spend 20% of their sprints prototyping in our dedicated R&D labs.
+            We operate at the forefront of technology excellence. Our consultants actively publish research blueprints and dedicate sprints to benchmarking distributed databases.
           </p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -89,7 +124,7 @@ export const About: React.FC = () => {
         {/* Labs cards list */}
         <div className="space-y-4">
           <h3 className="font-heading font-semibold text-slate-500 text-xs uppercase tracking-wider">
-            Active Innovation Labs
+            Innovation Laboratories
           </h3>
           <div className="space-y-3">
             {labsList.map((lab) => (
@@ -102,10 +137,10 @@ export const About: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Leadership profiles */}
+      {/* 5. Leadership profiles */}
       <section className="space-y-8">
         <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
-          Leadership Team
+          Advisory & Leadership Team
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {team.map((member) => (
@@ -125,10 +160,10 @@ export const About: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. Journey Timeline */}
+      {/* 6. Journey Timeline */}
       <section className="space-y-8 max-w-3xl">
         <h2 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
-          Our Journey
+          Company Growth Timeline
         </h2>
         <Timeline events={journeyEvents} />
       </section>

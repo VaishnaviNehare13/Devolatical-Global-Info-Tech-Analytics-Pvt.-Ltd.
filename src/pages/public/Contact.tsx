@@ -5,7 +5,7 @@ import { TextArea } from '../../components/ui/TextArea';
 import { Button } from '../../components/ui/Button';
 import { Accordion } from '../../components/ui/Accordion';
 import { useToast } from '../../components/ui/Toast';
-import { Calendar, Mail, Clock, AlertTriangle, Globe } from 'lucide-react';
+import { Calendar, Mail, Clock, Globe } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const { showToast } = useToast();
@@ -97,26 +97,26 @@ export const Contact: React.FC = () => {
             <Mail className="h-5 w-5 text-secondary" />
             <span>Communications Hub</span>
           </div>
-          <p className="text-xs text-slate-500">Sales Inquiries: <span className="font-semibold text-slate-700 dark:text-slate-350">inquire@devolatical.com</span></p>
-          <p className="text-xs text-slate-500">Tech Support: <span className="font-semibold text-slate-700 dark:text-slate-350">support@devolatical.com</span></p>
+          <p className="text-xs text-slate-500">Business Inquiries: <span className="font-semibold text-slate-700 dark:text-slate-350">consult@devolatical.com</span></p>
+          <p className="text-xs text-slate-500">Advisory Support: <span className="font-semibold text-slate-700 dark:text-slate-350">advisory@devolatical.com</span></p>
         </Card>
 
         <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
             <Clock className="h-5 w-5 text-accent" />
-            <span>Business Operations</span>
+            <span>Operations SLA</span>
           </div>
-          <p className="text-xs text-slate-500">Sales: 9:00 AM - 6:00 PM EST (Mon-Fri)</p>
-          <p className="text-xs text-slate-500">Engineering: 24/7/365 Telemetry monitoring</p>
+          <p className="text-xs text-slate-500">Initial Response: Under 24 Business Hours</p>
+          <p className="text-xs text-slate-500">Emergency Support: 15-Minute Priority Response</p>
         </Card>
 
         <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
-            <AlertTriangle className="h-5 w-5 text-red-500" />
-            <span>Priority Emergency Pager</span>
+            <Globe className="h-5 w-5 text-emerald-500" />
+            <span>Global Hub Coordinates</span>
           </div>
-          <p className="text-xs text-slate-500">Urgent SLA incident report line:</p>
-          <p className="text-xs font-semibold text-slate-700 dark:text-slate-350">+1 (800) 555-DEVO</p>
+          <p className="text-xs text-slate-500">NY HQ: 1 World Trade Center</p>
+          <p className="text-xs text-slate-500">Mumbai Hub: Godrej One, BKC</p>
         </Card>
       </div>
 
@@ -127,7 +127,7 @@ export const Contact: React.FC = () => {
           <Card className="border border-slate-100 dark:border-slate-800">
             <div className="p-6 border-b border-slate-50 dark:border-slate-800/40">
               <h3 className="font-bold text-slate-800 dark:text-white text-base">Enterprise Inquiry Form</h3>
-              <p className="text-xs text-slate-400 mt-1">File technical requests straight to our engineering sales queue.</p>
+              <p className="text-xs text-slate-400 mt-1">Submit scoping requests directly to our systems engineering queue.</p>
             </div>
             <div className="p-6">
               <form onSubmit={handleInquiry} className="space-y-4">
@@ -165,10 +165,10 @@ export const Contact: React.FC = () => {
                       onChange={(e) => setScope(e.target.value)}
                       className="w-full px-4 py-3 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-900 dark:text-white"
                     >
-                      <option value="data-analytics">Advanced Data Analytics</option>
-                      <option value="ai-ml">AI & Machine Learning</option>
-                      <option value="custom-software">Custom Software Dev</option>
-                      <option value="security">SOC 2 / Security Auditing</option>
+                      <option value="data-strategy">Data Strategy & Roadmap Assessment</option>
+                      <option value="lakehouse">Enterprise Lakehouse Migration</option>
+                      <option value="ai-ml">AI & Decision Intelligence Advisory</option>
+                      <option value="compliance">Compliance & Stewardship Audit</option>
                     </select>
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export const Contact: React.FC = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <Button type="submit" variant="secondary" className="w-full justify-center text-xs">
+                <Button type="submit" variant="secondary" className="w-full justify-center text-xs font-bold">
                   Submit Project Request
                 </Button>
               </form>

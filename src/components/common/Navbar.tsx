@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, Sun, Moon, Database, Shield, Cpu, Cloud, Code, BarChart2 } from 'lucide-react';
+import { Menu, X, ChevronDown, Sun, Moon, Database, Shield, Cpu, BarChart2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from '../ui/Button';
 import { cn } from '../../utils/cn';
@@ -43,23 +43,23 @@ export const Navbar: React.FC = () => {
   ];
 
   const megaServices = [
-    { name: 'Advanced Data Analytics', desc: 'Enterprise data pipelines, warehouses & custom ingestion systems.', icon: <Database className="h-5 w-5 text-secondary" />, path: '/services' },
-    { name: 'Business Intelligence', desc: 'Real-time intelligence dashboards & interactive visualizations.', icon: <BarChart2 className="h-5 w-5 text-accent" />, path: '/services' },
-    { name: 'AI & Machine Learning', desc: 'Custom predictive modeling, NLP integration & generative engines.', icon: <Cpu className="h-5 w-5 text-indigo-500" />, path: '/services' },
-    { name: 'Custom Software Development', desc: 'Microservices architectures, RESTful APIs & premium client software.', icon: <Code className="h-5 w-5 text-emerald-500" />, path: '/services' },
-    { name: 'Cloud Infrastructure', desc: 'Kubernetes orchestration, migration plans & serverless optimization.', icon: <Cloud className="h-5 w-5 text-cyan-500" />, path: '/services' },
-    { name: 'Cyber Security & Auditing', desc: 'SOC 2 reviews, active pentesting & network protection panels.', icon: <Shield className="h-5 w-5 text-red-500" />, path: '/services' }
+    { name: 'Data Strategy & Advisory', desc: 'Enterprise roadmap assessments & strategy playbooks.', icon: <Database className="h-5 w-5 text-secondary" />, path: '/services' },
+    { name: 'Enterprise Data Architecture', desc: 'Unified semantic models & decoupled cloud lakehouses.', icon: <BarChart2 className="h-5 w-5 text-accent" />, path: '/services' },
+    { name: 'Data Engineering & ETL', desc: 'Apache Spark pipelines & high-throughput streaming integrations.', icon: <Cpu className="h-5 w-5 text-indigo-500" />, path: '/services' },
+    { name: 'Data Governance & Risk', desc: 'Metadata catalogs, active stewardship & audit readiness logs.', icon: <Shield className="h-5 w-5 text-emerald-500" />, path: '/services' },
+    { name: 'Business Intelligence', desc: 'Revenue analytics dashboarding & metric transformations.', icon: <BarChart2 className="h-5 w-5 text-red-500" />, path: '/services' },
+    { name: 'AI & Machine Learning', desc: 'Predictive modeling algorithms & scalable PyTorch clusters.', icon: <Cpu className="h-5 w-5 text-yellow-500" />, path: '/services' }
   ];
 
   const megaIndustries = [
-    { name: 'Healthcare', path: '/industries' },
-    { name: 'Finance & Banking', path: '/industries' },
+    { name: 'Healthcare & Life Sciences', path: '/industries' },
+    { name: 'Banking & Financial Services', path: '/industries' },
     { name: 'Retail & E-commerce', path: '/industries' },
-    { name: 'Manufacturing', path: '/industries' },
-    { name: 'Logistics', path: '/industries' },
-    { name: 'Government & Public Sectors', path: '/industries' },
-    { name: 'Real Estate', path: '/industries' },
-    { name: 'Energy & Utilities', path: '/industries' }
+    { name: 'Manufacturing & Heavy Industry', path: '/industries' },
+    { name: 'Logistics & Distribution', path: '/industries' },
+    { name: 'Government & Public Sector', path: '/industries' },
+    { name: 'Higher Education', path: '/industries' },
+    { name: 'High-Technology & Software', path: '/industries' }
   ];
 
   return (

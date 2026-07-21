@@ -5,7 +5,7 @@ import { TextArea } from '../../components/ui/TextArea';
 import { Button } from '../../components/ui/Button';
 import { Accordion } from '../../components/ui/Accordion';
 import { useToast } from '../../components/ui/Toast';
-import { Calendar, Mail, Clock, Globe } from 'lucide-react';
+import { Calendar, Mail, Clock, MapPin } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const { showToast } = useToast();
@@ -41,7 +41,7 @@ export const Contact: React.FC = () => {
     }
 
     setErrors({});
-    showToast('Inquiry submitted successfully. An architect will reach out within 2 hours.', 'success');
+    showToast('Inquiry submitted successfully to devolaticalglobalinfotech@gmail.com! An architect will respond within 2 business hours.', 'success');
     setName('');
     setEmail('');
     setCompany('');
@@ -54,7 +54,7 @@ export const Contact: React.FC = () => {
       showToast('Please select Date and Time slot.', 'error');
       return;
     }
-    showToast(`Consultation slot booked for ${selectedDate} at ${selectedTime}. Calendar invite dispatched.`, 'success');
+    showToast(`Consultation slot booked for ${selectedDate} at ${selectedTime}. Calendar invitation dispatched.`, 'success');
     setSelectedDate('');
     setSelectedTime('');
   };
@@ -62,18 +62,18 @@ export const Contact: React.FC = () => {
   const faqItems = [
     {
       id: 'faq-1',
-      title: 'What compliance standards are active on Devolatical systems?',
-      content: 'Our entire ingestion infrastructure, databases, and portals are designed around SOC 2 and ISO 27001 guidelines. All customer data stores deploy AES-256 TLS/SSL encryption natively and comply with HIPAA and GDPR requirements.'
+      title: 'What core services does Devolatical Global offer?',
+      content: 'We specialize strictly in three official areas: 1) Advanced Data Analytics (BI, Data Visualization, Predictive Analytics, Dashboards), 2) IT Infrastructure Solutions (Cloud Migration, Network Architecture, Monitoring, Secure Deployments, IT Support), and 3) Custom Software Solutions (Enterprise Web Applications, Mobile Applications, Workflow Automation, Business Software).'
     },
     {
       id: 'faq-2',
-      title: 'Do you offer 24/7 engineering operations support?',
-      content: 'Yes. Our global engineering hub in Mumbai BKC operates 24/7/365 telemetry monitoring logs, providing dedicated technical accounts support with active SLA response times under 15 minutes.'
+      title: 'Where is Devolatical Global headquartered?',
+      content: 'Our primary headquarters and tech hub are located in Andheri West, Mumbai, Maharashtra, India.'
     },
     {
       id: 'faq-3',
-      title: 'What cloud hosting providers do your architectures support?',
-      content: 'We support all major cloud vendors, specializing in Amazon Web Services (AWS Advanced tier), Microsoft Azure, Google Cloud Platform (GCP), and hybrid database environments using Snowflake and Databricks.'
+      title: 'What response SLA can we expect for project scoping inquiries?',
+      content: 'Our systems engineering practice responds to initial inquiry submissions within 2 business hours and can arrange direct 15-minute architecture discovery sessions.'
     }
   ];
 
@@ -81,42 +81,44 @@ export const Contact: React.FC = () => {
     <div className="max-w-7xl mx-auto px-6 py-12 space-y-20 text-left">
       {/* Page Header */}
       <section className="space-y-4 max-w-2xl">
-        <span className="text-xs font-bold text-secondary uppercase tracking-widest">Contact Us</span>
+        <span className="text-xs font-bold text-secondary uppercase tracking-widest font-mono">Contact Us</span>
         <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight">
-          Connect with our Architects
+          Connect with Our Architects
         </h1>
         <p className="text-base text-slate-500 leading-relaxed">
-          Request system estimates, book technical discovery sessions, or query regulatory compliance parameters.
+          Request scoping estimates, book technical discovery sessions, or submit project requirements to Devolatical Global Info-Tech & Analytics Pvt. Ltd.
         </p>
       </section>
 
-      {/* Contact parameter widgets */}
+      {/* Contact Parameter Widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
             <Mail className="h-5 w-5 text-secondary" />
-            <span>Communications Hub</span>
+            <span>Official Email</span>
           </div>
-          <p className="text-xs text-slate-500">Business Inquiries: <span className="font-semibold text-slate-700 dark:text-slate-350">consult@devolatical.com</span></p>
-          <p className="text-xs text-slate-500">Advisory Support: <span className="font-semibold text-slate-700 dark:text-slate-350">advisory@devolatical.com</span></p>
+          <p className="text-xs text-slate-500">Business & Tech Inquiries:</p>
+          <a href="mailto:devolaticalglobalinfotech@gmail.com" className="text-xs font-semibold text-secondary hover:underline block font-mono">
+            devolaticalglobalinfotech@gmail.com
+          </a>
         </Card>
 
         <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
             <Clock className="h-5 w-5 text-accent" />
-            <span>Operations SLA</span>
+            <span>Operations Response SLA</span>
           </div>
-          <p className="text-xs text-slate-500">Initial Response: Under 24 Business Hours</p>
-          <p className="text-xs text-slate-500">Emergency Support: 15-Minute Priority Response</p>
+          <p className="text-xs text-slate-500">Standard Inquiries: Under 2 Business Hours</p>
+          <p className="text-xs text-slate-500">Urgent Support: 15-Minute Priority Response</p>
         </Card>
 
         <Card className="p-6 border border-slate-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center space-x-2.5 text-slate-800 dark:text-white font-bold text-sm">
-            <Globe className="h-5 w-5 text-emerald-500" />
-            <span>Global Hub Coordinates</span>
+            <MapPin className="h-5 w-5 text-emerald-500" />
+            <span>Registered Tech Hub</span>
           </div>
-          <p className="text-xs text-slate-500">NY HQ: 1 World Trade Center</p>
-          <p className="text-xs text-slate-500">Mumbai Hub: Godrej One, BKC</p>
+          <p className="text-xs text-slate-500">Andheri West, Mumbai</p>
+          <p className="text-xs text-slate-500">Maharashtra, India</p>
         </Card>
       </div>
 
@@ -126,7 +128,7 @@ export const Contact: React.FC = () => {
         <div className="lg:col-span-7 space-y-6">
           <Card className="border border-slate-100 dark:border-slate-800">
             <div className="p-6 border-b border-slate-50 dark:border-slate-800/40">
-              <h3 className="font-bold text-slate-800 dark:text-white text-base">Enterprise Inquiry Form</h3>
+              <h3 className="font-bold text-slate-800 dark:text-white text-base">Enterprise Scoping Form</h3>
               <p className="text-xs text-slate-400 mt-1">Submit scoping requests directly to our systems engineering queue.</p>
             </div>
             <div className="p-6">
@@ -157,75 +159,74 @@ export const Contact: React.FC = () => {
                     required
                   />
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider font-mono">
                       Inquiry Scope
                     </label>
                     <select
                       value={scope}
                       onChange={(e) => setScope(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-900 dark:text-white"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-900 dark:text-white outline-none focus:border-secondary"
                     >
-                      <option value="data-strategy">Data Strategy & Roadmap Assessment</option>
-                      <option value="lakehouse">Enterprise Lakehouse Migration</option>
-                      <option value="ai-ml">AI & Decision Intelligence Advisory</option>
-                      <option value="compliance">Compliance & Stewardship Audit</option>
+                      <option value="data-analytics">Advanced Data Analytics (BI, Viz, Dashboards)</option>
+                      <option value="it-infrastructure">IT Infrastructure Solutions (Cloud, Monitoring)</option>
+                      <option value="custom-software">Custom Software Solutions (Web, Mobile, Automation)</option>
                     </select>
                   </div>
                 </div>
                 <TextArea
-                  label="Architectural Goals / Project Scope Description"
+                  label="Project Scope / Technical Requirements"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <Button type="submit" variant="secondary" className="w-full justify-center text-xs font-bold">
-                  Submit Project Request
+                <Button type="submit" variant="secondary" className="w-full justify-center text-xs font-bold py-3">
+                  Submit Scoping Request
                 </Button>
               </form>
             </div>
           </Card>
         </div>
 
-        {/* Contact info & Scheduler */}
+        {/* Meeting Scheduler & Location Map */}
         <div className="lg:col-span-5 space-y-6">
           {/* Scheduler Card */}
           <Card className="border border-slate-100 dark:border-slate-800">
             <div className="p-6 border-b border-slate-50 dark:border-slate-800/40">
               <h3 className="font-bold text-slate-800 dark:text-white text-base">Schedule Discovery Session</h3>
-              <p className="text-xs text-slate-400 mt-1">Book a direct 15-minute slot with a principal system architect.</p>
+              <p className="text-xs text-slate-400 mt-1">Book a direct 15-minute slot with an architecture practice lead.</p>
             </div>
             <div className="p-6">
               <form onSubmit={handleBooking} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider font-mono">
                       Select Date
                     </label>
                     <input
                       type="date"
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-900 dark:text-white"
+                      className="w-full px-3 py-2.5 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-900 dark:text-white outline-none focus:border-secondary"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">
-                      Select Time Slot
+                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider font-mono">
+                      Select Slot (IST)
                     </label>
                     <select
                       value={selectedTime}
                       onChange={(e) => setSelectedTime(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-900 dark:text-white"
+                      className="w-full px-3 py-2.5 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-900 dark:text-white outline-none focus:border-secondary"
                       required
                     >
-                      <option value="">-- Choose Slot --</option>
-                      <option value="10:00 AM EST">10:00 AM EST</option>
-                      <option value="02:00 PM EST">02:00 PM EST</option>
-                      <option value="04:00 PM EST">04:00 PM EST</option>
+                      <option value="">-- Slot --</option>
+                      <option value="11:00 AM IST">11:00 AM IST</option>
+                      <option value="02:30 PM IST">02:30 PM IST</option>
+                      <option value="05:00 PM IST">05:00 PM IST</option>
                     </select>
                   </div>
                 </div>
-                <Button type="submit" variant="outline" className="w-full justify-center text-xs">
+                <Button type="submit" variant="outline" className="w-full justify-center text-xs font-bold">
                   <Calendar className="mr-2 h-4 w-4 text-secondary" />
                   <span>Book Calendar Slot</span>
                 </Button>
@@ -233,37 +234,31 @@ export const Contact: React.FC = () => {
             </div>
           </Card>
 
-          {/* Interactive World Map SVG representation */}
+          {/* Location Map Visual */}
           <Card className="h-64 flex flex-col justify-between overflow-hidden relative border border-slate-100 dark:border-slate-800 p-6">
             <div className="absolute inset-0 bg-secondary/5 filter blur-3xl pointer-events-none" />
-            <div className="flex items-center space-x-2 text-slate-400 mb-4 z-10">
-              <Globe className="h-5 w-5 text-secondary" />
-              <span className="text-xs font-bold uppercase tracking-wider">Office Regional Presence</span>
+            <div className="flex items-center space-x-2 text-slate-400 mb-2 z-10">
+              <MapPin className="h-5 w-5 text-secondary" />
+              <span className="text-xs font-bold uppercase tracking-wider font-mono">Company Tech Hub</span>
             </div>
             
-            {/* Minimalist World Map with glowing points */}
-            <div className="h-28 relative flex items-center justify-center bg-slate-50 dark:bg-dark/40 border border-slate-100 dark:border-slate-850/50 rounded-xl overflow-hidden mb-4">
+            <div className="h-28 relative flex items-center justify-center bg-slate-50 dark:bg-dark/40 border border-slate-100 dark:border-slate-850/50 rounded-xl overflow-hidden mb-2">
               <svg className="w-full h-full text-slate-250 dark:text-slate-800" viewBox="0 0 300 120" fill="none">
-                {/* Simulated continents outlines */}
                 <path d="M20 30 Q40 20 80 40 T150 30 T220 50 T280 20 L270 90 L210 110 L160 80 L90 100 L30 80 Z" fill="currentColor" opacity="0.15" />
                 
-                {/* Glowing Office Pins */}
-                {/* NY Pin */}
-                <circle cx="65" cy="45" r="4" fill="#0F62FE" />
-                <circle cx="65" cy="45" r="8" stroke="#0F62FE" strokeWidth="1" className="animate-ping" fill="none" />
-                <text x="65" y="35" textAnchor="middle" className="text-[7px] font-bold text-slate-500 font-mono" fill="currentColor">New York (HQ)</text>
-
-                {/* Mumbai BKC Pin */}
-                <circle cx="210" cy="70" r="4" fill="#00C2FF" />
-                <circle cx="210" cy="70" r="8" stroke="#00C2FF" strokeWidth="1" className="animate-ping" fill="none" />
-                <text x="210" y="60" textAnchor="middle" className="text-[7px] font-bold text-slate-500 font-mono" fill="currentColor">Mumbai BKC</text>
+                {/* Mumbai Pin */}
+                <circle cx="160" cy="65" r="5" fill="#00C2FF" />
+                <circle cx="160" cy="65" r="10" stroke="#00C2FF" strokeWidth="1" className="animate-ping" fill="none" />
+                <text x="160" y="52" textAnchor="middle" className="text-[8px] font-bold text-slate-500 font-mono" fill="currentColor">Andheri West, Mumbai</text>
               </svg>
             </div>
 
-            <div className="text-[10px] text-slate-500 flex justify-between items-center z-10 border-t border-slate-50 dark:border-slate-850/50 pt-3">
-              <span>New York (HQ)</span>
-              <span className="text-slate-400 font-mono">•</span>
-              <span>Mumbai Tech Hub</span>
+            <div className="text-[10px] text-slate-500 flex justify-between items-center z-10 border-t border-slate-50 dark:border-slate-850/50 pt-2 font-mono">
+              <span>Andheri West</span>
+              <span>•</span>
+              <span>Mumbai, MH</span>
+              <span>•</span>
+              <span>India</span>
             </div>
           </Card>
         </div>
@@ -279,4 +274,5 @@ export const Contact: React.FC = () => {
     </div>
   );
 };
+
 export default Contact;

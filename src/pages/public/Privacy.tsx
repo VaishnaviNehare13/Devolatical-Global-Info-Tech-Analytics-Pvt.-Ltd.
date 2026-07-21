@@ -6,7 +6,7 @@ export const Privacy: React.FC = () => {
       <h1 className="text-3xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight">
         Privacy Policy
       </h1>
-      <p className="text-xs text-slate-400">Effective Date: July 17, 2026</p>
+      <p className="text-xs text-slate-400 font-mono">Effective Date: July 17, 2026</p>
       
       <p className="text-sm text-slate-500 leading-relaxed">
         At Devolatical Global Info-Tech & Analytics Pvt. Ltd., we prioritize the security and confidentiality of client data. This Privacy Policy details our ingestion standards, cookies logs, and security parameters across all public websites, client portals, and administrative workspaces.
@@ -19,7 +19,7 @@ export const Privacy: React.FC = () => {
 
       <h3 className="text-lg font-bold text-slate-800 dark:text-white mt-8">2. Hashing and Security Storage</h3>
       <p className="text-sm text-slate-500 leading-relaxed">
-        All stored passwords and sensitive telemetry streams are hashed using AES-256-GCM configurations. Data stores are locked and audited under SOC 2 compliance guidelines.
+        All stored passwords and sensitive telemetry streams are hashed using AES-256-GCM configurations. Data stores are locked and audited under enterprise zero-trust security guidelines.
       </p>
     </div>
   );

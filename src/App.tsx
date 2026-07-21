@@ -1,103 +1,111 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { LoadingLayout } from './components/layout/LoadingLayout';
+import ScrollToTop from './components/common/ScrollToTop';
 
-// Layouts
+// Layouts (Eagerly loaded for instant shell render)
 import { PublicLayout } from './components/layout/PublicLayout';
 import { AuthLayout } from './components/layout/AuthLayout';
 import { ClientPortalLayout } from './components/layout/ClientPortalLayout';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { ErrorLayout } from './components/layout/ErrorLayout';
 
-// Public Pages
-import Home from './pages/public/Home';
-import About from './pages/public/About';
-import Services from './pages/public/Services';
-import Industries from './pages/public/Industries';
-import CaseStudies from './pages/public/CaseStudies';
-import Insights from './pages/public/Insights';
-import Careers from './pages/public/Careers';
-import Contact from './pages/public/Contact';
-import Privacy from './pages/public/Privacy';
-import Terms from './pages/public/Terms';
-import CookiePolicy from './pages/public/CookiePolicy';
+// Public Pages (Lazy Loaded for route-level code splitting)
+const Home = lazy(() => import('./pages/public/Home'));
+const About = lazy(() => import('./pages/public/About'));
+const Services = lazy(() => import('./pages/public/Services'));
+const Industries = lazy(() => import('./pages/public/Industries'));
+const CaseStudies = lazy(() => import('./pages/public/CaseStudies'));
+const Insights = lazy(() => import('./pages/public/Insights'));
+const Careers = lazy(() => import('./pages/public/Careers'));
+const Contact = lazy(() => import('./pages/public/Contact'));
+const Privacy = lazy(() => import('./pages/public/Privacy'));
+const Terms = lazy(() => import('./pages/public/Terms'));
+const CookiePolicy = lazy(() => import('./pages/public/CookiePolicy'));
 
 // Auth Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+const Login = lazy(() => import('./pages/auth/Login'));
+const Register = lazy(() => import('./pages/auth/Register'));
 
 // Client Portal Pages
-import ClientOverview from './pages/client/ClientOverview';
-import ClientProjects from './pages/client/ClientProjects';
-import ClientInvoices from './pages/client/ClientInvoices';
-import ClientSupport from './pages/client/ClientSupport';
+const ClientOverview = lazy(() => import('./pages/client/ClientOverview'));
+const ClientProjects = lazy(() => import('./pages/client/ClientProjects'));
+const ClientInvoices = lazy(() => import('./pages/client/ClientInvoices'));
+const ClientSupport = lazy(() => import('./pages/client/ClientSupport'));
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminPipelines from './pages/admin/AdminPipelines';
-import AdminAudit from './pages/admin/AdminAudit';
-import AdminSecurity from './pages/admin/AdminSecurity';
-import AdminSettings from './pages/admin/AdminSettings';
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminPipelines = lazy(() => import('./pages/admin/AdminPipelines'));
+const AdminAudit = lazy(() => import('./pages/admin/AdminAudit'));
+const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
 
 // Error Pages
-import NotFound from './pages/error/NotFound';
-import Maintenance from './pages/error/Maintenance';
+const NotFound = lazy(() => import('./pages/error/NotFound'));
+const Maintenance = lazy(() => import('./pages/error/Maintenance'));
 
 export const App: React.FC = () => {
   return (
-    <ThemeProvider>
-      <ToastProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public Pages */}
-            <Route path="/" element={<PublicLayout />}>
-              <Route index element={<Home />} />
-              <Route path="about" element={<About />} />
-              <Route path="services" element={<Services />} />
-              <Route path="industries" element={<Industries />} />
-              <Route path="case-studies" element={<CaseStudies />} />
-              <Route path="insights" element={<Insights />} />
-              <Route path="careers" element={<Careers />} />
-              <Route path="contact" element={<Contact />} />
-              <Route path="privacy" element={<Privacy />} />
-              <Route path="terms" element={<Terms />} />
-              <Route path="cookie-policy" element={<CookiePolicy />} />
-            </Route>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <Suspense fallback={<LoadingLayout />}>
+              <Routes>
+                {/* Public Pages */}
+                <Route path="/" element={<PublicLayout />}>
+                  <Route index element={<Home />} />
+                  <Route path="about" element={<About />} />
+                  <Route path="services" element={<Services />} />
+                  <Route path="industries" element={<Industries />} />
+                  <Route path="case-studies" element={<CaseStudies />} />
+                  <Route path="insights" element={<Insights />} />
+                  <Route path="careers" element={<Careers />} />
+                  <Route path="contact" element={<Contact />} />
+                  <Route path="privacy" element={<Privacy />} />
+                  <Route path="terms" element={<Terms />} />
+                  <Route path="cookie-policy" element={<CookiePolicy />} />
+                </Route>
 
-            {/* Authentication Pages */}
-            <Route path="/" element={<AuthLayout />}>
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-            </Route>
+                {/* Authentication Pages */}
+                <Route path="/" element={<AuthLayout />}>
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<Register />} />
+                </Route>
 
-            {/* Client Portal Pages */}
-            <Route path="/portal" element={<ClientPortalLayout />}>
-              <Route index element={<ClientOverview />} />
-              <Route path="projects" element={<ClientProjects />} />
-              <Route path="invoices" element={<ClientInvoices />} />
-              <Route path="support" element={<ClientSupport />} />
-            </Route>
+                {/* Client Portal Pages */}
+                <Route path="/portal" element={<ClientPortalLayout />}>
+                  <Route index element={<ClientOverview />} />
+                  <Route path="projects" element={<ClientProjects />} />
+                  <Route path="invoices" element={<ClientInvoices />} />
+                  <Route path="support" element={<ClientSupport />} />
+                </Route>
 
-            {/* Admin Dashboard Pages */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="pipelines" element={<AdminPipelines />} />
-              <Route path="audit" element={<AdminAudit />} />
-              <Route path="security" element={<AdminSecurity />} />
-              <Route path="settings" element={<AdminSettings />} />
-            </Route>
+                {/* Admin Dashboard Pages */}
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="pipelines" element={<AdminPipelines />} />
+                  <Route path="audit" element={<AdminAudit />} />
+                  <Route path="security" element={<AdminSecurity />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                </Route>
 
-            {/* Error Pages */}
-            <Route path="/" element={<ErrorLayout />}>
-              <Route path="maintenance" element={<Maintenance />} />
-              <Route path="404" element={<NotFound />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </ToastProvider>
-    </ThemeProvider>
+                {/* Error Pages */}
+                <Route path="/" element={<ErrorLayout />}>
+                  <Route path="maintenance" element={<Maintenance />} />
+                  <Route path="404" element={<NotFound />} />
+                  <Route path="*" element={<Navigate to="/404" replace />} />
+                </Route>
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </ToastProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 

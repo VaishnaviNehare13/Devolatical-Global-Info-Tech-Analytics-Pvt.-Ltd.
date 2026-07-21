@@ -4,7 +4,7 @@ import { Database, TrendingUp, Cpu } from 'lucide-react';
 
 export const AnalyticsDashboard: React.FC = () => {
   return (
-    <div className="relative w-full bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800 rounded-2xl shadow-2xl p-6 overflow-hidden">
+    <div className="relative w-full bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800 rounded-2xl shadow-2xl p-6 overflow-hidden text-left">
       {/* Top Controls Grid */}
       <div className="flex items-center justify-between border-b border-slate-50 dark:border-slate-800/40 pb-4 mb-6">
         <div className="flex items-center space-x-2">
@@ -12,7 +12,7 @@ export const AnalyticsDashboard: React.FC = () => {
           <span className="w-3 h-3 rounded-full bg-amber-400" />
           <span className="w-3 h-3 rounded-full bg-green-400" />
         </div>
-        <div className="px-3 py-1 bg-slate-50 dark:bg-dark rounded-md border border-slate-100 dark:border-slate-800/40 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+        <div className="px-3 py-1 bg-slate-50 dark:bg-dark rounded-md border border-slate-100 dark:border-slate-800/40 text-[10px] font-semibold text-slate-400 uppercase tracking-widest font-mono">
           devolatical-telemetry-v1
         </div>
       </div>
@@ -69,9 +69,9 @@ export const AnalyticsDashboard: React.FC = () => {
             </div>
           ))}
         </div>
-        <div className="flex justify-between items-center text-[10px] text-slate-400 font-semibold uppercase mt-2">
-          <span>ETL Stream Speed</span>
-          <span>System verified SOC-2</span>
+        <div className="flex justify-between items-center text-[10px] text-slate-400 font-semibold uppercase mt-2 font-mono">
+          <span>ETL Stream Performance</span>
+          <span>Zero-Downtime Pipeline</span>
         </div>
       </div>
     </div>

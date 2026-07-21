@@ -19,7 +19,7 @@ export const HeroDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="relative w-full max-w-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800/80 rounded-2xl shadow-2xl p-6 overflow-hidden">
+    <div className="relative w-full max-w-2xl bg-white dark:bg-dark-card border border-slate-100 dark:border-slate-800/80 rounded-2xl shadow-2xl p-6 overflow-hidden text-left">
       {/* Glow overlays */}
       <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-secondary/5 filter blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-accent/5 filter blur-3xl pointer-events-none" />
@@ -39,7 +39,7 @@ export const HeroDashboard: React.FC = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-          <span className="text-[9px] font-bold text-green-500 uppercase tracking-widest">
+          <span className="text-[9px] font-bold text-green-500 uppercase tracking-widest font-mono">
             Syncing
           </span>
         </div>
@@ -47,7 +47,7 @@ export const HeroDashboard: React.FC = () => {
 
       {/* Grid of Telemetry & Nodes */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Left Column: Live KPI Stats (6/12) */}
+        {/* Left Column: Live KPI Stats (7/12) */}
         <div className="md:col-span-7 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             {/* KPI Card 1 */}
@@ -86,7 +86,7 @@ export const HeroDashboard: React.FC = () => {
                 <TrendingUp className="h-4 w-4 text-secondary" />
                 <span className="text-[9px] font-bold uppercase tracking-wider">Pipeline Throughput</span>
               </div>
-              <span className="text-[9px] font-semibold text-slate-500">4.8 GB/s</span>
+              <span className="text-[9px] font-semibold text-slate-500 font-mono">4.8 GB/s</span>
             </div>
             
             {/* SVG area graph with grid lines */}
@@ -169,7 +169,7 @@ export const HeroDashboard: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <span>Verification:</span>
-                <span className="text-slate-650 dark:text-slate-300">SOC-2 Verified</span>
+                <span className="text-slate-650 dark:text-slate-300">Enterprise Encrypted</span>
               </div>
             </div>
           </div>

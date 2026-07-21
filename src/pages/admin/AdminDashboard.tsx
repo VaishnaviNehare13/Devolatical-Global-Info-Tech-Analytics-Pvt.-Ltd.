@@ -5,7 +5,7 @@ import { Activity, ShieldCheck, Terminal, Users } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-left">
       {/* Title */}
       <div className="flex flex-col space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">Ops Center Overview</h1>
@@ -44,7 +44,7 @@ export const AdminDashboard: React.FC = () => {
             <ShieldCheck className="h-5 w-5 text-emerald-500" />
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-bold">SOC 2 Level</h3>
+            <h3 className="text-2xl font-bold">Zero-Trust Active</h3>
             <p className="text-xs text-slate-400 mt-1">SSL certificates verify ok</p>
           </div>
         </Card>
@@ -56,7 +56,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div className="mt-4">
             <h3 className="text-2xl font-bold">18 Connected</h3>
-            <p className="text-xs text-slate-400 mt-1">Across 4 regional clusters</p>
+            <p className="text-xs text-slate-400 mt-1">Across regional clusters</p>
           </div>
         </Card>
       </div>
@@ -66,11 +66,10 @@ export const AdminDashboard: React.FC = () => {
         {/* Core System Graph Panel */}
         <Card className="lg:col-span-8">
           <CardHeader>
-            <CardTitle>Global Traffic telemetry</CardTitle>
+            <CardTitle>Global Traffic Telemetry</CardTitle>
             <CardDescription>Average API request speeds and processing latency limits (ms).</CardDescription>
           </CardHeader>
           <CardContent className="h-64 flex flex-col justify-between">
-            {/* Visual graph layout represented by CSS grids */}
             <div className="flex-1 flex items-end space-x-4 border-b border-slate-100 dark:border-slate-800 pb-4">
               <div className="flex-1 flex flex-col items-center">
                 <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-40 flex items-end">
@@ -103,7 +102,7 @@ export const AdminDashboard: React.FC = () => {
                 <span className="text-[10px] text-slate-400 font-semibold mt-1">16:00</span>
               </div>
             </div>
-            <div className="flex justify-between items-center text-xs text-slate-400 mt-2">
+            <div className="flex justify-between items-center text-xs text-slate-400 mt-2 font-mono">
               <span>Peak Latency: 12ms</span>
               <span>Total processed transactions: 4.8 Million</span>
             </div>

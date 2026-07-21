@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle, Info, X } from 'lucide-react';
 import { cn } from '../../utils/cn';
@@ -34,6 +34,24 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  // Monitor network status
+  useEffect(() => {
+    const handleOffline = () => {
+      showToast('Network disconnected. Operating in offline cached mode.', 'error');
+    };
+    const handleOnline = () => {
+      showToast('Network connection restored.', 'success');
+    };
+
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, [showToast]);
+
   const icons = {
     success: <CheckCircle className="h-5 w-5 text-green-500" />,
     error: <AlertCircle className="h-5 w-5 text-red-500" />,
@@ -60,18 +78,19 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               layout
               className={cn(
-                'flex items-start p-4 border rounded-xl shadow-lg glassmorphism text-slate-800 dark:text-slate-200',
+                'flex items-start p-4 border rounded-xl shadow-lg glassmorphism text-slate-800 dark:text-slate-200 text-left',
                 borders[toast.type]
               )}
             >
               <div className="flex-shrink-0 mr-3 mt-0.5">
                 {icons[toast.type]}
               </div>
-              <div className="flex-1 text-sm font-medium leading-relaxed">
+              <div className="flex-1 text-xs font-semibold leading-relaxed">
                 {toast.message}
               </div>
               <button
                 onClick={() => removeToast(toast.id)}
+                aria-label="Close notification"
                 className="ml-3 flex-shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-lg hover:bg-slate-100/50 dark:hover:bg-slate-800/50 cursor-pointer"
               >
                 <X className="h-4 w-4" />
@@ -91,3 +110,5 @@ export const useToast = () => {
   }
   return context;
 };
+
+export default ToastProvider;

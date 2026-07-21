@@ -1,14 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '../../components/ui/Badge';
-import { HeartPulse, Landmark, ShoppingBag, Factory, Truck, Building2, GraduationCap, Laptop } from 'lucide-react';
+import { HeartPulse, Landmark, ShoppingBag, Factory, Truck, Building2, Laptop, CheckCircle2 } from 'lucide-react';
 
 interface IndustryItem {
   id: string;
   name: string;
   challenges: string;
+  approach: string;
   solutions: string[];
   outcomes: string[];
+  benefits: string[];
   useCases: string[];
   tech: string[];
   icon: React.ReactNode;
@@ -17,77 +19,101 @@ interface IndustryItem {
 export const Industries: React.FC = () => {
   const industriesList: IndustryItem[] = [
     {
-      id: 'healthcare',
-      name: 'Healthcare & Life Sciences',
-      challenges: 'Strict regulatory frameworks (HIPAA/HITECH), data fragmentation across EHR networks, and latency issues in streaming telemetry sensors.',
-      solutions: [
-        'HL7/FHIR Ingestion Pipelines: Real-time patient records streaming.',
-        'Unified Data Storage: High-security multi-AZ clinical warehouses.'
-      ],
-      outcomes: [
-        '40% faster diagnostic telemetry sharing speed.',
-        'Zero metadata integrity loss during multi-system data merges.'
-      ],
-      useCases: [
-        'Clinical trial anomaly predictions.',
-        'Real-time bedside patient vital tracking alerts.'
-      ],
-      tech: ['Snowflake', 'Apache Spark', 'AWS KMS', 'dbt'],
-      icon: <HeartPulse className="h-6 w-6 text-red-500" />
-    },
-    {
       id: 'finance',
       name: 'Banking & Financial Services',
-      challenges: 'Vulnerability to fraud vectors, legacy batch reconciliation delays, and complex international financial compliance benchmarks.',
+      challenges: 'High transaction concurrency during market volatility, legacy batch reconciliation delays, and strict financial compliance parameters.',
+      approach: 'Deploy event-driven Kafka stream buffers paired with real-time analytics ledgers and zero-trust authentication boundaries.',
       solutions: [
-        'Fraud Telemetry Analyzers: Sub-second anomaly tracking pipelines.',
-        'Real-Time Ledgers: Distributed streaming CDC synchronization.'
+        'Real-Time Transaction Ledgers: CDC streaming database sync.',
+        'Fraud Telemetry Engines: Sub-second anomaly scoring pipelines.'
       ],
       outcomes: [
-        'Reconciliation processing window reduced from 24 hours to under 3 minutes.',
-        'High compliance verification readiness with automated audit trails.'
+        'Reconciliation processing window reduced from 24 hours to sub-minute streams.',
+        'Zero metadata loss during high-volume trading surges.'
+      ],
+      benefits: [
+        'Sub-10ms ledger update times',
+        'Transparent automated compliance audit logging',
+        'Reduced cloud database locking'
       ],
       useCases: [
-        'Credit scoring prediction scripts.',
-        'Algorithmic portfolio balance adjustments.'
+        'Credit risk prediction algorithms',
+        'Automated portfolio rebalancing alerts'
       ],
-      tech: ['Snowflake', 'Apache Spark', 'Kafka', 'Go'],
+      tech: ['Snowflake', 'Apache Spark', 'Kafka', 'Go', 'Python'],
       icon: <Landmark className="h-6 w-6 text-secondary" />
+    },
+    {
+      id: 'healthcare',
+      name: 'Healthcare & Life Sciences',
+      challenges: 'Data fragmentation across EHR systems, strict patient privacy parameters, and latency in clinical telemetry monitoring.',
+      approach: 'Architect secure HL7/FHIR compliance-ready data pipelines feeding encrypted multi-AZ cloud data stores.',
+      solutions: [
+        'HL7/FHIR Ingestion Gateway: Real-time clinical record integration.',
+        'Patient Telemetry Storage: Encrypted multi-AZ data warehouses.'
+      ],
+      outcomes: [
+        '40% faster diagnostic telemetry sharing speed across research nodes.',
+        'Hardened end-to-end encryption on transport and at rest.'
+      ],
+      benefits: [
+        'Accelerated clinical trial dataset ingestion',
+        'Single clinical view for care providers',
+        'Zero patient data exposure risk'
+      ],
+      useCases: [
+        'Clinical trial anomaly predictions',
+        'Real-time patient vital sign alert telemetry'
+      ],
+      tech: ['AWS KMS', 'Apache Spark', 'PostgreSQL', 'dbt'],
+      icon: <HeartPulse className="h-6 w-6 text-red-500" />
     },
     {
       id: 'retail',
       name: 'Retail & E-commerce',
-      challenges: 'Unpredictable customer churn, stock shortages from inventory lag, and fragmented tracking across multi-channel transactions.',
+      challenges: 'Inventory lag causing unexpected stock-outs during peak seasonal sales and fragmented customer clickstream profiles.',
+      approach: 'Integrate real-time event streaming clickstream analytics with predictive machine learning inventory sizing engines.',
       solutions: [
-        'Clickstream Event Analytics: Consolidated customer action profiles.',
-        'Demand Forecasting: Automated inventory sizing algorithms.'
+        'Clickstream Event Processors: Unified customer behavior profiles.',
+        'Demand Forecasting Engines: Automated inventory replenishment models.'
       ],
       outcomes: [
-        '28% inventory accuracy improvement.',
-        'Silos consolidated into a single e-commerce telemetry source.'
+        '28% improvement in inventory prediction accuracy.',
+        'Sub-50ms latency on personalized customer recommendation APIs.'
+      ],
+      benefits: [
+        'Elimination of warehouse stock-outs',
+        'Higher shopping cart order conversion rates',
+        'Unified omnichannel customer data'
       ],
       useCases: [
-        'Dynamic cart-abandonment trigger models.',
-        'Personalized recommenders feeding directly from delta lake stores.'
+        'Dynamic inventory restocking models',
+        'Personalized recommendation engine APIs'
       ],
-      tech: ['Python', 'PostgreSQL', 'Metabase', 'Docker'],
+      tech: ['Python', 'PostgreSQL', 'Kubernetes', 'Docker'],
       icon: <ShoppingBag className="h-6 w-6 text-accent" />
     },
     {
       id: 'manufacturing',
       name: 'Manufacturing & Heavy Industry',
-      challenges: 'Unexpected factory outages, supply chain delivery blocks, and unmonitored hardware workloads on assembly lines.',
+      challenges: 'Unplanned assembly line hardware outages, supply chain delivery delays, and unmonitored sensor workloads on factory floors.',
+      approach: 'Build IoT device telemetry aggregators feeding real-time anomaly detection pipelines and predictive maintenance alerts.',
       solutions: [
         'IoT Telemetry Aggregators: Continuous device telemetry monitoring.',
         'Predictive Maintenance Triggers: Machine degradation forecasts.'
       ],
       outcomes: [
         '30% reduction in assembly line maintenance downtime.',
-        'Lower device tracking script execution latency.'
+        'Sub-second device tracking metric processing.'
+      ],
+      benefits: [
+        'Lower factory equipment replacement costs',
+        'Real-time heat and vibration alert monitors',
+        'Optimized supply chain routing schedules'
       ],
       useCases: [
-        'Equipment heat and speed anomaly models.',
-        'Dynamic supply chain routing blueprints.'
+        'Equipment degradation alert scripts',
+        'Dynamic supply chain routing blueprints'
       ],
       tech: ['Azure IoT Hub', 'Terraform', 'Kubernetes', 'Go'],
       icon: <Factory className="h-6 w-6 text-indigo-500" />
@@ -95,18 +121,24 @@ export const Industries: React.FC = () => {
     {
       id: 'logistics',
       name: 'Logistics & Distribution',
-      challenges: 'Fuel waste from inefficient delivery routes, warehouse space waste, and manual shipment dispatching errors.',
+      challenges: 'Elevated fuel expenses from suboptimal fleet routing, inefficient warehouse space utilization, and manual dispatch tracking.',
+      approach: 'Implement spatial routing analytics algorithms and real-time cargo container tracking pipelines.',
       solutions: [
-        'Route Cost Optimizers: AI spatial routing models.',
+        'Spatial Route Optimizers: AI-assisted vehicle routing algorithms.',
         'Warehouse Capacity Trackers: Spatial storage volume modeling.'
       ],
       outcomes: [
         '14% reduction in monthly delivery routing fuel expenses.',
-        'Real-time package status visibility across systems.'
+        'Real-time package status visibility across distribution networks.'
+      ],
+      benefits: [
+        'Improved driver delivery completion rates',
+        'Optimized warehouse pallet stacking space',
+        'Instant cargo tracking updates'
       ],
       useCases: [
-        'Predictive delivery date models.',
-        'Active container load capacity analytics.'
+        'Predictive delivery arrival time models',
+        'Active container capacity optimization'
       ],
       tech: ['PostgreSQL Spatial', 'Node.js', 'Docker', 'AWS Fargate'],
       icon: <Truck className="h-6 w-6 text-emerald-500" />
@@ -114,56 +146,49 @@ export const Industries: React.FC = () => {
     {
       id: 'government',
       name: 'Government & Public Sector',
-      challenges: 'Massive legacy databases, public information disclosure timelines, and tight regional cybersecurity requirements.',
+      challenges: 'Massive legacy databases, slow public disclosure response times, and strict regional cybersecurity guidelines.',
+      approach: 'Migrate legacy records to secured, private cloud infrastructure with role-based governance controls.',
       solutions: [
         'Public Portal Ingestors: Legacy record indexing pipelines.',
-        'Secured Storage: Hardened private government clouds.'
+        'Secured Storage Architecture: Hardened private cloud environments.'
       ],
       outcomes: [
-        'Accelerated record query responses for public requests.',
-        'High compliance with federal system security benchmarks.'
+        'Accelerated record query responses for public disclosure requests.',
+        'Strict alignment with government system security benchmarks.'
+      ],
+      benefits: [
+        'Secure multi-agency data sharing',
+        'Lower legacy database maintenance spending',
+        'Auditable administrative activity logs'
       ],
       useCases: [
-        'Smart city sensor network monitoring.',
-        'Automated document verification pipeline scripts.'
+        'Smart city sensor network monitoring',
+        'Automated document indexing verification'
       ],
       tech: ['AWS GovCloud', 'Wazuh', 'Terraform', 'Python'],
       icon: <Building2 className="h-6 w-6 text-blue-500" />
     },
     {
-      id: 'education',
-      name: 'Higher Education',
-      challenges: 'Student retention dropouts, uncoordinated department budgets, and fragmented learning management registries.',
-      solutions: [
-        'Student Success Trackers: Early warning dropout predictors.',
-        'Consolidated Databases: Unified student records storage.'
-      ],
-      outcomes: [
-        'Improved administrative retention monitoring speed.',
-        'Siloed registries consolidated under unified data catalogs.'
-      ],
-      useCases: [
-        'Optimal course size selection analytics.',
-        'Departmental expenditure forecasting models.'
-      ],
-      tech: ['PostgreSQL', 'Tableau', 'dbt', 'AWS Lambda'],
-      icon: <GraduationCap className="h-6 w-6 text-orange-500" />
-    },
-    {
       id: 'technology',
       name: 'High-Technology & Software',
-      challenges: 'High SaaS API maintenance overheads, database load spikes, and manual microservices orchestration cycles.',
+      challenges: 'High API maintenance overheads, dynamic database load spikes, and complex microservices orchestration cycles.',
+      approach: 'Deploy auto-scaling Kubernetes node clusters managed declaratively via Terraform with zero-trust API gateways.',
       solutions: [
         'Kubernetes Infrastructure: Fully automated orchestration.',
         'API Gateway Optimization: Cached client transaction layers.'
       ],
       outcomes: [
         '99.99% core infrastructure availability under peak traffic load.',
-        'Simplified developer workflows through automated deployments.'
+        'Fast deployment pipelines for engineering teams.'
+      ],
+      benefits: [
+        'Seamless dynamic traffic handling',
+        'Sub-millisecond API response times',
+        'Declarative infrastructure state tracking'
       ],
       useCases: [
-        'Developer usage forecasting engines.',
-        'Real-time API error monitoring and metrics logs.'
+        'Developer resource usage forecasting',
+        'Real-time API error monitoring metrics'
       ],
       tech: ['Kubernetes', 'Go Backend', 'Prometheus', 'Terraform'],
       icon: <Laptop className="h-6 w-6 text-pink-500" />
@@ -173,22 +198,22 @@ export const Industries: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 space-y-20 text-left">
       {/* Page Header */}
-      <section className="space-y-4 max-w-2xl">
-        <span className="text-xs font-bold text-secondary uppercase tracking-widest">Sectors Served</span>
+      <section className="space-y-4 max-w-3xl">
+        <span className="text-xs font-bold text-secondary uppercase tracking-widest font-mono">Enterprise Sectors</span>
         <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-slate-900 dark:text-white tracking-tight">
-          Enterprise Industry Solutions
+          Industry Solutions & Domain Expertise
         </h1>
         <p className="text-base text-slate-500 leading-relaxed">
-          We customize our core analytics frameworks, governance systems, and cloud strategies to align perfectly with industry compliance guidelines and business targets.
+          We customize our core analytics frameworks, cloud infrastructure solutions, and custom software architectures to align with industry compliance requirements and strategic business targets.
         </p>
       </section>
 
-      {/* Industries Grid */}
+      {/* Industries List */}
       <section className="space-y-16">
         {industriesList.map((ind, index) => (
           <div
             key={ind.id}
-            className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pb-12 border-b border-slate-100 dark:border-slate-850/60`}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pb-12 border-b border-slate-100 dark:border-slate-850/60"
           >
             {/* Left Content (7/12) */}
             <div className={`lg:col-span-7 space-y-6 ${index % 2 === 1 ? 'lg:order-2' : 'lg:order-1'}`}>
@@ -196,58 +221,68 @@ export const Industries: React.FC = () => {
                 <div className="p-3 bg-slate-50 dark:bg-dark border border-slate-100 dark:border-slate-800 rounded-lg">
                   {ind.icon}
                 </div>
-                <h3 className="text-xl font-bold text-slate-850 dark:text-white leading-none">
+                <h3 className="text-2xl font-bold text-slate-850 dark:text-white leading-none">
                   {ind.name}
                 </h3>
               </div>
 
-              {/* Challenges */}
-              <div>
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Business Challenge</h4>
-                <p className="text-sm text-slate-500 leading-relaxed">
-                  {ind.challenges}
-                </p>
+              {/* Challenge & Approach */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 bg-slate-50/50 dark:bg-dark/20 border border-slate-100 dark:border-slate-800 rounded-xl space-y-1">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Business Challenge</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{ind.challenges}</p>
+                </div>
+                <div className="p-4 bg-slate-50/50 dark:bg-dark/20 border border-slate-100 dark:border-slate-800 rounded-xl space-y-1">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Implementation Approach</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{ind.approach}</p>
+                </div>
               </div>
 
-              {/* Solutions & Outcomes Grid */}
+              {/* Benefits & Outcomes */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-5 bg-slate-50/50 dark:bg-dark/10 border border-slate-100 dark:border-slate-800/80 rounded-2xl">
                 <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Our Solutions</h4>
-                  <ul className="space-y-1.5 text-xs text-slate-650 dark:text-slate-400 list-disc list-inside">
-                    {ind.solutions.map((s, idx) => (
-                      <li key={idx}>{s}</li>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Expected Outcomes</h4>
+                  <ul className="space-y-1.5 text-xs text-slate-650 dark:text-slate-400">
+                    {ind.outcomes.map((o, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-secondary mr-2 mt-0.5 flex-shrink-0" />
+                        <span>{o}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Expected Outcomes</h4>
-                  <ul className="space-y-1.5 text-xs text-slate-650 dark:text-slate-400 list-disc list-inside">
-                    {ind.outcomes.map((o, idx) => (
-                      <li key={idx}>{o}</li>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono font-bold">Business Benefits</h4>
+                  <ul className="space-y-1.5 text-xs text-slate-650 dark:text-slate-400">
+                    {ind.benefits.map((b, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span>{b}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
               </div>
 
-              {/* Use Cases */}
-              <div>
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Analytics Use Cases</h4>
-                <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
-                  {ind.useCases.map((u, idx) => (
-                    <li key={idx}>{u}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Technologies */}
-              <div className="space-y-2">
-                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Key Technology Stack</h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {ind.tech.map((t, idx) => (
-                    <Badge key={idx} variant="outline" className="text-[9px]">
-                      {t}
-                    </Badge>
-                  ))}
+              {/* Analytics Use Cases & Tech Stack */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Analytics Use Cases</h4>
+                  <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
+                    {ind.useCases.map((u, idx) => (
+                      <li key={idx}>{u}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Technology Stack</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {ind.tech.map((t, idx) => (
+                      <Badge key={idx} variant="outline" className="text-[9px]">
+                        {t}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -278,8 +313,8 @@ export const Industries: React.FC = () => {
                 <text x="180" y="128" textAnchor="middle" className="text-[7px] font-mono text-slate-400" fill="currentColor">Backup Storage</text>
               </svg>
               
-              <span className="absolute bottom-4 right-4 text-[9px] font-mono font-bold text-slate-400">
-                // active_dataflow.diag
+              <span className="absolute bottom-4 right-4 text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+                // sector_dataflow.diag
               </span>
             </div>
           </div>

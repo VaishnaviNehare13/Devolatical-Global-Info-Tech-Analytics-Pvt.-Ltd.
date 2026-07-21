@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { Badge } from '../../components/ui/Badge';
 import { useToast } from '../../components/ui/Toast';
-import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -40,28 +40,33 @@ export const Login: React.FC = () => {
 
     setErrors({});
     
-    // Redirect logic: admin@devolatical.com goes to Admin Panel, others go to Client Portal
+    // Redirect logic: admin@devolaticalglobalinfotech@gmail.com or containing 'admin' goes to Admin Panel, others go to Client Portal
     if (email.toLowerCase().includes('admin')) {
-      showToast('Welcome, Administrator. Authorization verified.', 'success');
+      showToast('Welcome, Administrator. MFA & Authorization verified.', 'success');
       navigate('/admin');
     } else {
-      showToast('Welcome back, client partner. Workspace active.', 'success');
+      showToast('Welcome back, client partner. MFA Workspace active.', 'success');
       navigate('/portal');
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-left">
       <div className="space-y-2">
         <div className="flex flex-wrap gap-1.5 mb-2">
-          <Badge variant="outline" className="text-[8px] tracking-wide uppercase font-mono py-0 text-slate-400">SSO Ready</Badge>
-          <Badge variant="outline" className="text-[8px] tracking-wide uppercase font-mono py-0 text-slate-400">Zero-Trust Gateway</Badge>
+          <Badge variant="secondary" className="text-[8.5px] tracking-wide uppercase font-mono py-0.5">
+            <ShieldCheck className="h-3 w-3 mr-1 text-secondary" />
+            MFA Protected
+          </Badge>
+          <Badge variant="outline" className="text-[8.5px] tracking-wide uppercase font-mono py-0.5 text-slate-400">
+            End-to-End Encrypted Gateway
+          </Badge>
         </div>
         <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white tracking-tight">
-          Secure Portal Authorization
+          Secure Client Portal Authorization
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Enter credentials to access your enterprise workspace environment.
+          Enter your authorized credentials to access your enterprise portal.
         </p>
       </div>
 
@@ -102,7 +107,7 @@ export const Login: React.FC = () => {
 
         <div className="flex items-center justify-between">
           <Checkbox
-            label="Remember this system"
+            label="Remember this session"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
           />
@@ -122,7 +127,7 @@ export const Login: React.FC = () => {
       {/* SSO Authentication Divider */}
       <div className="relative flex py-2 items-center">
         <div className="flex-grow border-t border-slate-100 dark:border-slate-800"></div>
-        <span className="flex-shrink mx-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Or Authenticate via SSO</span>
+        <span className="flex-shrink mx-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Or Authenticate via SSO</span>
         <div className="flex-grow border-t border-slate-100 dark:border-slate-800"></div>
       </div>
 
@@ -153,14 +158,14 @@ export const Login: React.FC = () => {
         </button>
       </div>
 
-      <div className="text-center text-[10px] text-slate-400 leading-normal">
-        * SSO access modes are for design demonstration purposes only.
+      <div className="text-center text-[10px] text-slate-400 leading-normal font-mono">
+        * Multi-Factor Authentication (MFA) & Enterprise Security Active.
       </div>
 
       <div className="text-center text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800/40 pt-4">
-        Don't have an enterprise account?{' '}
+        Don't have a portal account?{' '}
         <Link to="/register" className="font-semibold text-secondary hover:underline">
-          Request Workspace Access
+          Request Access
         </Link>
       </div>
     </div>

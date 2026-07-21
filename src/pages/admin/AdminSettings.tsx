@@ -7,8 +7,8 @@ import { useToast } from '../../components/ui/Toast';
 
 export const AdminSettings: React.FC = () => {
   const { showToast } = useToast();
-  const [systemName, setSystemName] = useState('Devolatical Ops Center');
-  const [adminEmail, setAdminEmail] = useState('ops@devolatical.com');
+  const [systemName, setSystemName] = useState('Devolatical Global Ops Center');
+  const [adminEmail, setAdminEmail] = useState('devolaticalglobalinfotech@gmail.com');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [allowRegistration, setAllowRegistration] = useState(true);
 
@@ -18,7 +18,7 @@ export const AdminSettings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-left">
       <div className="flex flex-col space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">Global System Settings</h1>
         <p className="text-sm text-slate-500">
@@ -29,7 +29,7 @@ export const AdminSettings: React.FC = () => {
       <Card className="max-w-2xl">
         <CardHeader>
           <CardTitle>System Preferences</CardTitle>
-          <CardDescription>Adjust variables that impact all server operations.</CardDescription>
+          <CardDescription>Adjust variables that impact server operations.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSave} className="space-y-6">
@@ -60,7 +60,7 @@ export const AdminSettings: React.FC = () => {
               />
             </div>
 
-            <Button type="submit" variant="secondary" className="w-full justify-center">
+            <Button type="submit" variant="secondary" className="w-full justify-center text-xs font-bold">
               Apply System Configurations
             </Button>
           </form>

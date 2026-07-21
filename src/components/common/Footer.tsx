@@ -4,6 +4,8 @@ import { MapPin, Send, ShieldCheck, Mail } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { useToast } from '../ui/Toast';
+import logo from '../../assets/logo.png';
+
 
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -21,19 +23,14 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         {/* Brand Details */}
         <div className="space-y-6">
-          <div className="flex items-center space-x-3">
-            <svg className="h-9 w-9" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="footerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#002E5B" />
-                  <stop offset="50%" stopColor="#0F62FE" />
-                  <stop offset="100%" stopColor="#00C2FF" />
-                </linearGradient>
-              </defs>
-              <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#footerLogoGrad)" strokeWidth="6" strokeLinejoin="round" />
-              <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#footerLogoGrad)" opacity="0.85" />
-              <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
-            </svg>
+          <Link to="/" className="flex items-center gap-4 cursor-pointer">
+            <img
+              src={logo}
+              alt="Devolatical Global Info-Tech & Analytics Pvt. Ltd."
+              className="h-10 md:h-12 lg:h-14 w-auto object-contain flex-shrink-0"
+              loading="eager"
+              decoding="async"
+            />
             <div className="flex flex-col">
               <span className="font-heading font-bold text-base leading-none tracking-wide text-white uppercase">
                 Devolatical
@@ -42,7 +39,7 @@ export const Footer: React.FC = () => {
                 Global Info-Tech & Analytics
               </span>
             </div>
-          </div>
+          </Link>
           <p className="text-xs font-semibold text-secondary uppercase tracking-wider">
             "Empowering Growth Through Advanced Analytics & Smart Technology"
           </p>

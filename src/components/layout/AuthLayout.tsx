@@ -2,6 +2,8 @@ import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { ShieldCheck, ArrowLeft } from 'lucide-react';
 import ScrollToTop from '../common/ScrollToTop';
+import logo from '../../assets/logo.png';
+
 
 export const AuthLayout: React.FC = () => {
   return (
@@ -22,19 +24,14 @@ export const AuthLayout: React.FC = () => {
 
         {/* Brand Banner */}
         <div className="space-y-4 max-w-sm">
-          <div className="flex items-center space-x-3 mb-6">
-            <svg className="h-9 w-9" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="authLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#002E5B" />
-                  <stop offset="50%" stopColor="#0F62FE" />
-                  <stop offset="100%" stopColor="#00C2FF" />
-                </linearGradient>
-              </defs>
-              <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#authLogoGrad)" strokeWidth="6" strokeLinejoin="round" />
-              <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#authLogoGrad)" opacity="0.85" />
-              <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
-            </svg>
+          <Link to="/" className="flex items-center gap-4 mb-6 cursor-pointer">
+            <img
+              src={logo}
+              alt="Devolatical Global Info-Tech & Analytics Pvt. Ltd."
+              className="h-11 w-auto object-contain flex-shrink-0"
+              loading="eager"
+              decoding="async"
+            />
             <div className="flex flex-col">
               <span className="font-heading font-bold text-lg leading-none tracking-wide text-white uppercase">
                 Devolatical
@@ -43,7 +40,7 @@ export const AuthLayout: React.FC = () => {
                 Global Info-Tech
               </span>
             </div>
-          </div>
+          </Link>
           <h2 className="text-3xl font-bold font-heading leading-tight">
             Enterprise Portal & Analytics Hub
           </h2>

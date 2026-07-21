@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useToast } from '../ui/Toast';
+import logo from '../../assets/logo.png';
+
 
 export const ClientPortalLayout: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -29,19 +31,14 @@ export const ClientPortalLayout: React.FC = () => {
       {/* Sidebar for Desktop */}
       <aside className="hidden lg:flex flex-col w-64 bg-white dark:bg-dark-card border-r border-slate-100 dark:border-slate-800/80 flex-shrink-0">
         {/* Brand */}
-        <div className="p-6 border-b border-slate-50 dark:border-slate-800/40 flex items-center space-x-3">
-          <svg className="h-8 w-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="portalLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#002E5B" />
-                <stop offset="50%" stopColor="#0F62FE" />
-                <stop offset="100%" stopColor="#00C2FF" />
-              </linearGradient>
-            </defs>
-            <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#portalLogoGrad)" strokeWidth="6" strokeLinejoin="round" />
-            <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#portalLogoGrad)" opacity="0.85" />
-            <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
-          </svg>
+        <Link to="/" className="p-6 border-b border-slate-50 dark:border-slate-800/40 flex items-center gap-4 cursor-pointer">
+          <img
+            src={logo}
+            alt="Devolatical Global Info-Tech & Analytics Pvt. Ltd."
+            className="h-10 w-auto object-contain flex-shrink-0"
+            loading="eager"
+            decoding="async"
+          />
           <div className="flex flex-col">
             <span className="font-heading font-bold text-sm leading-none tracking-wide text-primary dark:text-white uppercase">
               Devolatical
@@ -50,7 +47,7 @@ export const ClientPortalLayout: React.FC = () => {
               Client Portal
             </span>
           </div>
-        </div>
+        </Link>
 
         {/* Sidebar Nav */}
         <nav className="flex-1 px-4 py-6 space-y-2">
@@ -107,23 +104,18 @@ export const ClientPortalLayout: React.FC = () => {
 
       {/* Mobile Header Menu Trigger */}
       <header className="lg:hidden h-16 bg-white dark:bg-dark-card border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-6 z-30">
-        <div className="flex items-center space-x-3">
-          <svg className="h-7 w-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="portalMobLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#002E5B" />
-                <stop offset="50%" stopColor="#0F62FE" />
-                <stop offset="100%" stopColor="#00C2FF" />
-              </linearGradient>
-            </defs>
-            <path d="M50 5 L90 30 L90 70 L50 95 L10 70 L10 30 Z" stroke="url(#portalMobLogoGrad)" strokeWidth="6" strokeLinejoin="round" />
-            <path d="M50 25 L75 40 L75 60 L50 75 L25 60 L25 40 Z" fill="url(#portalMobLogoGrad)" opacity="0.85" />
-            <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
-          </svg>
+        <Link to="/" className="flex items-center gap-3.5 cursor-pointer">
+          <img
+            src={logo}
+            alt="Devolatical Global Info-Tech & Analytics Pvt. Ltd."
+            className="h-8 w-auto object-contain flex-shrink-0"
+            loading="eager"
+            decoding="async"
+          />
           <span className="font-heading font-bold text-sm text-primary dark:text-white uppercase">
             Devolatical Client
           </span>
-        </div>
+        </Link>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-1.5 rounded-lg border border-slate-100 dark:border-slate-800 cursor-pointer"

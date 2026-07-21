@@ -161,7 +161,7 @@ export const HeroDashboard: React.FC = () => {
             <div className="space-y-1.5 font-mono text-[9px] text-slate-500 dark:text-slate-400">
               <div className="flex justify-between">
                 <span>Confidence:</span>
-                <span className="text-green-500 font-bold">99.82%</span>
+                <span className="text-green-500 font-bold">Optimal</span>
               </div>
               <div className="flex justify-between">
                 <span>Anomaly Shield:</span>

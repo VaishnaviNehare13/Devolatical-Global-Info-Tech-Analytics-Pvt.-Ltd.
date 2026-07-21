@@ -39,7 +39,7 @@ export const Services: React.FC = () => {
       ],
       challenge: 'Organizations encounter fragmented data sources, stale operational reporting, and slow query speeds that hinder data-backed decision making.',
       solution: 'We architect unified semantic data models, high-throughput ingestion pipelines, real-time telemetry dashboards, and predictive forecasting engines.',
-      impact: 'Reduces reporting compilation cycles from days to seconds and unlocks up to 30% operational efficiency returns.',
+      impact: 'Reduces reporting compilation cycles from days to seconds and improves operational efficiency.',
       deliverables: [
         'Enterprise Semantic Data Model',
         'Interactive Business Intelligence Dashboards',
@@ -68,7 +68,7 @@ export const Services: React.FC = () => {
       ],
       challenge: 'Legacy hardware appliances and unmonitored infrastructure create reliability risks, scaling bottlenecks, and elevated operational spends.',
       solution: 'We engineer zero-downtime multi-cloud migrations, declarative IaC blueprints, resilient network topographies, and 24/7 telemetry monitoring systems.',
-      impact: 'Shrinks ongoing infrastructure maintenance costs by up to 28% while guaranteeing 99.99% core availability.',
+      impact: 'Shrinks ongoing infrastructure maintenance costs while maintaining high availability architecture.',
       deliverables: [
         'Multi-Region Cloud Topology Blueprints (AWS / Azure)',
         'Terraform Infrastructure-as-Code Repositories',
@@ -96,7 +96,7 @@ export const Services: React.FC = () => {
       ],
       challenge: 'Off-the-shelf software tools often fail to accommodate specialized business processes, resulting in manual workarounds and fragmented user experiences.',
       solution: 'We design custom web platforms, mobile solutions, API integration layers, and automated workflow engines tailored to operational goals.',
-      impact: 'Automates manual operational tasks to accelerate processing throughput by up to 45%.',
+      impact: 'Automates manual operational tasks to accelerate processing throughput.',
       deliverables: [
         'Production Web & Mobile Software Codebases',
         'REST / gRPC Microservice API Gateways',
@@ -226,7 +226,7 @@ export const Services: React.FC = () => {
                   <svg className="w-full h-full" viewBox="0 0 320 80">
                     <path d="M 20 40 H 100 H 200 H 290" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-200 dark:text-slate-800" strokeDasharray="4 4" />
                     <motion.circle cx="20" cy="40" r="3.5" fill="#00C2FF" animate={{ cx: [20, 100, 200, 290] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />
-                    <rect x="10" y="25" width="30" height="30" rx="4" fill="#0F62FE" />
+                    <rect x="10" y="25" width="30" height="30" rx="4" fill="#002E5B" />
                     <text x="25" y="43" textAnchor="middle" fill="#FFFFFF" className="text-[7px] font-mono font-bold">Ingest</text>
                     <rect x="100" y="25" width="40" height="30" rx="4" fill="#00C2FF" />
                     <text x="120" y="43" textAnchor="middle" fill="#1e293b" className="text-[7px] font-mono font-bold">Spark</text>
@@ -237,8 +237,8 @@ export const Services: React.FC = () => {
                 {selectedPillar.architectureType === 'infrastructure' && (
                   <svg className="w-full h-full" viewBox="0 0 320 80">
                     <path d="M 20 40 L 100 20 L 200 60 L 290 40" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-200 dark:text-slate-800" strokeDasharray="4 4" />
-                    <motion.circle cx="20" cy="40" r="3.5" fill="#0F62FE" animate={{ cx: [20, 100, 200, 290], cy: [40, 20, 60, 40] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />
-                    <circle cx="20" cy="40" r="10" fill="#0F62FE" />
+                    <motion.circle cx="20" cy="40" r="3.5" fill="#002E5B" animate={{ cx: [20, 100, 200, 290], cy: [40, 20, 60, 40] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />
+                    <circle cx="20" cy="40" r="10" fill="#002E5B" />
                     <circle cx="100" cy="20" r="10" fill="#00C2FF" />
                     <circle cx="200" cy="60" r="10" fill="#22C55E" />
                     <circle cx="290" cy="40" r="10" fill="#F59E0B" />
@@ -296,6 +296,9 @@ export const Services: React.FC = () => {
                   </Badge>
                 ))}
               </div>
+              <p className="text-[9px] text-slate-400 italic font-mono mt-1">
+                * Representative enterprise technologies commonly used in modern solutions.
+              </p>
             </div>
 
             {/* Footer Consultation Actions */}

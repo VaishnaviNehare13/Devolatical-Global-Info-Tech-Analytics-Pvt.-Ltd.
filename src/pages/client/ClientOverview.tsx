@@ -6,10 +6,10 @@ import { Database, Activity, CheckCircle, Clock } from 'lucide-react';
 
 export const ClientOverview: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-left">
       {/* Title */}
       <div className="flex flex-col space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">Acme Corp. Workspace</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Client Portal Workspace</h1>
         <p className="text-sm text-slate-500">
           Overview of your active data pipelines, cloud deployments, and project deliverables.
         </p>
@@ -23,7 +23,7 @@ export const ClientOverview: React.FC = () => {
             <Activity className="h-5 w-5 text-green-500" />
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-bold">99.98%</h3>
+            <h3 className="text-2xl font-bold">Optimal</h3>
             <p className="text-xs text-green-500 mt-1">✓ Core ingestion pipelines operational</p>
           </div>
         </Card>
@@ -34,8 +34,8 @@ export const ClientOverview: React.FC = () => {
             <Database className="h-5 w-5 text-secondary" />
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-bold">14.8 TB</h3>
-            <p className="text-xs text-slate-400 mt-1">Processed in the last 24 hours</p>
+            <h3 className="text-2xl font-bold">High Volume</h3>
+            <p className="text-xs text-slate-400 mt-1">Processed in active window</p>
           </div>
         </Card>
 

@@ -25,14 +25,14 @@ export const Industries: React.FC = () => {
       approach: 'Deploy event-driven Kafka stream buffers paired with real-time analytics ledgers and zero-trust authentication boundaries.',
       solutions: [
         'Real-Time Transaction Ledgers: CDC streaming database sync.',
-        'Fraud Telemetry Engines: Sub-second anomaly scoring pipelines.'
+        'Fraud Telemetry Engines: Real-time anomaly scoring pipelines.'
       ],
       outcomes: [
-        'Reconciliation processing window reduced from 24 hours to sub-minute streams.',
+        'Reconciliation processing window reduced from days to real-time streams.',
         'Zero metadata loss during high-volume trading surges.'
       ],
       benefits: [
-        'Sub-10ms ledger update times',
+        'Rapid ledger update times',
         'Transparent automated compliance audit logging',
         'Reduced cloud database locking'
       ],
@@ -53,7 +53,7 @@ export const Industries: React.FC = () => {
         'Patient Telemetry Storage: Encrypted multi-AZ data warehouses.'
       ],
       outcomes: [
-        '40% faster diagnostic telemetry sharing speed across research nodes.',
+        'Accelerated diagnostic telemetry sharing speed across research nodes.',
         'Hardened end-to-end encryption on transport and at rest.'
       ],
       benefits: [
@@ -78,8 +78,8 @@ export const Industries: React.FC = () => {
         'Demand Forecasting Engines: Automated inventory replenishment models.'
       ],
       outcomes: [
-        '28% improvement in inventory prediction accuracy.',
-        'Sub-50ms latency on personalized customer recommendation APIs.'
+        'Significant improvement in inventory prediction accuracy.',
+        'Sub-second latency on personalized customer recommendation APIs.'
       ],
       benefits: [
         'Elimination of warehouse stock-outs',
@@ -103,7 +103,7 @@ export const Industries: React.FC = () => {
         'Predictive Maintenance Triggers: Machine degradation forecasts.'
       ],
       outcomes: [
-        '30% reduction in assembly line maintenance downtime.',
+        'Reduction in assembly line maintenance downtime.',
         'Sub-second device tracking metric processing.'
       ],
       benefits: [
@@ -128,7 +128,7 @@ export const Industries: React.FC = () => {
         'Warehouse Capacity Trackers: Spatial storage volume modeling.'
       ],
       outcomes: [
-        '14% reduction in monthly delivery routing fuel expenses.',
+        'Reduction in monthly delivery routing fuel expenses.',
         'Real-time package status visibility across distribution networks.'
       ],
       benefits: [
@@ -178,7 +178,7 @@ export const Industries: React.FC = () => {
         'API Gateway Optimization: Cached client transaction layers.'
       ],
       outcomes: [
-        '99.99% core infrastructure availability under peak traffic load.',
+        'High core infrastructure availability under peak traffic load.',
         'Fast deployment pipelines for engineering teams.'
       ],
       benefits: [
@@ -276,13 +276,16 @@ export const Industries: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Technology Stack</h4>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1.5 mb-1">
                     {ind.tech.map((t, idx) => (
                       <Badge key={idx} variant="outline" className="text-[9px]">
                         {t}
                       </Badge>
                     ))}
                   </div>
+                  <p className="text-[8.5px] text-slate-400 italic font-mono">
+                    * Representative enterprise technologies.
+                  </p>
                 </div>
               </div>
             </div>

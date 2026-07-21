@@ -29,7 +29,7 @@ export const CustomGlobe: React.FC = () => {
         </div>
         <div>
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">AI Inference</p>
-          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">99.82%</h4>
+          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">Optimal Speed</h4>
         </div>
       </motion.div>
 
@@ -44,7 +44,7 @@ export const CustomGlobe: React.FC = () => {
         </div>
         <div>
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Systems Health</p>
-          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">100% Active</h4>
+          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">Systems Active</h4>
         </div>
       </motion.div>
 
@@ -59,7 +59,7 @@ export const CustomGlobe: React.FC = () => {
         </div>
         <div>
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Throughput</p>
-          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">248k /s</h4>
+          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">High Stream</h4>
         </div>
       </motion.div>
 
@@ -74,7 +74,7 @@ export const CustomGlobe: React.FC = () => {
         </div>
         <div>
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Intrusion Shield</p>
-          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">SOC-2 Secure</h4>
+          <h4 className="text-sm font-bold text-slate-850 dark:text-white font-mono leading-tight">Zero-Trust</h4>
         </div>
       </motion.div>
 
@@ -108,7 +108,7 @@ export const CustomGlobe: React.FC = () => {
           className="text-slate-300 dark:text-slate-800/80"
         />
 
-        {/* Latitudes & Longitudes with rotating projection effects */}
+        {/* Latitudes & Longitudes */}
         <path d="M 50 250 Q 250 120 450 250" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-200 dark:text-slate-800/60" />
         <path d="M 50 250 Q 250 380 450 250" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-200 dark:text-slate-800/60" />
         <path d="M 250 50 Q 120 250 250 450" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-200 dark:text-slate-800/60" />
@@ -155,7 +155,6 @@ export const CustomGlobe: React.FC = () => {
         {/* Client locations / Pins */}
         {points.map((pt, idx) => (
           <g key={idx}>
-            {/* Pulsing Outer Circle */}
             <motion.circle
               cx={pt.x}
               cy={pt.y}
@@ -166,7 +165,6 @@ export const CustomGlobe: React.FC = () => {
               animate={{ scale: [0.8, 1.8, 0.8], opacity: [0.4, 0, 0.4] }}
               transition={{ duration: 2.5, repeat: Infinity, delay: pt.delay }}
             />
-            {/* Core Node */}
             <circle
               cx={pt.x}
               cy={pt.y}

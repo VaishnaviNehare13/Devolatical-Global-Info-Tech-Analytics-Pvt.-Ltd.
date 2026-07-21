@@ -35,9 +35,9 @@ export const CaseStudies: React.FC = () => {
       clientLabel: 'Financial Institution',
       industry: 'Finance',
       title: 'Streaming Ingestion & High-Throughput Asset Transaction Ledger',
-      summary: 'Re-engineered core data lakehouse architecture to handle ingestion streaming loads of over 80,000 active asset transactions per second.',
+      summary: 'Re-engineered core data lakehouse architecture to handle ingestion streaming workloads of high-volume asset transactions.',
       challenge: 'Legacy transaction databases experienced connection pooling bottlenecks during peak trading windows, causing ledger sync latency spikes.',
-      architecture: 'Event-driven streaming ingestion layer utilizing Apache Kafka message brokers feeding an auto-scaling Spark engine that syncs directly into Snowflake Core schemas.',
+      architecture: 'Event-driven streaming ingestion layer utilizing message brokers feeding an auto-scaling Spark engine that syncs directly into Snowflake Core schemas.',
       implementation: [
         'Phase 1: Database connection pool & bottleneck audit',
         'Phase 2: Spark cluster auto-scaling setup',
@@ -45,13 +45,13 @@ export const CaseStudies: React.FC = () => {
         'Phase 4: High-concurrency stress validation trials'
       ],
       technology: ['AWS Kinesis', 'Apache Spark', 'Snowflake', 'Scala', 'Terraform', 'Kafka'],
-      businessImpact: 'Eliminated transaction pooling locks and reduced ledger sync latencies from 4.2s to sub-10ms intervals.',
+      businessImpact: 'Eliminated transaction pooling locks and significantly reduced ledger sync latencies across trading windows.',
       results: [
-        'Reduced ledger sync latency to sub-10ms intervals',
+        'Reduced ledger sync latency to optimal sub-second intervals',
         'Zero connection pool lockouts during peak market volumes',
-        'Decreased cloud compute spending by 34%'
+        'Improved cloud compute resource efficiency'
       ],
-      kpis: ['Latency: Sub-10ms', 'Compute Cost: -34%', 'Availability: 99.99%'],
+      kpis: ['Low Latency Architecture', 'Cost Optimization', 'High Availability'],
       testimonial: {
         quote: "The redesigned streaming ledger pipeline completely eliminated database locks during peak market volatility.",
         role: "Principal Architect, Financial Services Practice"
@@ -73,13 +73,13 @@ export const CaseStudies: React.FC = () => {
         'Phase 4: Automated diagnostic verification testing'
       ],
       technology: ['Node.js', 'PostgreSQL', 'AWS KMS', 'Docker', 'Terraform', 'Go'],
-      businessImpact: 'Accelerated clinical diagnostic data delivery times by 40% while ensuring zero unencrypted data staging.',
+      businessImpact: 'Accelerated clinical diagnostic data delivery times while ensuring zero unencrypted data staging.',
       results: [
-        '40% faster diagnostic telemetry sharing speed across clinics',
+        'Accelerated diagnostic telemetry sharing speed across clinics',
         'Automated telemetry audit log generation',
         'Zero metadata integrity loss during multi-system record syncs'
       ],
-      kpis: ['Telemetry Delivery: -40%', 'Encryption: AES-256', 'Audit Readiness: 100%'],
+      kpis: ['Rapid Telemetry Delivery', 'Encryption: AES-256', 'Auditable Security'],
       testimonial: {
         quote: "Diagnostic telemetry exchange between regional nodes is now fast, seamless, and fully encrypted.",
         role: "Lead Systems Engineer, Healthcare Solutions Practice"
@@ -91,23 +91,23 @@ export const CaseStudies: React.FC = () => {
       clientLabel: 'Retail Organization',
       industry: 'Retail',
       title: 'Predictive Demand Forecasting & Omnichannel Clickstream Analytics',
-      summary: 'Developed real-time clickstream event processors and predictive ML demand forecasting algorithms.',
+      summary: 'Developed real-time clickstream event processors and predictive demand forecasting algorithms.',
       challenge: 'Static demand forecasting models led to warehouse stock-outs during peak seasonal promotions, causing lost revenue sales.',
-      architecture: 'Python forecasting models executing on Kubernetes worker nodes that process real-time clickstream streams from event databases.',
+      architecture: 'Predictive forecasting models executing on Kubernetes worker nodes that process real-time clickstream streams from event databases.',
       implementation: [
         'Phase 1: Clickstream tracking hook integration',
-        'Phase 2: Predictive ML demand forecasting model training',
+        'Phase 2: Predictive demand forecasting model training',
         'Phase 3: Kubernetes cluster auto-scaling setup',
         'Phase 4: Omnichannel inventory sync verification'
       ],
       technology: ['Python', 'Kubernetes', 'TensorFlow', 'PostgreSQL', 'Docker', 'Metabase'],
-      businessImpact: 'Improved inventory prediction accuracy by 28%, significantly reducing warehouse stock-outs during peak sales events.',
+      businessImpact: 'Improved inventory prediction accuracy, significantly reducing warehouse stock-outs during peak sales events.',
       results: [
-        'Improved inventory prediction accuracy by 28%',
-        'Warehouse stock-out rate reduced to 0.2% globally',
-        'Sub-50ms recommendation API response times'
+        'Improved inventory demand forecasting accuracy',
+        'Drastically reduced warehouse stock-outs globally',
+        'High-performance recommendation API response times'
       ],
-      kpis: ['Accuracy: +28%', 'Stockout Rate: 0.2%', 'API Latency: <50ms'],
+      kpis: ['Enhanced Forecasting', 'Minimized Stockouts', 'High Speed APIs'],
       testimonial: {
         quote: "Real-time demand forecasting transformed our inventory strategy and eliminated stock-outs during holiday traffic.",
         role: "Lead Analytics Architect, Retail Practice"
@@ -129,13 +129,13 @@ export const CaseStudies: React.FC = () => {
         'Phase 4: Automated dispatch alert testing'
       ],
       technology: ['Azure IoT Hub', 'Terraform', 'Go', 'Kubernetes', 'Prometheus'],
-      businessImpact: 'Reduced unscheduled assembly line downtime by 30% through proactive hardware maintenance alerts.',
+      businessImpact: 'Reduced unscheduled assembly line downtime through proactive hardware maintenance alerts.',
       results: [
-        '30% reduction in assembly line maintenance downtime',
+        'Significant reduction in assembly line downtime',
         'Early detection of motor heat and vibration anomalies',
         'Lower hardware replacement spends'
       ],
-      kpis: ['Downtime: -30%', 'Alert Accuracy: 98.4%', 'Sensor Latency: <100ms'],
+      kpis: ['Reduced Downtime', 'Proactive Alerts', 'Real-Time Telemetry'],
       testimonial: {
         quote: "Predictive maintenance alerts allow our maintenance teams to resolve machine wear long before outages occur.",
         role: "Principal Infrastructure Lead, Industrial Systems Practice"
@@ -147,7 +147,7 @@ export const CaseStudies: React.FC = () => {
       clientLabel: 'Government Agency',
       industry: 'Government',
       title: 'Secured Record Analytics Portal & Automated Indexing Pipeline',
-      summary: 'Migrated massive legacy public records to a secure private cloud indexing architecture with auditable access controls.',
+      summary: 'Migrated legacy public records to a secure private cloud indexing architecture with auditable access controls.',
       challenge: 'Legacy database appliances caused slow record search query responses for administrative requests.',
       architecture: 'Hardened private cloud architecture deploying automated document indexing pipelines and encrypted query caching layers.',
       implementation: [
@@ -157,13 +157,13 @@ export const CaseStudies: React.FC = () => {
         'Phase 4: Access audit logging verification'
       ],
       technology: ['AWS GovCloud', 'Wazuh', 'Terraform', 'Python', 'PostgreSQL'],
-      businessImpact: 'Accelerated administrative record query speeds by 65% while ensuring auditable access tracking.',
+      businessImpact: 'Accelerated administrative record query speeds while ensuring auditable access tracking.',
       results: [
-        '65% faster record query response times',
+        'Significantly faster record query response times',
         'Fully auditable access tracking logs',
         'Zero security policy deviations during system audits'
       ],
-      kpis: ['Query Speed: +65%', 'Audit Readiness: 100%', 'Uptime: 99.99%'],
+      kpis: ['Rapid Record Access', 'Auditable Trail', 'High Availability'],
       testimonial: {
         quote: "The private cloud indexing portal drastically accelerated record retrieval while keeping access fully auditable.",
         role: "Senior Solutions Architect, Public Sector Practice"
@@ -248,6 +248,11 @@ export const CaseStudies: React.FC = () => {
         ))}
       </section>
 
+      {/* Technology Disclaimer Note */}
+      <div className="text-center text-[10px] text-slate-400 font-mono italic">
+        * Representative enterprise technologies commonly used in modern solutions.
+      </div>
+
       {/* Case Study Detailed Modal */}
       <Modal
         isOpen={selectedCase !== null}
@@ -312,13 +317,16 @@ export const CaseStudies: React.FC = () => {
 
               <div>
                 <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2 font-mono">Technology Stack</h4>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 mb-1">
                   {selectedCase.technology.map((t, idx) => (
                     <Badge key={idx} variant="outline" className="text-[9px]">
                       {t}
                     </Badge>
                   ))}
                 </div>
+                <span className="text-[9px] text-slate-400 italic block font-mono">
+                  * Representative enterprise technologies.
+                </span>
               </div>
 
               {/* Anonymized Practice Lead Quote */}

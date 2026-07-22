@@ -1,51 +1,109 @@
-HEAD
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
-
 # Devolatical Global Info-Tech & Analytics Pvt. Ltd.
 
-## Software Development Internship
+> Official Website, Client Portal & Admin Management System
 
-Welcome to my internship project repository.
+A modern full-stack web application developed for **Devolatical Global Info-Tech & Analytics Pvt. Ltd.** The platform provides a professional corporate website along with a secure client portal and an administrative dashboard for managing clients, projects, documents, support tickets, and business operations.
 
-### Repository Purpose
-This repository contains the source code, documentation, and project work completed during my Software Development Internship at Devolatical Global Info-Tech & Analytics Pvt. Ltd.
+---
 
-### Status
-- Repository Initialized
-- Awaiting Problem Statement
-- Development to begin from 25 June 2026
+## Project Overview
 
-### Author
-Vaishnavi Nehare
-70433cf6ead58bfc6b51a566552d6e052d1631b1
+This project is designed to streamline business operations by providing a centralized platform for:
+
+- Corporate Website
+- Client Portal
+- Admin Dashboard
+- Project Management
+- Client Management
+- Lead Management
+- Support Ticket System
+- Document Management
+- Secure Authentication & Authorization
+- Business Analytics Dashboard
+
+---
+
+## Technology Stack
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+
+### Backend
+
+- Node.js
+- Express.js
+- TypeScript
+- PostgreSQL
+- Prisma ORM
+
+### Security
+
+- JWT Authentication
+- Role-Based Access Control (RBAC)
+- Helmet
+- Express Rate Limiter
+- Cookie Parser
+- Zod Validation
+
+### Development Tools
+
+- ESLint
+- Prettier
+- Git & GitHub
+
+---
+
+## Project Structure
+
+```
+SIP/
+├── frontend/
+└── backend/
+```
+
+---
+
+## Current Status
+
+### ✅ Phase 1 — Backend Foundation (Completed)
+
+- Clean Architecture
+- Express Server
+- TypeScript Configuration
+- Prisma Integration
+- API Versioning
+- Global Error Handling
+- Environment Validation
+- Security Middleware
+- Health Check Endpoint
+- Feature-Based Module Structure
+- Linting & Formatting
+
+### 🚧 Upcoming Phases
+
+- Database Design
+- Authentication & Authorization
+- Client Management
+- Project Management
+- Lead Management
+- Support Ticket System
+- Document Management
+- Dashboard & Analytics
+- Deployment
+
+---
+
+## Repository
+
+This repository contains the complete source code for the Devolatical Global Info-Tech & Analytics Pvt. Ltd. web platform.
+
+---
+
+## License
+
+This repository is maintained for the development of the Devolatical Global Info-Tech & Analytics Pvt. Ltd. platform.

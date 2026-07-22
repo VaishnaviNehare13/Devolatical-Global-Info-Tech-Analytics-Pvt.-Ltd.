@@ -1,0 +1,2 @@
+# Place your feature modules in this directory (e.g., auth, users, analytics).
+# Organizing by modules enables high scalability and clean separation of concerns.

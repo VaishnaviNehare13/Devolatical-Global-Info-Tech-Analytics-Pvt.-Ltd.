@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { env } from './env';
+import { config } from './env';
 import { logger } from '../utils/logger';
 
 declare global {
@@ -13,7 +13,7 @@ export const prisma =
   global.prisma ||
   new PrismaClient({
     log:
-      env.NODE_ENV === 'development'
+      config.app.nodeEnv === 'development'
         ? [
             { emit: 'event', level: 'query' },
             { emit: 'stdout', level: 'error' },
@@ -23,12 +23,12 @@ export const prisma =
         : [{ emit: 'stdout', level: 'error' }],
   });
 
-if (env.NODE_ENV !== 'production') {
+if (config.app.nodeEnv !== 'production') {
   global.prisma = prisma;
 }
 
 // Hook to log prisma queries in development
-if (env.NODE_ENV === 'development') {
+if (config.app.nodeEnv === 'development') {
   (prisma as PrismaClient).$on(
     'query' as never,
     (e: { query: string; params: string; duration: number }) => {

@@ -1,5 +1,5 @@
 import { CorsOptions } from 'cors';
-import { env } from './env';
+import { config } from './env';
 
 /**
  * Configuration options for Cross-Origin Resource Sharing (CORS)
@@ -7,11 +7,11 @@ import { env } from './env';
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
     // In development mode, allow requests with no origin (e.g., Postman, curl, mobile apps)
-    if (!origin && env.NODE_ENV === 'development') {
+    if (!origin && config.app.nodeEnv === 'development') {
       return callback(null, true);
     }
 
-    const allowedOrigin = env.CORS_ORIGIN;
+    const allowedOrigin = config.cors.origin;
 
     // Check if origin matches the allowed CORS_ORIGIN or if wildcard is used
     if (allowedOrigin === '*' || !origin || origin === allowedOrigin) {

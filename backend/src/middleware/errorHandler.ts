@@ -3,7 +3,7 @@ import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../utils/appError';
 import { logger } from '../utils/logger';
-import { env } from '../config/env';
+import { config } from '../config';
 import { HttpStatus } from '../constants/httpStatus';
 import { Messages } from '../constants/messages';
 
@@ -80,7 +80,7 @@ export const errorHandler = (
   }
 
   // Include error stack trace only when in development mode for easier debugging
-  if (env.NODE_ENV === 'development') {
+  if (config.app.nodeEnv === 'development') {
     errorPayload.stack = err.stack;
   }
 

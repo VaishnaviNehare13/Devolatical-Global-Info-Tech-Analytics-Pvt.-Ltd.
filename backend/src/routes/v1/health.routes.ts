@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../../config/db';
-import { env } from '../../config/env';
+import { config } from '../../config';
 import { HttpStatus } from '../../constants/httpStatus';
 import { Messages } from '../../constants/messages';
 import { ApiResponse } from '../../utils/apiResponse';
@@ -20,7 +20,7 @@ healthRouter.get('/health', async (req: Request, res: Response) => {
   const payloadData = {
     status: 'UP',
     database: 'connected',
-    environment: env.NODE_ENV,
+    environment: config.app.nodeEnv,
     uptime: `${Math.floor(process.uptime())}s`,
     timestamp: new Date().toISOString(),
   };

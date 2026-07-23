@@ -1,3 +1,5 @@
+import { config } from '../config';
+
 /**
  * Lightweight application logging utility.
  * Formats console output with ISO timestamps and log levels.
@@ -24,7 +26,7 @@ export const logger = {
     console.error(`[ERROR] [${new Date().toISOString()}] ${message}`, ...meta);
   },
   debug: (message: string, ...meta: unknown[]): void => {
-    if (process.env.NODE_ENV === 'development') {
+    if (config.app.nodeEnv === 'development') {
       console.log(`[DEBUG] [${new Date().toISOString()}] ${message}`, ...meta);
     }
   },

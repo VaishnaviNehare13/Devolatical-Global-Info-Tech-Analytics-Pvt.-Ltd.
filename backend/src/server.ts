@@ -1,10 +1,10 @@
 import http from 'http';
 import app from './app';
-import { env } from './config/env';
+import { config } from './config';
 import { connectDB, prisma } from './config/db';
 import { logger } from './utils/logger';
 
-const port = env.PORT;
+const port = config.app.port;
 const server = http.createServer(app);
 
 /**
@@ -15,7 +15,7 @@ const startServer = async (): Promise<void> => {
   await connectDB();
 
   server.listen(port, () => {
-    logger.info(`🚀 Server running in [${env.NODE_ENV}] mode on port: ${port}`);
+    logger.info(`🚀 Server running in [${config.app.nodeEnv}] mode on port: ${port}`);
     logger.info(`🔗 Health check available at: http://localhost:${port}/api/v1/health`);
   });
 };

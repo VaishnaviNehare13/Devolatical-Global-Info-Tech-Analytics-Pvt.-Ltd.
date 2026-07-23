@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 
-import { env } from './config/env';
+import { config } from './config';
 import { corsOptions } from './config/cors';
 import { globalRateLimiter } from './middleware/rateLimiter';
 import { notFoundHandler } from './middleware/notFoundHandler';
@@ -28,7 +28,7 @@ app.use(compression());
 app.use(cors(corsOptions));
 
 // HTTP Request logging
-if (env.NODE_ENV === 'production') {
+if (config.app.nodeEnv === 'production') {
   app.use(morgan('combined'));
 } else {
   app.use(morgan('dev'));

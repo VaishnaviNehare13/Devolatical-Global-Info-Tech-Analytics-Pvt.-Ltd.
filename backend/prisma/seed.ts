@@ -1,48 +1,32 @@
 import { PrismaClient } from '@prisma/client';
+import { runSeeding } from './seed/index';
 
 const prisma = new PrismaClient();
 
 /**
- * Placeholder Database Seeder.
+ * Enterprise Database Seeding Entry Point.
  * 
- * In future phases, this seeder will populate the database with initial 
- * metadata and sample development data.
- * 
- * Seed Scope:
- * 1. Default Admin Account:
- *    - Setup a primary root admin user with secure hashed password (using bcrypt).
- *    - Enable immediate admin console login for testing.
- * 
- * 2. System Roles & Permissions:
- *    - Seed database level roles: ADMIN, CLIENT, EMPLOYEE, PROJECT_MANAGER.
- * 
- * 3. Sample Users:
- *    - Seed mock employee profiles and managers.
- *    - Link users to respective security roles.
- * 
- * 4. Sample Clients:
- *    - Seed dummy business client records.
- *    - Configure corporate domains and metadata.
- * 
- * 5. Sample Projects:
- *    - Seed demo projects linked to corporate clients.
- *    - Seed mock milestones and ticket lists to populate dashboard visualizations.
+ * Responsible for:
+ * 1. Initializing the shared PrismaClient instance.
+ * 2. Invoking the main seeding coordinator.
+ * 3. Ensuring clean database disconnection.
+ * 4. Capturing and logging execution errors.
  */
-async function main() {
-  console.log('🌱 Database seeder triggered (Placeholder).');
-  console.log('Seeding logic will be fully implemented in Phase 2 during database design.');
-  
-  // Example future implementation:
-  // await prisma.role.createMany({ ... });
-  // await prisma.user.create({ ... });
+async function main(): Promise<void> {
+  try {
+    await runSeeding(prisma);
+  } catch (error) {
+    console.error('❌ Database seeding failed:', error);
+    throw error;
+  }
 }
 
 main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async (e) => {
-    console.error('❌ Error occurred during database seeding:', e);
+  .catch(async (error) => {
+    console.error('❌ Critical error in seeder execution:', error);
     await prisma.$disconnect();
     process.exit(1);
   });

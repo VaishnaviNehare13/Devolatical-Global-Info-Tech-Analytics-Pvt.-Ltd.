@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,10 +7,379 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Placeholder model to allow Prisma Client generation in Phase 1.
-// This will be replaced with real models in Phase 2.
-model SystemCheck {
-  id        String   @id @default(uuid())
-  checkedAt DateTime @default(now())
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
 }
 
+enum RoleType {
+  SYSTEM
+  CUSTOM
+}
+
+enum SessionStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum Module {
+  IDENTITY
+  CRM
+  PROJECT
+  SUPPORT
+  FINANCE
+  CAREER
+  CMS
+  ANALYTICS
+  NOTIFICATION
+  SYSTEM
+}
+
+enum DeviceType {
+  DESKTOP
+  LAPTOP
+  MOBILE
+  TABLET
+  SMART_TV
+  UNKNOWN
+}
+
+enum Language {
+  ENGLISH
+  HINDI
+  MARATHI
+}
+
+enum TimeFormat {
+  H12
+  H24
+}
+
+enum Resource {
+  USER
+  ROLE
+  PERMISSION
+  PROJECT
+  TASK
+  CLIENT
+  EMPLOYEE
+  JOB
+  APPLICATION
+  REPORT
+  INVOICE
+  PAYMENT
+  DASHBOARD
+}
+
+enum Action {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  APPROVE
+  ASSIGN
+  EXPORT
+  IMPORT
+  DOWNLOAD
+  PUBLISH
+}
+
+model User {
+  id String @id @default(uuid())
+
+  // Personal Information
+  firstName   String
+  middleName  String?
+  lastName    String
+  displayName String
+
+  // Contact Information
+  email String  @unique
+  phone String? @unique
+
+  // Profile
+  avatarUrl String?
+
+  // Verification
+  emailVerified Boolean @default(false)
+  phoneVerified Boolean @default(false)
+
+  // Status
+  status UserStatus @default(ACTIVE)
+
+  // Audit Fields
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relationships
+  credentials Credential?
+  preference  UserPreference?
+
+  sessions UserSession[]
+
+  assignedRoles UserRole[] @relation("UserAssignedRoles")
+
+  rolesAssigned UserRole[] @relation("RoleAssignedBy")
+
+  @@index([status])
+  @@map("users")
+}
+
+model Credential {
+  id String @id @default(uuid())
+
+  // Foreign Key
+  userId String @unique
+
+  // Authentication
+  passwordHash String
+
+  // Password Management
+  mustChangePassword Boolean   @default(false)
+  passwordChangedAt  DateTime?
+
+  // Login Tracking
+  lastLoginAt         DateTime?
+  failedLoginAttempts Int       @default(0)
+  lockUntil           DateTime?
+
+  // Password Reset
+  passwordResetToken     String?   @unique
+  passwordResetExpiresAt DateTime?
+
+  // Audit Fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([lockUntil])
+  @@map("credentials")
+}
+
+model UserPreference {
+  id String @id @default(uuid())
+
+  // Foreign Key
+  userId String @unique
+
+  // Appearance
+  theme Theme @default(SYSTEM)
+
+  // Localization
+  language   Language   @default(ENGLISH)
+  timezone   String     @default("Asia/Kolkata")
+  dateFormat String     @default("DD/MM/YYYY")
+  timeFormat TimeFormat @default(H24)
+
+  // Notification Preferences
+  emailNotifications Boolean @default(true)
+  smsNotifications   Boolean @default(false)
+  pushNotifications  Boolean @default(true)
+
+  // Account Preferences
+  profileVisibility Boolean @default(true)
+  twoFactorEnabled  Boolean @default(false)
+
+  // Audit Fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+model Role {
+  id String @id @default(uuid())
+
+  // Basic Information
+  name        String  @unique
+  code        String  @unique
+  description String?
+
+  // Role Configuration
+  type     RoleType @default(CUSTOM)
+  priority Int      @default(0)
+
+  isActive  Boolean @default(true)
+  isDefault Boolean @default(false)
+  isSystem  Boolean @default(false)
+
+  // Audit Fields
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relationships
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@index([type])
+  @@index([priority])
+  @@index([isActive])
+  @@index([isDefault])
+  @@map("roles")
+}
+
+model Permission {
+  id String @id @default(uuid())
+
+  // Basic Information
+  name        String  @unique
+  code        String  @unique
+  description String?
+
+  // Permission Classification
+  module   Module
+  resource Resource
+  action   Action
+
+  // Configuration
+  isActive     Boolean @default(true)
+  isSystem     Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Audit Fields
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relationships
+  rolePermissions RolePermission[]
+
+  // Prevent duplicate permissions within the same module
+  @@unique([module, resource, action])
+  // Indexes
+  @@index([module])
+  @@index([resource])
+  @@index([action])
+  @@index([isActive])
+  @@index([displayOrder])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id String @id @default(uuid())
+
+  // Foreign Keys
+  roleId       String
+  permissionId String
+
+  // Configuration
+  isGranted Boolean @default(true)
+
+  // Audit Fields
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relationships
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@index([isGranted])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  id String @id @default(uuid())
+
+  // Foreign Keys
+  userId String
+  roleId String
+
+  // Assignment Information
+  assignedById String?
+  assignedAt   DateTime @default(now())
+
+  // Validity
+  effectiveFrom DateTime  @default(now())
+  expiresAt     DateTime?
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Audit Fields
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relationships
+  user User @relation("UserAssignedRoles", fields: [userId], references: [id], onDelete: Cascade)
+
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  assignedBy User? @relation("RoleAssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@index([assignedById])
+  @@index([isActive])
+  @@index([effectiveFrom])
+  @@index([expiresAt])
+  @@map("user_roles")
+}
+
+model UserSession {
+  id String @id @default(uuid())
+
+  // Foreign Key
+  userId String
+
+  // Authentication
+  refreshTokenHash String @unique
+
+  // Device Information
+  deviceName      String?
+  deviceType      DeviceType?
+  browser         String?
+  operatingSystem String?
+
+  // Network Information
+  ipAddress String? @db.VarChar(45)
+  userAgent String?
+
+  // Location Information
+  country String?
+  city    String?
+
+  // Session Status
+  status SessionStatus @default(ACTIVE)
+
+  // Session Timeline
+  lastActivityAt DateTime  @default(now())
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  logoutAt       DateTime?
+
+  // Audit Fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([lastActivityAt])
+  @@map("user_sessions")
+}

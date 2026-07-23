@@ -22,6 +22,9 @@ const rawConfig = {
     refreshSecret: parsedEnv.JWT_REFRESH_SECRET,
     accessExpiresIn: parsedEnv.JWT_ACCESS_EXPIRES_IN,
     refreshExpiresIn: parsedEnv.JWT_REFRESH_EXPIRES_IN,
+    issuer: parsedEnv.JWT_ISSUER,
+    audience: parsedEnv.JWT_AUDIENCE,
+    algorithm: parsedEnv.JWT_ALGORITHM,
   },
   security: {
     bcryptSaltRounds: parsedEnv.BCRYPT_SALT_ROUNDS,

@@ -21,6 +21,9 @@ export const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(16, 'must be at least 16 characters long'),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
+  JWT_ISSUER: z.string().min(1, 'is required'),
+  JWT_AUDIENCE: z.string().min(1, 'is required'),
+  JWT_ALGORITHM: z.enum(['HS256']).default('HS256'),
 
   // Security
   BCRYPT_SALT_ROUNDS: z.coerce.number().default(12),

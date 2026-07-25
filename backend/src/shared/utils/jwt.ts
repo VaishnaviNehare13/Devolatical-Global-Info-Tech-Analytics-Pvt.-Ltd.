@@ -10,20 +10,18 @@ import { signToken, verifyToken, decodeToken as decodeTokenHelper } from './jwt.
 
 /**
  * Public JWT Infrastructure API
- * 
+ *
  * Provides unified, domain-specific utilities for generating and validating
  * identity tokens. Delegates low-level cryptography to jwt.helpers.ts.
  */
 
 /**
  * Generates an Access Token for identity verification.
- * 
+ *
  * @param payload Identity claims (sub, email)
  * @returns Signed JWT access token
  */
-export function generateAccessToken(
-  payload: Omit<AccessTokenPayload, 'type'>
-): string {
+export function generateAccessToken(payload: Omit<AccessTokenPayload, 'type'>): string {
   const claims = {
     ...payload,
     type: JWT_CONSTANTS.TOKEN_TYPES.ACCESS,
@@ -39,13 +37,11 @@ export function generateAccessToken(
 
 /**
  * Generates a Refresh Token for session management.
- * 
+ *
  * @param payload Identity claims (sub, email)
  * @returns Signed JWT refresh token
  */
-export function generateRefreshToken(
-  payload: Omit<RefreshTokenPayload, 'type'>
-): string {
+export function generateRefreshToken(payload: Omit<RefreshTokenPayload, 'type'>): string {
   const claims = {
     ...payload,
     type: JWT_CONSTANTS.TOKEN_TYPES.REFRESH,
@@ -62,7 +58,7 @@ export function generateRefreshToken(
 /**
  * Verifies and decodes an Access Token.
  * Enforces token classification safety (prevents refresh tokens from acting as access tokens).
- * 
+ *
  * @param token JWT token string
  * @returns Type-safe verification result
  */
@@ -86,7 +82,7 @@ export function verifyAccessToken(token: string): JwtVerifyResult<AccessTokenPay
 /**
  * Verifies and decodes a Refresh Token.
  * Enforces token classification safety (prevents access tokens from acting as refresh tokens).
- * 
+ *
  * @param token JWT token string
  * @returns Type-safe verification result
  */
@@ -109,7 +105,7 @@ export function verifyRefreshToken(token: string): JwtVerifyResult<RefreshTokenP
 
 /**
  * Decodes a token payload without verifying its signature.
- * 
+ *
  * @param token JWT token string
  * @returns Decoded payload claims structure or null
  */

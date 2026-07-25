@@ -19,7 +19,7 @@ export interface JwtConfig {
 
 /**
  * Enterprise JWT Configuration Domain
- * 
+ *
  * Maps configurations specifically for JWT token generation and verification.
  * Enforces deep runtime immutability.
  */

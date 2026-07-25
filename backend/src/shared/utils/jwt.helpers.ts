@@ -1,9 +1,15 @@
-import jwt, { SignOptions, VerifyOptions, TokenExpiredError, JsonWebTokenError, NotBeforeError } from 'jsonwebtoken';
+import jwt, {
+  SignOptions,
+  VerifyOptions,
+  TokenExpiredError,
+  JsonWebTokenError,
+  NotBeforeError,
+} from 'jsonwebtoken';
 import { JwtVerifyResult, JwtErrorCode } from '../types/jwt.types';
 
 /**
  * Generically signs a payload to generate a JWT.
- * 
+ *
  * @param payload Immutable data structure containing claims
  * @param secret Secret key for signing
  * @param options Expiration, issuer, audience, and algorithm options
@@ -20,7 +26,7 @@ export function signToken<T extends object>(
 /**
  * Validates a JWT and extracts its payload.
  * Maps library-specific errors to strongly-typed system error codes.
- * 
+ *
  * @param token JWT string to verify
  * @param secret Secret key used during signing
  * @param options Issuer, audience, and algorithm options
@@ -33,7 +39,7 @@ export function verifyToken<T extends object>(
 ): JwtVerifyResult<T> {
   try {
     const decoded = jwt.verify(token, secret, options);
-    
+
     if (!decoded || typeof decoded !== 'object') {
       return {
         success: false,
@@ -71,7 +77,7 @@ export function verifyToken<T extends object>(
 
 /**
  * Decodes a token's payload without verifying its signature.
- * 
+ *
  * @param token JWT string to decode
  * @returns Decoded payload claims structure or null
  */

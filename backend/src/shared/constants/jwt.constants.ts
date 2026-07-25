@@ -1,6 +1,6 @@
 /**
  * Reusable JWT System Constants
- * 
+ *
  * Centralizes all magic strings associated with JWT tokens, HTTP cookies,
  * and authorization headers to avoid duplication.
  */

@@ -3,7 +3,7 @@ import { deepFreeze } from '../shared/utils/deep-freeze';
 
 /**
  * Enterprise Application Configuration
- * 
+ *
  * Aggregates validated environment variables into logically organized,
  * strongly-typed, and deeply immutable configuration domains.
  */
@@ -45,4 +45,3 @@ const rawConfig = {
 export const config = deepFreeze(rawConfig);
 
 export type ConfigType = typeof config;
-

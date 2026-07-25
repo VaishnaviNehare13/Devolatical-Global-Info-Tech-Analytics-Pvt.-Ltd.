@@ -45,7 +45,7 @@ if (!result.success) {
 
   result.error.issues.forEach((issue) => {
     const fieldName = issue.path.join('.');
-    
+
     // Check if the variable is missing (undefined received)
     if (
       (issue.code === 'invalid_type' && issue.received === 'undefined') ||
@@ -59,7 +59,7 @@ if (!result.success) {
 
   console.error('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.error('Environment Configuration Error');
-  
+
   if (missing.length > 0) {
     console.error('\nMissing Variables');
     missing.forEach((field) => console.error(`✗ ${field}`));

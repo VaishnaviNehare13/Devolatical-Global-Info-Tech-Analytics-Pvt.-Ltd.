@@ -2,3 +2,4 @@ export { LoginSchema, LoginDto } from './login.dto';
 export { RefreshTokenSchema, RefreshTokenDto } from './refresh-token.dto';
 export { ForgotPasswordSchema, ForgotPasswordDto } from './forgot-password.dto';
 export { ResetPasswordSchema, ResetPasswordDto } from './reset-password.dto';
+export { ChangePasswordSchema, ChangePasswordDto } from './change-password.dto';

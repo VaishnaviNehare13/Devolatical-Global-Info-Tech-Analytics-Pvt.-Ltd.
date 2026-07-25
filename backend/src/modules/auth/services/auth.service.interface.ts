@@ -43,4 +43,13 @@ export interface IAuthService {
    * @param newPassword Plain text user password
    */
   resetPassword(resetToken: string, newPassword: string): Promise<void>;
+
+  /**
+   * Updates credentials password for authenticated sessions.
+   *
+   * @param userId The unique user identifier
+   * @param currentPassword Current plain text password
+   * @param newPassword The new plain text password
+   */
+  changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
 }

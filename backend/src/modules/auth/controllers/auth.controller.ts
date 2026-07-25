@@ -4,6 +4,7 @@ import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 import { HttpStatus } from '../../../constants/httpStatus';
 
 /**
@@ -100,6 +101,29 @@ export class AuthController {
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'Password has been reset successfully.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Controller handler for updating user passwords during active sessions.
+   */
+  public changePassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      // req.user is guaranteed to be populated by the upstream authMiddleware
+      const userId = req.user!.id;
+      const dto: ChangePasswordDto = req.body;
+      await this.authService.changePassword(userId, dto.currentPassword, dto.newPassword);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Password has been changed successfully.',
       });
     } catch (error) {
       next(error);

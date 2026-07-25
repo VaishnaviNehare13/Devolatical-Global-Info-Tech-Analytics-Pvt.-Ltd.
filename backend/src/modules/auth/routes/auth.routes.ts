@@ -4,6 +4,7 @@ import { LoginSchema } from '../dto/login.dto';
 import { RefreshTokenSchema } from '../dto/refresh-token.dto';
 import { ForgotPasswordSchema } from '../dto/forgot-password.dto';
 import { ResetPasswordSchema } from '../dto/reset-password.dto';
+import { ChangePasswordSchema } from '../dto/change-password.dto';
 
 /**
  * Authentication Controller Contract for Router Injection.
@@ -14,11 +15,12 @@ export interface IAuthController {
   logout(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   forgotPassword(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   resetPassword(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  changePassword(req: Request, res: Response, next: NextFunction): void | Promise<void>;
 }
 
 /**
  * Configures and returns the Authentication Router.
- * Protects logout using the injected authMiddleware handler.
+ * Protects logout and change-password using the injected authMiddleware handler.
  *
  * @param authController The controller delegate
  * @param authMiddleware RequestHandler enforcing JWT Access Token validation
@@ -45,8 +47,13 @@ export function createAuthRouter(
   // POST /reset-password - Reset password using recovery token
   router.post('/reset-password', validate(ResetPasswordSchema), authController.resetPassword);
 
-  // Future Authentication Placeholders (Not Implemented)
-  // router.post('/change-password', authController.changePassword);
+  // POST /change-password - Change password during active session (requires token authentication)
+  router.post(
+    '/change-password',
+    authMiddleware,
+    validate(ChangePasswordSchema),
+    authController.changePassword
+  );
 
   return router;
 }

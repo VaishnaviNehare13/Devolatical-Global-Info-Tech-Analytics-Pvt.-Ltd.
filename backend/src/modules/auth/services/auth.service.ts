@@ -186,6 +186,77 @@ export class AuthService implements IAuthService {
   }
 
   /**
+   * Updates credentials password for authenticated sessions.
+   *
+   * @param userId The unique user identifier
+   * @param currentPassword Current plain text password
+   * @param newPassword The new plain text password
+   * @throws {AuthenticationError} For password mismatch, account lookup, or validation failures
+   */
+  public async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<void> {
+    let user = null;
+    try {
+      user = await this.authRepository.findUserCredentialsById(userId);
+    } catch (error) {
+      throw new AuthenticationError(
+        'INVALID_CREDENTIALS',
+        'Password change failed during account query.',
+        error
+      );
+    }
+
+    if (!user) {
+      throw new AuthenticationError(
+        'ACCOUNT_NOT_FOUND',
+        'Password change failed. Account not found.'
+      );
+    }
+
+    this.ensureAccountIsActive(user.status);
+
+    try {
+      const isPasswordMatch = await comparePassword(currentPassword, user.passwordHash);
+      if (!isPasswordMatch) {
+        throw new AuthenticationError(
+          'INVALID_PASSWORD',
+          'Password change failed. Invalid current password.'
+        );
+      }
+    } catch (error) {
+      if (error instanceof AuthenticationError) {
+        throw error;
+      }
+      throw new AuthenticationError(
+        'INVALID_CREDENTIALS',
+        'Password change failed during credentials validation.',
+        error
+      );
+    }
+
+    if (currentPassword === newPassword) {
+      throw new AuthenticationError(
+        'INVALID_PASSWORD',
+        'Password change failed. New password cannot be the same as current password.'
+      );
+    }
+
+    try {
+      const passwordHash = await createPasswordHash(newPassword);
+      await this.authRepository.updatePassword(user.id, passwordHash);
+    } catch (error) {
+      throw new AuthenticationError(
+        'INVALID_CREDENTIALS',
+        'Password change failed during credentials update.',
+        error
+      );
+    }
+  }
+
+  /**
    * Decodes and asserts validity of reset token claims.
    */
   private validateResetTokenClaims(token: string) {

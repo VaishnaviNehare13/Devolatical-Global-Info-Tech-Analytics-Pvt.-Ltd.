@@ -51,6 +51,44 @@ export class AuthRepository implements IAuthRepository {
   }
 
   /**
+   * Retrieves user credentials and roles for authentication by ID.
+   *
+   * @param id User identifier
+   * @returns User auth details or null if not found
+   * @throws {RepositoryError} If database read fails
+   */
+  public async findUserCredentialsById(id: string): Promise<AuthenticatedUser | null> {
+    try {
+      const result = await prisma.user.findUnique({
+        where: { id },
+        select: AUTH_USER_SELECT,
+      });
+
+      if (!result) {
+        return null;
+      }
+
+      return {
+        id: result.id,
+        email: result.email,
+        status: result.status,
+        passwordHash: result.credentials?.passwordHash || '',
+        lastLoginAt: result.credentials?.lastLoginAt || null,
+        roles: result.assignedRoles.map((userRole) => ({
+          id: userRole.role.id,
+          name: userRole.role.name,
+        })),
+      };
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_READ_FAILED',
+        'Database query failed while retrieving user credentials by ID.',
+        error
+      );
+    }
+  }
+
+  /**
    * Retrieves basic identity information of an authenticated user by ID.
    * Uses centralized select definitions to retrieve identification fields.
    *

@@ -22,6 +22,14 @@ export interface IAuthRepository {
   findUserById(id: string): Promise<UserIdentity | null>;
 
   /**
+   * Retrieves user credentials and roles for authentication by ID.
+   *
+   * @param id The user identifier
+   * @returns User auth details or null if not found
+   */
+  findUserCredentialsById(id: string): Promise<AuthenticatedUser | null>;
+
+  /**
    * Updates only the lastLoginAt timestamp of user credentials.
    *
    * @param userId User identifier

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IAuthService } from '../services/auth.service.interface';
 import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 import { HttpStatus } from '../../../constants/httpStatus';
 
 /**
@@ -59,6 +60,28 @@ export class AuthController {
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'Logout successful.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Controller handler for initiating user password recovery procedures.
+   */
+  public forgotPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const dto: ForgotPasswordDto = req.body;
+      await this.authService.forgotPassword(dto.email);
+
+      // Generic response to prevent user enumeration security flaws
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'If the email exists, a password reset link has been sent.',
       });
     } catch (error) {
       next(error);

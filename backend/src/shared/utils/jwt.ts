@@ -112,3 +112,46 @@ export function verifyRefreshToken(token: string): JwtVerifyResult<RefreshTokenP
 export function decodeToken(token: string): BaseJwtPayload | null {
   return decodeTokenHelper<BaseJwtPayload>(token);
 }
+
+/**
+ * Generates a Password Reset Token.
+ *
+ * @param payload Identity claims (sub, email)
+ * @returns Signed JWT reset token
+ */
+export function generatePasswordResetToken(payload: Omit<BaseJwtPayload, 'type'>): string {
+  const claims = {
+    ...payload,
+    type: JWT_CONSTANTS.TOKEN_TYPES.RESET,
+  };
+
+  return signToken(claims, jwtConfig.access.secret, {
+    expiresIn: '15m', // Password resets are short-lived
+    issuer: jwtConfig.issuer,
+    audience: jwtConfig.audience,
+    algorithm: jwtConfig.algorithm,
+  });
+}
+
+/**
+ * Verifies and decodes a Password Reset Token.
+ *
+ * @param token JWT reset token
+ * @returns Type-safe verification result
+ */
+export function verifyPasswordResetToken(token: string): JwtVerifyResult<BaseJwtPayload> {
+  const result = verifyToken<BaseJwtPayload>(token, jwtConfig.access.secret, {
+    issuer: jwtConfig.issuer,
+    audience: jwtConfig.audience,
+    algorithms: [jwtConfig.algorithm],
+  });
+
+  if (result.success && result.payload.type !== JWT_CONSTANTS.TOKEN_TYPES.RESET) {
+    return {
+      success: false,
+      error: 'INVALID',
+    };
+  }
+
+  return result;
+}

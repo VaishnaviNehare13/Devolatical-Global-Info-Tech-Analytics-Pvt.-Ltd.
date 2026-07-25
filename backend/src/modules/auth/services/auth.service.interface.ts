@@ -27,4 +27,12 @@ export interface IAuthService {
    * @param userId The unique user identifier
    */
   logout(userId: string): Promise<void>;
+
+  /**
+   * Initiates password recovery process.
+   * Generates reset token and dispatches recovery email.
+   *
+   * @param email Plain text user email address
+   */
+  forgotPassword(email: string): Promise<void>;
 }

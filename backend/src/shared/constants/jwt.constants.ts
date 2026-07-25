@@ -8,6 +8,7 @@ export const JWT_CONSTANTS = Object.freeze({
   TOKEN_TYPES: {
     ACCESS: 'ACCESS',
     REFRESH: 'REFRESH',
+    RESET: 'RESET',
   } as const,
   HEADER: {
     PREFIX: 'Bearer ' as const,

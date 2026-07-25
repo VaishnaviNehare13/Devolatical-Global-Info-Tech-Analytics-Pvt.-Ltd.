@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction, RequestHandler } from 'express
 import { validate } from '../../../middleware';
 import { LoginSchema } from '../dto/login.dto';
 import { RefreshTokenSchema } from '../dto/refresh-token.dto';
+import { ForgotPasswordSchema } from '../dto/forgot-password.dto';
 
 /**
  * Authentication Controller Contract for Router Injection.
@@ -10,6 +11,7 @@ export interface IAuthController {
   login(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   refreshToken(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   logout(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  forgotPassword(req: Request, res: Response, next: NextFunction): void | Promise<void>;
 }
 
 /**
@@ -35,8 +37,10 @@ export function createAuthRouter(
   // POST /logout - Session termination (requires token authentication)
   router.post('/logout', authMiddleware, authController.logout);
 
+  // POST /forgot-password - Initiate password recovery procedures
+  router.post('/forgot-password', validate(ForgotPasswordSchema), authController.forgotPassword);
+
   // Future Authentication Placeholders (Not Implemented)
-  // router.post('/forgot-password', authController.forgotPassword);
   // router.post('/reset-password', authController.resetPassword);
   // router.post('/change-password', authController.changePassword);
 

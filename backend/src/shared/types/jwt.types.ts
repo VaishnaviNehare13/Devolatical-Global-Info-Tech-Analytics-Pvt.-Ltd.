@@ -7,7 +7,7 @@ import type { StringValue } from 'ms';
  * error handling, and token verification outputs.
  */
 
-export type TokenType = 'ACCESS' | 'REFRESH';
+export type TokenType = 'ACCESS' | 'REFRESH' | 'RESET';
 
 export type JwtExpiresIn = StringValue | number;
 

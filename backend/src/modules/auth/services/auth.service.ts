@@ -8,8 +8,10 @@ import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
+  generatePasswordResetToken,
 } from '../../../shared/utils/jwt';
 import { AuthMapper } from '../mappers/auth.mapper';
+import { sendPasswordResetEmail } from '../../../shared/utils/email';
 
 /**
  * Concrete Authentication Business Service implementing IAuthService.
@@ -82,9 +84,6 @@ export class AuthService implements IAuthService {
    * @throws {AuthenticationError} For business validation or query failures
    */
   public async logout(userId: string): Promise<void> {
-    // Current stateless JWT implementation is a no-op placeholder.
-    // This design allows future token revocation stores (e.g. database, redis lists)
-    // to be integrated seamlessly without breaking public interface consumers.
     try {
       const userExists = await this.authRepository.findUserById(userId);
       if (!userExists) {
@@ -100,6 +99,44 @@ export class AuthService implements IAuthService {
       throw new AuthenticationError(
         'INVALID_CREDENTIALS',
         'Session termination failed during account validation.',
+        error
+      );
+    }
+  }
+
+  /**
+   * Initiates password recovery process.
+   * Generates reset token and dispatches recovery email.
+   * Employs generic success responses to mitigate user enumeration vectors.
+   *
+   * @param email The target email address requesting recovery
+   */
+  public async forgotPassword(email: string): Promise<void> {
+    try {
+      // 1. Look up user by email
+      const user = await this.authRepository.findUserByEmail(email);
+
+      // 2. Mitigate enumeration: return immediately on mismatch
+      if (!user) {
+        return;
+      }
+
+      // 3. Mitigate enumeration: return immediately if account is inactive/suspended
+      if (user.status !== 'ACTIVE') {
+        return;
+      }
+
+      // 4. Generate a password reset token
+      const token = generatePasswordResetToken({ sub: user.id, email: user.email });
+
+      // 5. Send password reset email
+      await sendPasswordResetEmail(user.email, token);
+    } catch (error) {
+      // For any internal operational errors (like SMTP failures), bubble up as standard errors.
+      // Do not expose details of the lookup failure to avoid enumeration.
+      throw new AuthenticationError(
+        'INVALID_CREDENTIALS',
+        'An error occurred while processing the forgot password request.',
         error
       );
     }

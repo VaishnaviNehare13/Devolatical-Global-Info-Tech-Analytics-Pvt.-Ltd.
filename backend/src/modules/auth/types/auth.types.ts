@@ -1,4 +1,5 @@
 import { UserStatus } from '@prisma/client';
+export { UserStatus };
 
 /**
  * Reusable User Role Contract for Authentication (Readonly)

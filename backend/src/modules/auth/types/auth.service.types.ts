@@ -7,6 +7,7 @@ export interface AuthUser {
   readonly id: string;
   readonly email: string;
   readonly status: UserStatus;
+  readonly roles: readonly string[];
 }
 
 /**

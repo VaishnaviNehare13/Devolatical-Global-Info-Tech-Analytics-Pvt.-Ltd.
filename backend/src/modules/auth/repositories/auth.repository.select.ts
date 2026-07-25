@@ -35,4 +35,17 @@ export const USER_IDENTITY_SELECT = {
   firstName: true,
   lastName: true,
   displayName: true,
+  assignedRoles: {
+    where: {
+      isActive: true,
+    },
+    select: {
+      role: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  },
 } as const;

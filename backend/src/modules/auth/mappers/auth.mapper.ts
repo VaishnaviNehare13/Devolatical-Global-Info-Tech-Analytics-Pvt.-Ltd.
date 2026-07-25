@@ -18,6 +18,7 @@ export class AuthMapper {
       id: user.id,
       email: user.email,
       status: user.status,
+      roles: user.roles.map((r) => r.name),
     };
   }
 

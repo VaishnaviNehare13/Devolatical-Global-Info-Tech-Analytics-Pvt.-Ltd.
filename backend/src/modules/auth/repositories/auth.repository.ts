@@ -69,7 +69,18 @@ export class AuthRepository implements IAuthRepository {
         return null;
       }
 
-      return result;
+      return {
+        id: result.id,
+        email: result.email,
+        status: result.status,
+        firstName: result.firstName,
+        lastName: result.lastName,
+        displayName: result.displayName,
+        roles: result.assignedRoles.map((ur) => ({
+          id: ur.role.id,
+          name: ur.role.name,
+        })),
+      };
     } catch (error) {
       throw new RepositoryError(
         'DATABASE_READ_FAILED',

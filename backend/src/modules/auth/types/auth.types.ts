@@ -31,4 +31,5 @@ export interface UserIdentity {
   readonly firstName: string;
   readonly lastName: string;
   readonly displayName: string;
+  readonly roles: readonly UserRole[];
 }

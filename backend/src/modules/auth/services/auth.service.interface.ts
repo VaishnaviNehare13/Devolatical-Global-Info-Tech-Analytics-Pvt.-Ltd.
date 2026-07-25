@@ -35,4 +35,12 @@ export interface IAuthService {
    * @param email Plain text user email address
    */
   forgotPassword(email: string): Promise<void>;
+
+  /**
+   * Executes password resets using short-lived recovery tokens.
+   *
+   * @param resetToken Signed JWT reset token
+   * @param newPassword Plain text user password
+   */
+  resetPassword(resetToken: string, newPassword: string): Promise<void>;
 }

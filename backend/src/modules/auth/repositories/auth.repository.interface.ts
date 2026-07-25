@@ -28,4 +28,13 @@ export interface IAuthRepository {
    * @returns Resolves when updated successfully
    */
   updateLastLogin(userId: string): Promise<void>;
+
+  /**
+   * Updates the password hash of a user.
+   *
+   * @param userId User identifier
+   * @param passwordHash The new hashed password
+   * @returns Resolves when updated successfully
+   */
+  updatePassword(userId: string, passwordHash: string): Promise<void>;
 }

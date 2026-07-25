@@ -3,12 +3,13 @@ import { IAuthService } from './auth.service.interface';
 import { LoginResult } from '../types/auth.service.types';
 import { AuthenticatedUser, UserStatus } from '../types/auth.types';
 import { AuthenticationError } from '../types/auth.service.errors';
-import { comparePassword } from '../../../shared/utils/password';
+import { comparePassword, createPasswordHash } from '../../../shared/utils/password';
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
   generatePasswordResetToken,
+  verifyPasswordResetToken,
 } from '../../../shared/utils/jwt';
 import { AuthMapper } from '../mappers/auth.mapper';
 import { sendPasswordResetEmail } from '../../../shared/utils/email';
@@ -140,6 +141,67 @@ export class AuthService implements IAuthService {
         error
       );
     }
+  }
+
+  /**
+   * Executes password resets using short-lived recovery tokens.
+   *
+   * @param resetToken Signed JWT reset token
+   * @param newPassword Plain text user password
+   * @throws {AuthenticationError} For token validation or account state failures
+   */
+  public async resetPassword(resetToken: string, newPassword: string): Promise<void> {
+    const payload = this.validateResetTokenClaims(resetToken);
+
+    let user = null;
+    try {
+      user = await this.authRepository.findUserById(payload.sub);
+    } catch (error) {
+      throw new AuthenticationError(
+        'INVALID_CREDENTIALS',
+        'Password reset failed during account query.',
+        error
+      );
+    }
+
+    if (!user) {
+      throw new AuthenticationError(
+        'ACCOUNT_NOT_FOUND',
+        'Password reset failed. Account not found.'
+      );
+    }
+
+    this.ensureAccountIsActive(user.status);
+
+    try {
+      const passwordHash = await createPasswordHash(newPassword);
+      await this.authRepository.updatePassword(user.id, passwordHash);
+    } catch (error) {
+      throw new AuthenticationError(
+        'INVALID_CREDENTIALS',
+        'Password reset failed during credentials update.',
+        error
+      );
+    }
+  }
+
+  /**
+   * Decodes and asserts validity of reset token claims.
+   */
+  private validateResetTokenClaims(token: string) {
+    const result = verifyPasswordResetToken(token);
+
+    if (!result.success) {
+      let message = 'Invalid reset token.';
+      if (result.error === 'EXPIRED') {
+        message = 'Reset token has expired.';
+      } else if (result.error === 'MALFORMED') {
+        message = 'Reset token is malformed.';
+      }
+      throw new AuthenticationError('INVALID_CREDENTIALS', message);
+    }
+
+    return result.payload;
   }
 
   /**

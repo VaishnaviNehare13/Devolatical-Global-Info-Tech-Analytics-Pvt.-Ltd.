@@ -3,6 +3,7 @@ import { IAuthService } from '../services/auth.service.interface';
 import { LoginDto } from '../dto/login.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { ForgotPasswordDto } from '../dto/forgot-password.dto';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { HttpStatus } from '../../../constants/httpStatus';
 
 /**
@@ -82,6 +83,23 @@ export class AuthController {
       res.status(HttpStatus.OK).json({
         success: true,
         message: 'If the email exists, a password reset link has been sent.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Controller handler for executing password resets via validation tokens.
+   */
+  public resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const dto: ResetPasswordDto = req.body;
+      await this.authService.resetPassword(dto.resetToken, dto.newPassword);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Password has been reset successfully.',
       });
     } catch (error) {
       next(error);

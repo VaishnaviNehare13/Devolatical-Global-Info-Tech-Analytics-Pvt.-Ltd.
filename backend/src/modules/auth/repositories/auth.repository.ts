@@ -113,4 +113,29 @@ export class AuthRepository implements IAuthRepository {
       );
     }
   }
+
+  /**
+   * Updates the password hash of a user.
+   *
+   * @param userId User identifier
+   * @param passwordHash The new hashed password
+   * @throws {RepositoryError} If database update fails
+   */
+  public async updatePassword(userId: string, passwordHash: string): Promise<void> {
+    try {
+      await prisma.credential.update({
+        where: { userId },
+        data: {
+          passwordHash,
+        },
+        select: { id: true },
+      });
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_UPDATE_FAILED',
+        'Database write failed while updating user password hash.',
+        error
+      );
+    }
+  }
 }

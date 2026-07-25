@@ -5,11 +5,19 @@ import { LoginResult } from '../types/auth.service.types';
  */
 export interface IAuthService {
   /**
-   * Executes the authentication login flow.
+   * Executes the credentials login flow.
    *
-   * @param email The user plain text email
-   * @param password The user plain text password
+   * @param email Plain text user email
+   * @param password Plain text user password
    * @returns Strongly typed login result with token pair and identity
    */
   login(email: string, password: string): Promise<LoginResult>;
+
+  /**
+   * Executes token refresh and rotation flow.
+   *
+   * @param token Refresh token string
+   * @returns Strongly typed login result with rotated token pair and identity
+   */
+  refreshToken(token: string): Promise<LoginResult>;
 }

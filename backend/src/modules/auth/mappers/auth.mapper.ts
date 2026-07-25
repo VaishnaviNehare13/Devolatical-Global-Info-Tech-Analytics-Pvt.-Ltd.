@@ -1,19 +1,30 @@
-import { AuthenticatedUser } from '../types/auth.types';
+import { UserStatus } from '@prisma/client';
+import { UserRole } from '../types/auth.types';
 import { AuthUser, LoginResult } from '../types/auth.service.types';
+
+/**
+ * Interface representing a user object that can be converted by the AuthMapper.
+ * Integrates both repository-level AuthenticatedUser and UserIdentity.
+ */
+export interface MappableUser {
+  readonly id: string;
+  readonly email: string;
+  readonly status: UserStatus;
+  readonly roles: readonly UserRole[];
+}
 
 /**
  * Authentication Data Mapper.
  * Responsible strictly for transforming objects between layers.
- * Contains no business logic, database queries, JWT generation, or password comparison.
  */
 export class AuthMapper {
   /**
-   * Converts a repository-level AuthenticatedUser into a service-level AuthUser.
+   * Converts a repository-level user model into a service-level AuthUser.
    *
-   * @param user The repository authenticated user object
+   * @param user Mappable user model containing roles
    * @returns Readonly AuthUser model for service layer
    */
-  public static toAuthUser(user: AuthenticatedUser): AuthUser {
+  public static toAuthUser(user: MappableUser): AuthUser {
     return {
       id: user.id,
       email: user.email,
@@ -27,13 +38,13 @@ export class AuthMapper {
    *
    * @param accessToken Access token string
    * @param refreshToken Refresh token string
-   * @param user The repository authenticated user object
+   * @param user Mappable user model containing roles
    * @returns Readonly LoginResult model
    */
   public static toLoginResult(
     accessToken: string,
     refreshToken: string,
-    user: AuthenticatedUser
+    user: MappableUser
   ): LoginResult {
     return {
       accessToken,

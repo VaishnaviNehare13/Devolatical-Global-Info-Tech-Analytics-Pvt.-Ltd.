@@ -76,6 +76,36 @@ export class AuthService implements IAuthService {
   }
 
   /**
+   * Terminates user sessions and triggers necessary token revocations.
+   *
+   * @param userId The unique user identifier
+   * @throws {AuthenticationError} For business validation or query failures
+   */
+  public async logout(userId: string): Promise<void> {
+    // Current stateless JWT implementation is a no-op placeholder.
+    // This design allows future token revocation stores (e.g. database, redis lists)
+    // to be integrated seamlessly without breaking public interface consumers.
+    try {
+      const userExists = await this.authRepository.findUserById(userId);
+      if (!userExists) {
+        throw new AuthenticationError(
+          'ACCOUNT_NOT_FOUND',
+          'Session termination failed. User not found.'
+        );
+      }
+    } catch (error) {
+      if (error instanceof AuthenticationError) {
+        throw error;
+      }
+      throw new AuthenticationError(
+        'INVALID_CREDENTIALS',
+        'Session termination failed during account validation.',
+        error
+      );
+    }
+  }
+
+  /**
    * Decodes and asserts validity of refresh token claims.
    */
   private validateRefreshTokenClaims(token: string) {

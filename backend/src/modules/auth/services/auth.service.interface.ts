@@ -20,4 +20,11 @@ export interface IAuthService {
    * @returns Strongly typed login result with rotated token pair and identity
    */
   refreshToken(token: string): Promise<LoginResult>;
+
+  /**
+   * Terminates user sessions and triggers necessary token revocations.
+   *
+   * @param userId The unique user identifier
+   */
+  logout(userId: string): Promise<void>;
 }

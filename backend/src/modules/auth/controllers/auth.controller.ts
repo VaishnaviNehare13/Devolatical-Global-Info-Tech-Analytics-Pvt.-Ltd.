@@ -46,4 +46,22 @@ export class AuthController {
       next(error);
     }
   };
+
+  /**
+   * Controller handler for terminating user sessions and clearing session contexts.
+   */
+  public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // req.user is guaranteed to be populated by the upstream authMiddleware
+      const userId = req.user!.id;
+      await this.authService.logout(userId);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Logout successful.',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

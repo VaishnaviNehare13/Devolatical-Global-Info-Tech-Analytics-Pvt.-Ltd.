@@ -13,6 +13,12 @@ import { AuthService } from '../../modules/auth/services/auth.service';
 import { AuthController } from '../../modules/auth/controllers/auth.controller';
 import { createAuthRouter } from '../../modules/auth/routes/auth.routes';
 
+// Roles imports
+import { createRolesModule } from '../../modules/roles/roles.module';
+
+// Shared imports
+import { SYSTEM_ROLES } from '../../shared/constants/roles';
+
 // Middleware imports
 import { AuthMiddleware } from '../../middleware/auth.middleware';
 import { authorize } from '../../middleware/authorization.middleware';
@@ -27,7 +33,7 @@ v1Router.use(healthRouter);
 const authRepository = new AuthRepository();
 const authMiddleware = new AuthMiddleware(authRepository);
 const authorizeAdmin = authorize({
-  roles: ['Super Admin', 'Admin'], // Authorization roles matching user role names
+  roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ADMIN], // Authorization roles using centralized constants
 });
 
 // Initialize and Mount Auth Router
@@ -42,6 +48,9 @@ const userService = new UserService(userRepository);
 const userController = new UserController(userService);
 const usersRouter = createUsersRouter(userController, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/users', usersRouter);
+
+// Initialize and Mount Roles Router
+v1Router.use('/roles', createRolesModule(prisma, authMiddleware.handle, authorizeAdmin));
 
 /**
  * Placeholder mounts for future module routing:

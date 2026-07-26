@@ -1,16 +1,52 @@
 import { Router } from 'express';
 import healthRouter from './health.routes';
 
+// Users imports
+import { UserRepository } from '../../modules/users/repositories/user.repository';
+import { UserService } from '../../modules/users/services/user.service';
+import { UserController } from '../../modules/users/controllers/user.controller';
+import { createUsersRouter } from '../../modules/users/routes/user.routes';
+import { USER_SYSTEM } from '../../modules/users/constants/user.constants';
+
+// Auth imports
+import { AuthRepository } from '../../modules/auth/repositories/auth.repository';
+import { AuthService } from '../../modules/auth/services/auth.service';
+import { AuthController } from '../../modules/auth/controllers/auth.controller';
+import { createAuthRouter } from '../../modules/auth/routes/auth.routes';
+
+// Middleware imports
+import { AuthMiddleware } from '../../middleware/auth.middleware';
+import { authorize } from '../../middleware/authorization.middleware';
+import { prisma } from '../../config/db';
+
 const v1Router = Router();
 
 // Mount Health routes (which defines GET /health)
 v1Router.use(healthRouter);
 
+// Initialize Shared Repositories and Middlewares
+const authRepository = new AuthRepository();
+const authMiddleware = new AuthMiddleware(authRepository);
+const authorizeAdmin = authorize({
+  roles: [USER_SYSTEM.SUPER_ADMIN_ROLE_CODE, 'ADMIN'], // Authorization roles
+});
+
+// Initialize and Mount Auth Router
+const authService = new AuthService(authRepository);
+const authController = new AuthController(authService);
+const authRouter = createAuthRouter(authController, authMiddleware.handle);
+v1Router.use('/auth', authRouter);
+
+// Initialize and Mount Users Router
+const userRepository = new UserRepository(prisma);
+const userService = new UserService(userRepository);
+const userController = new UserController(userService);
+const usersRouter = createUsersRouter(userController, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/users', usersRouter);
+
 /**
  * Placeholder mounts for future module routing:
  *
- * - Authentication: v1Router.use('/auth', authRouter);
- * - User Profiles:  v1Router.use('/users', usersRouter);
  * - Portal Clients: v1Router.use('/clients', clientsRouter);
  * - Leads Tracking: v1Router.use('/leads', leadsRouter);
  * - Projects:       v1Router.use('/projects', projectsRouter);
@@ -20,4 +56,3 @@ v1Router.use(healthRouter);
  */
 
 export default v1Router;
-//

@@ -6,7 +6,6 @@ import { UserRepository } from '../../modules/users/repositories/user.repository
 import { UserService } from '../../modules/users/services/user.service';
 import { UserController } from '../../modules/users/controllers/user.controller';
 import { createUsersRouter } from '../../modules/users/routes/user.routes';
-import { USER_SYSTEM } from '../../modules/users/constants/user.constants';
 
 // Auth imports
 import { AuthRepository } from '../../modules/auth/repositories/auth.repository';
@@ -28,7 +27,7 @@ v1Router.use(healthRouter);
 const authRepository = new AuthRepository();
 const authMiddleware = new AuthMiddleware(authRepository);
 const authorizeAdmin = authorize({
-  roles: [USER_SYSTEM.SUPER_ADMIN_ROLE_CODE, 'ADMIN'], // Authorization roles
+  roles: ['Super Admin', 'Admin'], // Authorization roles matching user role names
 });
 
 // Initialize and Mount Auth Router

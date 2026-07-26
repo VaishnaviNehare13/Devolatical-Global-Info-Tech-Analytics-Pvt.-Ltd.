@@ -25,6 +25,12 @@ export async function sendPasswordResetEmail(to: string, token: string): Promise
   // Future extensibility: load frontend baseUrl from config
   const resetUrl = `https://devolatical.com/reset-password?token=${token}`;
 
+  // If in development/test environment and SMTP user is placeholder, log and return
+  if (config.app.nodeEnv === 'development' && config.email.username === 'placeholder_user') {
+    console.log(`[DEV EMAIL MOCK] Password reset link for ${to}: ${resetUrl}`);
+    return;
+  }
+
   await transporter.sendMail({
     from: config.email.from,
     to,

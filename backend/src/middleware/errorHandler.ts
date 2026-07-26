@@ -34,6 +34,10 @@ export const errorHandler = (
     statusCode = err.statusCode;
     message = err.message;
     errors = err.errors;
+  } else if (err.name === 'AuthenticationError') {
+    // Map operational authentication errors to 401 Unauthorized
+    statusCode = HttpStatus.UNAUTHORIZED;
+    message = err.message;
   } else if (err instanceof ZodError) {
     // Input validation errors
     statusCode = HttpStatus.BAD_REQUEST;

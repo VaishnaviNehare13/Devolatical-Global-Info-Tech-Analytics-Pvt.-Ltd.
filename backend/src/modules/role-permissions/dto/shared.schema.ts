@@ -24,3 +24,18 @@ export const PermissionIdsSchema = z
   });
 
 export const IsGrantedSchema = z.boolean().optional().default(true);
+
+export const RoleParamSchema = z
+  .object({
+    roleId: RoleIdSchema,
+  })
+  .strict();
+
+export const RolePermissionParamSchema = z
+  .object({
+    roleId: RoleIdSchema,
+    permissionId: z
+      .string({ required_error: 'Permission ID is required.' })
+      .uuid('Invalid Permission ID format. Must be a valid UUID.'),
+  })
+  .strict();

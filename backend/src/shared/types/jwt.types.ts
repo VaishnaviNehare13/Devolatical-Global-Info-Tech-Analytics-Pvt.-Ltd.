@@ -17,7 +17,7 @@ export interface BaseJwtPayload {
   type: TokenType; // Identity token classification claim
 }
 
-export interface AccessTokenPayload extends BaseJwtPayload {}
+export type AccessTokenPayload = BaseJwtPayload;
 
 export interface RefreshTokenPayload extends BaseJwtPayload {
   tokenVersion?: number; // Optional token version identifier

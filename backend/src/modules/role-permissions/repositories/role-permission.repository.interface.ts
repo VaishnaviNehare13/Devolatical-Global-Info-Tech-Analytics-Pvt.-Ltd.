@@ -56,4 +56,22 @@ export interface IRolePermissionRepository {
    * Counts active mappings currently associated with a role.
    */
   countActiveMappingsForRole(roleId: string): Promise<number>;
+
+  /**
+   * Executes bulk assignments transactionally (handling exists/active/soft-deleted records).
+   */
+  assignPermissionsBulk(
+    roleId: string,
+    permissionIds: string[],
+    isGranted: boolean
+  ): Promise<MappingDetails[]>;
+
+  /**
+   * Executes permission synchronization transactionally (soft-deleting missing mappings and restoring/creating matching ones).
+   */
+  replacePermissionsTransaction(
+    roleId: string,
+    permissionIds: string[],
+    isGranted: boolean
+  ): Promise<MappingDetails[]>;
 }

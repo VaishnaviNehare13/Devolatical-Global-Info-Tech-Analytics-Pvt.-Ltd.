@@ -293,4 +293,158 @@ export class RolePermissionRepository implements IRolePermissionRepository {
       );
     }
   }
+
+  /**
+   * Executes bulk assignments transactionally (handling exists/active/soft-deleted records).
+   */
+  public async assignPermissionsBulk(
+    roleId: string,
+    permissionIds: string[],
+    isGranted: boolean
+  ): Promise<MappingDetails[]> {
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const results: MappingDetails[] = [];
+
+        for (const permissionId of permissionIds) {
+          // Find existing mapping (including soft-deleted ones)
+          const existing = await tx.rolePermission.findFirst({
+            where: {
+              roleId,
+              permissionId,
+            },
+            select: ROLE_PERMISSION_SELECT,
+          });
+
+          if (existing) {
+            if (existing.deletedAt === null) {
+              if (existing.isGranted !== isGranted) {
+                const updated = await tx.rolePermission.update({
+                  where: { id: existing.id },
+                  data: { isGranted },
+                  select: ROLE_PERMISSION_SELECT,
+                });
+                results.push(updated);
+              } else {
+                results.push(existing);
+              }
+            } else {
+              // Restore mapping
+              const restored = await tx.rolePermission.update({
+                where: { id: existing.id },
+                data: {
+                  deletedAt: null,
+                  isGranted,
+                },
+                select: ROLE_PERMISSION_SELECT,
+              });
+              results.push(restored);
+            }
+          } else {
+            // Create new mapping
+            const created = await tx.rolePermission.create({
+              data: {
+                roleId,
+                permissionId,
+                isGranted,
+              },
+              select: ROLE_PERMISSION_SELECT,
+            });
+            results.push(created);
+          }
+        }
+
+        return results;
+      });
+    } catch (error) {
+      throw new RolePermissionRepositoryError(
+        'DB_WRITE_ERROR',
+        'Failed to bulk assign permissions.',
+        error
+      );
+    }
+  }
+
+  /**
+   * Executes permission synchronization transactionally (soft-deleting missing mappings and restoring/creating matching ones).
+   */
+  public async replacePermissionsTransaction(
+    roleId: string,
+    permissionIds: string[],
+    isGranted: boolean
+  ): Promise<MappingDetails[]> {
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        // 1. Soft-delete all active mappings for this role that are NOT in the supplied list
+        await tx.rolePermission.updateMany({
+          where: {
+            roleId,
+            deletedAt: null,
+            permissionId: {
+              notIn: permissionIds,
+            },
+          },
+          data: {
+            deletedAt: new Date(),
+          },
+        });
+
+        // 2. Perform bulk assignment (assign/restore/create) for the supplied list
+        const results: MappingDetails[] = [];
+
+        for (const permissionId of permissionIds) {
+          const existing = await tx.rolePermission.findFirst({
+            where: {
+              roleId,
+              permissionId,
+            },
+            select: ROLE_PERMISSION_SELECT,
+          });
+
+          if (existing) {
+            if (existing.deletedAt === null) {
+              if (existing.isGranted !== isGranted) {
+                const updated = await tx.rolePermission.update({
+                  where: { id: existing.id },
+                  data: { isGranted },
+                  select: ROLE_PERMISSION_SELECT,
+                });
+                results.push(updated);
+              } else {
+                results.push(existing);
+              }
+            } else {
+              const restored = await tx.rolePermission.update({
+                where: { id: existing.id },
+                data: {
+                  deletedAt: null,
+                  isGranted,
+                },
+                select: ROLE_PERMISSION_SELECT,
+              });
+              results.push(restored);
+            }
+          } else {
+            const created = await tx.rolePermission.create({
+              data: {
+                roleId,
+                permissionId,
+                isGranted,
+              },
+              select: ROLE_PERMISSION_SELECT,
+            });
+            results.push(created);
+          }
+        }
+
+        return results;
+      });
+    } catch (error) {
+      throw new RolePermissionRepositoryError(
+        'DB_WRITE_ERROR',
+        'Failed to replace permissions for role.',
+        error
+      );
+    }
+  }
 }

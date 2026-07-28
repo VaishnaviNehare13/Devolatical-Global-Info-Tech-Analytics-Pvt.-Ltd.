@@ -51,7 +51,8 @@ export class RolePermissionService {
    */
   public async assignPermissions(
     roleId: string,
-    permissionIds: string[]
+    permissionIds: string[],
+    isGranted = true
   ): Promise<readonly MappingDetails[]> {
     try {
       const role = await this.ensureRoleExists(roleId);
@@ -59,7 +60,11 @@ export class RolePermissionService {
       this.ensureRoleIsNotProtected(role);
       await this.ensurePermissionsExist(permissionIds);
 
-      return await this.rolePermissionRepository.assignPermissionsBulk(roleId, permissionIds, true);
+      return await this.rolePermissionRepository.assignPermissionsBulk(
+        roleId,
+        permissionIds,
+        isGranted
+      );
     } catch (error) {
       this.handleRepositoryError(error);
     }
@@ -74,7 +79,8 @@ export class RolePermissionService {
    */
   public async replacePermissions(
     roleId: string,
-    permissionIds: string[]
+    permissionIds: string[],
+    isGranted = true
   ): Promise<readonly MappingDetails[]> {
     try {
       const role = await this.ensureRoleExists(roleId);
@@ -85,7 +91,7 @@ export class RolePermissionService {
       return await this.rolePermissionRepository.replacePermissionsTransaction(
         roleId,
         permissionIds,
-        true
+        isGranted
       );
     } catch (error) {
       this.handleRepositoryError(error);

@@ -26,7 +26,7 @@ export class RolePermissionService {
   /**
    * Retrieves all permissions mapped to a specific role.
    *
-   * @throws {RolePermissionServiceError} If role is missing
+   * @throws {MappingNotFoundError} If role is missing
    */
   public async getRolePermissions(roleId: string): Promise<readonly MappingDetails[]> {
     try {
@@ -45,7 +45,7 @@ export class RolePermissionService {
   /**
    * Assigns a list of permissions to a role.
    *
-   * @throws {RolePermissionServiceError} If role or any permission is missing
+   * @throws {MappingNotFoundError} If role or any permission is missing
    * @throws {InvalidMappingStateError} If role or any permission is inactive
    * @throws {ProtectedRoleMappingError} If target role is a system role
    */
@@ -73,7 +73,7 @@ export class RolePermissionService {
   /**
    * Synchronizes mappings for a role to match exactly the supplied permission ID list.
    *
-   * @throws {RolePermissionServiceError} If role or any permission is missing
+   * @throws {MappingNotFoundError} If role or any permission is missing
    * @throws {InvalidMappingStateError} If role or any permission is inactive
    * @throws {ProtectedRoleMappingError} If target role is a system role
    */
@@ -101,9 +101,8 @@ export class RolePermissionService {
   /**
    * Revokes a specific permission assignment from a role.
    *
-   * @throws {RolePermissionServiceError} If role is missing
+   * @throws {MappingNotFoundError} If role or mapping is missing
    * @throws {ProtectedRoleMappingError} If target role is a system role
-   * @throws {MappingNotFoundError} If mapping does not exist
    */
   public async removePermission(roleId: string, permissionId: string): Promise<void> {
     try {
@@ -127,7 +126,7 @@ export class RolePermissionService {
   private async ensureRoleExists(roleId: string): Promise<RoleDetails> {
     const role = await this.roleRepository.findRoleById(roleId);
     if (!role) {
-      throw new RolePermissionServiceError(`Role with ID "${roleId}" was not found.`);
+      throw new MappingNotFoundError(`Role with ID "${roleId}" was not found.`);
     }
     return role;
   }
@@ -160,7 +159,7 @@ export class RolePermissionService {
   private async ensurePermissionExists(permissionId: string): Promise<PermissionDetails> {
     const permission = await this.permissionRepository.findPermissionById(permissionId);
     if (!permission) {
-      throw new RolePermissionServiceError(`Permission with ID "${permissionId}" was not found.`);
+      throw new MappingNotFoundError(`Permission with ID "${permissionId}" was not found.`);
     }
     return permission;
   }

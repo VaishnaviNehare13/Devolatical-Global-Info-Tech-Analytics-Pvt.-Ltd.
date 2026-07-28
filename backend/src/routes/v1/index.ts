@@ -15,6 +15,7 @@ import { createAuthRouter } from '../../modules/auth/routes/auth.routes';
 
 // Roles imports
 import { createRolesModule } from '../../modules/roles/roles.module';
+import { createRolePermissionsModule } from '../../modules/role-permissions/role-permissions.module';
 
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
@@ -51,6 +52,7 @@ v1Router.use('/users', usersRouter);
 
 // Initialize and Mount Roles Router
 v1Router.use('/roles', createRolesModule(prisma, authMiddleware.handle, authorizeAdmin));
+v1Router.use('/roles', createRolePermissionsModule(prisma, authMiddleware.handle, authorizeAdmin));
 
 /**
  * Placeholder mounts for future module routing:

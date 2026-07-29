@@ -32,15 +32,11 @@ export const FindAuditLogQuerySchema = PaginationQuerySchema.merge(SearchQuerySc
       .optional(),
     dateFrom: z
       .string({ invalid_type_error: 'dateFrom must be a string' })
-      .refine((val) => !isNaN(Date.parse(val)), {
-        message: 'Invalid dateFrom format. Must be a valid date string.',
-      })
+      .datetime({ message: 'Invalid dateFrom format. Must be a valid ISO date string.' })
       .optional(),
     dateTo: z
       .string({ invalid_type_error: 'dateTo must be a string' })
-      .refine((val) => !isNaN(Date.parse(val)), {
-        message: 'Invalid dateTo format. Must be a valid date string.',
-      })
+      .datetime({ message: 'Invalid dateTo format. Must be a valid ISO date string.' })
       .optional(),
     sortField: z.enum(AUDIT_LOG_VALIDATION.ALLOWED_SORT_FIELDS).optional(),
     sortOrder: z.enum(AUDIT_LOG_VALIDATION.ALLOWED_SORT_ORDERS).optional(),

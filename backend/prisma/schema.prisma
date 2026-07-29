@@ -125,7 +125,8 @@ model User {
   credentials Credential?
   preference  UserPreference?
 
-  sessions UserSession[]
+  sessions  UserSession[]
+  auditLogs AuditLog[]
 
   assignedRoles UserRole[] @relation("UserAssignedRoles")
 
@@ -382,4 +383,92 @@ model UserSession {
   @@index([expiresAt])
   @@index([lastActivityAt])
   @@map("user_sessions")
+}
+
+/// Enums for Audit Trail Actions
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  REGISTER
+  FORGOT_PASSWORD
+  RESET_PASSWORD
+  CHANGE_PASSWORD
+  ASSIGN_ROLE
+  REMOVE_ROLE
+  ASSIGN_PERMISSION
+  REMOVE_PERMISSION
+  EXPORT
+  IMPORT
+}
+
+/// Enums for Audit Trail Modules
+enum AuditModule {
+  AUTH
+  USERS
+  ROLES
+  PERMISSIONS
+  ROLE_PERMISSIONS
+  CLIENTS
+  PROJECTS
+  DOCUMENTS
+  SUPPORT
+  INVOICES
+  DASHBOARD
+  SETTINGS
+  NOTIFICATIONS
+  REPORTS
+  SYSTEM
+  SECURITY
+}
+
+/// Enums for Audit Trail status outcome
+enum AuditStatus {
+  SUCCESS
+  FAILED
+}
+
+/// Enums for Audit Log Severity Levels
+enum AuditSeverity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+/// Immutable audit trail for tracking user and system actions.
+model AuditLog {
+  id           String        @id @default(uuid())
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  requestId    String?
+  module       AuditModule
+  action       AuditAction
+  entityType   String?
+  entityId     String?
+  resourceName String?
+  oldValues    Json?
+  newValues    Json?
+  metadata     Json?
+  status       AuditStatus
+  severity     AuditSeverity @default(INFO)
+  ipAddress    String?       @db.Inet
+  userAgent    String?       @db.Text
+  createdAt    DateTime      @default(now())
+
+  @@index([userId])
+  @@index([module])
+  @@index([action])
+  @@index([status])
+  @@index([entityId])
+  @@index([createdAt])
+  @@index([requestId])
+  @@index([userId, createdAt])
+  @@index([module, action, createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([status, createdAt])
+  @@index([severity, createdAt])
+  @@map("audit_logs")
 }

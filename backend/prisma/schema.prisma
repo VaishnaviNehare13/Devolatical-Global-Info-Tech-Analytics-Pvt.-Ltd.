@@ -132,6 +132,10 @@ model User {
 
   rolesAssigned UserRole[] @relation("RoleAssignedBy")
 
+  managedClients Client[] @relation("ClientManager")
+  createdClients Client[] @relation("ClientCreator")
+  updatedClients Client[] @relation("ClientUpdater")
+
   @@index([status])
   @@map("users")
 }
@@ -471,4 +475,46 @@ model AuditLog {
   @@index([status, createdAt])
   @@index([severity, createdAt])
   @@map("audit_logs")
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+/// Enterprise client model representing organizations served by the platform.
+model Client {
+  id               String       @id @default(uuid())
+  name             String
+  code             String       @unique
+  email            String?
+  phone            String?
+  website          String?
+  addressLine1     String?
+  addressLine2     String?
+  city             String?
+  state            String?
+  country          String?
+  postalCode       String?
+  notes            String?      @db.Text
+  status           ClientStatus @default(ACTIVE)
+  accountManagerId String?
+  accountManager   User?        @relation("ClientManager", fields: [accountManagerId], references: [id], onDelete: SetNull)
+  createdAt        DateTime     @default(now())
+  createdById      String?
+  createdBy        User?        @relation("ClientCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt        DateTime     @updatedAt
+  updatedById      String?
+  updatedBy        User?        @relation("ClientUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt        DateTime?
+
+  @@index([name])
+  @@index([status])
+  @@index([accountManagerId])
+  @@index([createdById])
+  @@index([updatedById])
+  @@index([deletedAt])
+  @@map("clients")
 }

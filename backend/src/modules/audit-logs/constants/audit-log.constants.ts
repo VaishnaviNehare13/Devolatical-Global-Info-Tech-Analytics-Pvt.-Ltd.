@@ -15,3 +15,11 @@ export const AUDIT_LOG_SORT = {
   DEFAULT_ORDER: 'desc' as const,
   ALLOWED_FIELDS: ['createdAt', 'severity', 'module', 'action'] as const,
 };
+
+/**
+ * Standard success messages for the Audit Logs controller responses.
+ */
+export const AUDIT_LOG_MESSAGES = {
+  RETRIEVE_LIST_SUCCESS: 'Audit logs list retrieved successfully.',
+  RETRIEVE_DETAIL_SUCCESS: 'Audit log details retrieved successfully.',
+} as const;

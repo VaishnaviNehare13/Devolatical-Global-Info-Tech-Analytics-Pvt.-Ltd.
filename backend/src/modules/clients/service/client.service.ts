@@ -1,10 +1,4 @@
-import {
-  ClientStatus,
-  AuditAction,
-  AuditModule,
-  AuditStatus,
-  AuditSeverity,
-} from '@prisma/client';
+import { ClientStatus, AuditAction, AuditModule, AuditStatus, AuditSeverity } from '@prisma/client';
 import { IClientRepository } from '../repository/client.repository.interface';
 import { IUserRepository } from '../../users/repositories/user.repository.interface';
 import { IAuditLogService } from '../../audit-logs/service/audit-log.service';

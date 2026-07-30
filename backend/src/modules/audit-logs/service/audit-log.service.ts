@@ -27,10 +27,19 @@ export interface PaginatedAuditLogs {
 }
 
 /**
+ * Service Contract for logging and querying audit logs.
+ */
+export interface IAuditLogService {
+  record(data: CreateAuditLogData): Promise<AuditLogOutput>;
+  getAuditLogById(id: string): Promise<AuditLogOutput>;
+  getAuditLogs(options: FindAuditLogsOptions): Promise<PaginatedAuditLogs>;
+}
+
+/**
  * Service Layer implementation for logging and querying audit logs.
  * Coordinates audit-log repository and enforces domain rules.
  */
-export class AuditLogService {
+export class AuditLogService implements IAuditLogService {
   constructor(private readonly repository: IAuditLogRepository) {}
 
   /**

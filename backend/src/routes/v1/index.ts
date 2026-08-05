@@ -20,6 +20,9 @@ import { createRolePermissionsModule } from '../../modules/role-permissions/role
 // Audit Logs imports
 import { createAuditLogsModule } from '../../modules/audit-logs';
 
+// Clients imports
+import { createClientsModule } from '../../modules/clients';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -61,10 +64,13 @@ v1Router.use('/roles', createRolePermissionsModule(prisma, authMiddleware.handle
 const auditLogsRouter = createAuditLogsModule(prisma, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/audit-logs', auditLogsRouter);
 
+// Initialize and Mount Clients Router
+const clientsRouter = createClientsModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/clients', clientsRouter);
+
 /**
  * Placeholder mounts for future module routing:
  *
- * - Portal Clients: v1Router.use('/clients', clientsRouter);
  * - Leads Tracking: v1Router.use('/leads', leadsRouter);
  * - Projects:       v1Router.use('/projects', projectsRouter);
  * - Milestones:     v1Router.use('/projects/:projectId/milestones', milestonesRouter);

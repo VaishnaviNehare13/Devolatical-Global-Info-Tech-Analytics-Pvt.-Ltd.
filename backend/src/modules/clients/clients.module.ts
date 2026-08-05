@@ -29,11 +29,7 @@ export function createClientsModule(
   const auditLogRepository = new AuditLogRepository(prisma);
   const auditLogService = new AuditLogService(auditLogRepository);
 
-  const clientService = new ClientService(
-    clientRepository,
-    userRepository,
-    auditLogService
-  );
+  const clientService = new ClientService(clientRepository, userRepository, auditLogService);
   const clientController = new ClientController(clientService);
 
   return createClientsRouter(clientController, authMiddleware, authorizeAdminMiddleware);

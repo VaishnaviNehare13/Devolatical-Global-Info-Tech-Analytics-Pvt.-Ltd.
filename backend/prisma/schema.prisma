@@ -136,6 +136,10 @@ model User {
   createdClients Client[] @relation("ClientCreator")
   updatedClients Client[] @relation("ClientUpdater")
 
+  managedProjects Project[] @relation("ProjectManager")
+  createdProjects Project[] @relation("ProjectCreator")
+  updatedProjects Project[] @relation("ProjectUpdater")
+
   @@index([status])
   @@map("users")
 }
@@ -510,6 +514,8 @@ model Client {
   updatedBy        User?        @relation("ClientUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
   deletedAt        DateTime?
 
+  projects Project[]
+
   @@index([name])
   @@index([status])
   @@index([accountManagerId])
@@ -517,4 +523,40 @@ model Client {
   @@index([updatedById])
   @@index([deletedAt])
   @@map("clients")
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+model Project {
+  id               String        @id @default(uuid())
+  name             String
+  code             String        @unique
+  description      String?       @db.Text
+  status           ProjectStatus @default(PLANNING)
+  clientId         String
+  client           Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  projectManagerId String?
+  projectManager   User?         @relation("ProjectManager", fields: [projectManagerId], references: [id], onDelete: SetNull)
+  startDate        DateTime?
+  endDate          DateTime?
+  budget           Decimal?      @db.Decimal(12, 2)
+  createdAt        DateTime      @default(now())
+  createdById      String?
+  createdBy        User?         @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt        DateTime      @updatedAt
+  updatedById      String?
+  updatedBy        User?         @relation("ProjectUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt        DateTime?
+
+  @@index([clientId])
+  @@index([projectManagerId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("projects")
 }

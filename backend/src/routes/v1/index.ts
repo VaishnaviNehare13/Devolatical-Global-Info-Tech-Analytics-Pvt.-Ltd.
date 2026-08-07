@@ -26,6 +26,9 @@ import { createClientsModule } from '../../modules/clients';
 // Projects imports
 import { createProjectsModule } from '../../modules/projects';
 
+// Milestones imports
+import { createMilestonesModule } from '../../modules/milestones';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -74,6 +77,10 @@ v1Router.use('/clients', clientsRouter);
 // Initialize and Mount Projects Router
 const projectsRouter = createProjectsModule(prisma, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/projects', projectsRouter);
+
+// Initialize and Mount Milestones Router
+const milestonesRouter = createMilestonesModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/projects/:projectId/milestones', milestonesRouter);
 
 /**
  * Placeholder mounts for future module routing:

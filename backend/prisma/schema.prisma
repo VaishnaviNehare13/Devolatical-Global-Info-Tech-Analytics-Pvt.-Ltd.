@@ -143,6 +143,10 @@ model User {
   createdMilestones Milestone[] @relation("MilestoneCreator")
   updatedMilestones Milestone[] @relation("MilestoneUpdater")
 
+  assignedLeads Lead[] @relation("LeadAssignee")
+  createdLeads  Lead[] @relation("LeadCreator")
+  updatedLeads  Lead[] @relation("LeadUpdater")
+
   @@index([status])
   @@map("users")
 }
@@ -425,6 +429,7 @@ enum AuditModule {
   CLIENTS
   PROJECTS
   MILESTONES
+  LEADS
   DOCUMENTS
   SUPPORT
   INVOICES
@@ -595,4 +600,60 @@ model Milestone {
   @@index([status])
   @@index([deletedAt])
   @@map("milestones")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum LeadSource {
+  WEBSITE
+  REFERRAL
+  EMAIL
+  PHONE
+  LINKEDIN
+  MANUAL
+  OTHER
+}
+
+enum LeadPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Lead {
+  id           String       @id @default(uuid())
+  name         String
+  companyName  String?
+  email        String?
+  phone        String?
+  status       LeadStatus   @default(NEW)
+  priority     LeadPriority @default(MEDIUM)
+  source       LeadSource?
+  industry     String?
+  notes        String?      @db.Text
+  assignedToId String?
+  assignedTo   User?        @relation("LeadAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdAt    DateTime     @default(now())
+  createdById  String?
+  createdBy    User?        @relation("LeadCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt    DateTime     @updatedAt
+  updatedById  String?
+  updatedBy    User?        @relation("LeadUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt    DateTime?
+
+  @@index([status])
+  @@index([priority])
+  @@index([source])
+  @@index([assignedToId])
+  @@index([email])
+  @@index([deletedAt])
+  @@map("leads")
 }

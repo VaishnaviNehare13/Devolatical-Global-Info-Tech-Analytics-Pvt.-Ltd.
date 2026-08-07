@@ -140,6 +140,9 @@ model User {
   createdProjects Project[] @relation("ProjectCreator")
   updatedProjects Project[] @relation("ProjectUpdater")
 
+  createdMilestones Milestone[] @relation("MilestoneCreator")
+  updatedMilestones Milestone[] @relation("MilestoneUpdater")
+
   @@index([status])
   @@map("users")
 }
@@ -421,6 +424,7 @@ enum AuditModule {
   ROLE_PERMISSIONS
   CLIENTS
   PROJECTS
+  MILESTONES
   DOCUMENTS
   SUPPORT
   INVOICES
@@ -554,9 +558,41 @@ model Project {
   updatedBy        User?         @relation("ProjectUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
   deletedAt        DateTime?
 
+  milestones Milestone[]
+
   @@index([clientId])
   @@index([projectManagerId])
   @@index([status])
   @@index([deletedAt])
   @@map("projects")
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+}
+
+model Milestone {
+  id          String          @id @default(uuid())
+  title       String
+  description String?         @db.Text
+  status      MilestoneStatus @default(PENDING)
+  projectId   String
+  project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime        @default(now())
+  createdById String?
+  createdBy   User?           @relation("MilestoneCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt   DateTime        @updatedAt
+  updatedById String?
+  updatedBy   User?           @relation("MilestoneUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt   DateTime?
+
+  @@index([projectId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("milestones")
 }

@@ -147,6 +147,10 @@ model User {
   createdLeads  Lead[] @relation("LeadCreator")
   updatedLeads  Lead[] @relation("LeadUpdater")
 
+  assignedTickets Ticket[] @relation("TicketAssignee")
+  createdTickets  Ticket[] @relation("TicketCreator")
+  updatedTickets  Ticket[] @relation("TicketUpdater")
+
   @@index([status])
   @@map("users")
 }
@@ -524,6 +528,7 @@ model Client {
   deletedAt        DateTime?
 
   projects Project[]
+  tickets  Ticket[]  @relation("ClientTickets")
 
   @@index([name])
   @@index([status])
@@ -564,6 +569,7 @@ model Project {
   deletedAt        DateTime?
 
   milestones Milestone[]
+  tickets    Ticket[]    @relation("ProjectTickets")
 
   @@index([clientId])
   @@index([projectManagerId])
@@ -656,4 +662,46 @@ model Lead {
   @@index([email])
   @@index([deletedAt])
   @@map("leads")
+}
+
+enum TicketStatus {
+  OPEN
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Ticket {
+  id           String         @id @default(uuid())
+  subject      String
+  description  String         @db.Text
+  status       TicketStatus   @default(OPEN)
+  priority     TicketPriority @default(MEDIUM)
+  assignedToId String?
+  assignedTo   User?          @relation("TicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  clientId     String?
+  client       Client?        @relation("ClientTickets", fields: [clientId], references: [id], onDelete: SetNull)
+  projectId    String?
+  project      Project?       @relation("ProjectTickets", fields: [projectId], references: [id], onDelete: SetNull)
+  createdAt    DateTime       @default(now())
+  createdById  String?
+  createdBy    User?          @relation("TicketCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt    DateTime       @updatedAt
+  updatedById  String?
+  updatedBy    User?          @relation("TicketUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt    DateTime?
+
+  @@index([status])
+  @@index([priority])
+  @@index([assignedToId])
+  @@index([clientId])
+  @@index([projectId])
+  @@index([deletedAt])
+  @@map("tickets")
 }

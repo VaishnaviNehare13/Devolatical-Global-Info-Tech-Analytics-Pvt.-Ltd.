@@ -151,6 +151,10 @@ model User {
   createdTickets  Ticket[] @relation("TicketCreator")
   updatedTickets  Ticket[] @relation("TicketUpdater")
 
+  assignedTasks Task[] @relation("TaskAssignee")
+  createdTasks  Task[] @relation("TaskCreator")
+  updatedTasks  Task[] @relation("TaskUpdater")
+
   @@index([status])
   @@map("users")
 }
@@ -443,6 +447,7 @@ enum AuditModule {
   REPORTS
   SYSTEM
   SECURITY
+  TASKS
 }
 
 /// Enums for Audit Trail status outcome
@@ -570,6 +575,7 @@ model Project {
 
   milestones Milestone[]
   tickets    Ticket[]    @relation("ProjectTickets")
+  tasks      Task[]      @relation("ProjectTasks")
 
   @@index([clientId])
   @@index([projectManagerId])
@@ -601,6 +607,7 @@ model Milestone {
   updatedById String?
   updatedBy   User?           @relation("MilestoneUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
   deletedAt   DateTime?
+  tasks       Task[]          @relation("MilestoneTasks")
 
   @@index([projectId])
   @@index([status])
@@ -704,4 +711,58 @@ model Ticket {
   @@index([projectId])
   @@index([deletedAt])
   @@map("tickets")
+}
+
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  IN_QA
+  BLOCKED
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Task {
+  id             String       @id @default(uuid())
+  code           String       @unique
+  title          String
+  description    String?      @db.Text
+  status         TaskStatus   @default(TODO)
+  priority       TaskPriority @default(MEDIUM)
+  projectId      String
+  project        Project      @relation("ProjectTasks", fields: [projectId], references: [id], onDelete: Cascade)
+  milestoneId    String?
+  milestone      Milestone?   @relation("MilestoneTasks", fields: [milestoneId], references: [id], onDelete: SetNull)
+  assignedToId   String?
+  assignedTo     User?        @relation("TaskAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  parentId       String?
+  parent         Task?        @relation("TaskSubtasks", fields: [parentId], references: [id], onDelete: Cascade)
+  subtasks       Task[]       @relation("TaskSubtasks")
+  estimatedHours Decimal?     @db.Decimal(5, 2)
+  loggedHours    Decimal      @default(0.0) @db.Decimal(5, 2)
+  dueDate        DateTime?
+  createdAt      DateTime     @default(now())
+  createdById    String?
+  createdBy      User?        @relation("TaskCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt      DateTime     @updatedAt
+  updatedById    String?
+  updatedBy      User?        @relation("TaskUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt      DateTime?
+
+  @@index([projectId])
+  @@index([milestoneId])
+  @@index([assignedToId])
+  @@index([parentId])
+  @@index([status])
+  @@index([priority])
+  @@index([dueDate])
+  @@index([deletedAt])
+  @@map("tasks")
 }

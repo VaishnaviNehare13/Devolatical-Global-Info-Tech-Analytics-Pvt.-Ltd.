@@ -29,6 +29,9 @@ import { createProjectsModule } from '../../modules/projects';
 // Milestones imports
 import { createMilestonesModule } from '../../modules/milestones';
 
+// Leads imports
+import { createLeadsModule } from '../../modules/leads';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -82,12 +85,13 @@ v1Router.use('/projects', projectsRouter);
 const milestonesRouter = createMilestonesModule(prisma, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/projects/:projectId/milestones', milestonesRouter);
 
+// Initialize and Mount Leads Router
+const leadsRouter = createLeadsModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/leads', leadsRouter);
+
 /**
  * Placeholder mounts for future module routing:
  *
- * - Leads Tracking: v1Router.use('/leads', leadsRouter);
- * - Projects:       v1Router.use('/projects', projectsRouter);
- * - Milestones:     v1Router.use('/projects/:projectId/milestones', milestonesRouter);
  * - Support Desk:   v1Router.use('/tickets', ticketsRouter);
  * - Portal Assets:  v1Router.use('/documents', documentsRouter);
  */

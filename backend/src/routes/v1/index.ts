@@ -32,6 +32,9 @@ import { createMilestonesModule } from '../../modules/milestones';
 // Leads imports
 import { createLeadsModule } from '../../modules/leads';
 
+// Tickets imports
+import { createTicketsModule } from '../../modules/tickets';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -88,6 +91,10 @@ v1Router.use('/projects/:projectId/milestones', milestonesRouter);
 // Initialize and Mount Leads Router
 const leadsRouter = createLeadsModule(prisma, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/leads', leadsRouter);
+
+// Initialize and Mount Tickets Router
+const ticketsRouter = createTicketsModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/tickets', ticketsRouter);
 
 /**
  * Placeholder mounts for future module routing:

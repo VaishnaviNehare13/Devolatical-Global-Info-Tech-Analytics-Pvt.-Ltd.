@@ -155,6 +155,9 @@ model User {
   createdTasks  Task[] @relation("TaskCreator")
   updatedTasks  Task[] @relation("TaskUpdater")
 
+  createdDocuments Document[] @relation("DocumentCreator")
+  updatedDocuments Document[] @relation("DocumentUpdater")
+
   @@index([status])
   @@map("users")
 }
@@ -532,8 +535,9 @@ model Client {
   updatedBy        User?        @relation("ClientUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
   deletedAt        DateTime?
 
-  projects Project[]
-  tickets  Ticket[]  @relation("ClientTickets")
+  projects  Project[]
+  tickets   Ticket[]   @relation("ClientTickets")
+  documents Document[] @relation("ClientDocuments")
 
   @@index([name])
   @@index([status])
@@ -576,6 +580,7 @@ model Project {
   milestones Milestone[]
   tickets    Ticket[]    @relation("ProjectTickets")
   tasks      Task[]      @relation("ProjectTasks")
+  documents  Document[]  @relation("ProjectDocuments")
 
   @@index([clientId])
   @@index([projectManagerId])
@@ -608,6 +613,7 @@ model Milestone {
   updatedBy   User?           @relation("MilestoneUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
   deletedAt   DateTime?
   tasks       Task[]          @relation("MilestoneTasks")
+  documents   Document[]      @relation("MilestoneDocuments")
 
   @@index([projectId])
   @@index([status])
@@ -765,4 +771,36 @@ model Task {
   @@index([dueDate])
   @@index([deletedAt])
   @@map("tasks")
+}
+
+model Document {
+  id          String     @id @default(uuid())
+  title       String
+  fileName    String
+  fileUrl     String
+  mimeType    String
+  fileSize    Int
+  description String?    @db.Text
+  clientId    String?
+  client      Client?    @relation("ClientDocuments", fields: [clientId], references: [id], onDelete: SetNull)
+  projectId   String?
+  project     Project?   @relation("ProjectDocuments", fields: [projectId], references: [id], onDelete: SetNull)
+  milestoneId String?
+  milestone   Milestone? @relation("MilestoneDocuments", fields: [milestoneId], references: [id], onDelete: SetNull)
+  createdAt   DateTime   @default(now())
+  createdById String?
+  createdBy   User?      @relation("DocumentCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt   DateTime   @updatedAt
+  updatedById String?
+  updatedBy   User?      @relation("DocumentUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt   DateTime?
+
+  @@index([clientId])
+  @@index([projectId])
+  @@index([milestoneId])
+  @@index([createdById])
+  @@index([mimeType])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("documents")
 }

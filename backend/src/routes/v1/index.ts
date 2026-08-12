@@ -17,6 +17,9 @@ import { createAuthRouter } from '../../modules/auth/routes/auth.routes';
 import { createRolesModule } from '../../modules/roles/roles.module';
 import { createRolePermissionsModule } from '../../modules/role-permissions/role-permissions.module';
 
+// Permissions imports
+import { createPermissionsModule } from '../../modules/permissions';
+
 // Audit Logs imports
 import { createAuditLogsModule } from '../../modules/audit-logs';
 
@@ -74,6 +77,10 @@ v1Router.use('/users', usersRouter);
 // Initialize and Mount Roles Router
 v1Router.use('/roles', createRolesModule(prisma, authMiddleware.handle, authorizeAdmin));
 v1Router.use('/roles', createRolePermissionsModule(prisma, authMiddleware.handle, authorizeAdmin));
+
+// Initialize and Mount Permissions Router
+const permissionsRouter = createPermissionsModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/permissions', permissionsRouter);
 
 // Initialize and Mount Audit Logs Router
 const auditLogsRouter = createAuditLogsModule(prisma, authMiddleware.handle, authorizeAdmin);

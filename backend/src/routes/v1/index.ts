@@ -41,6 +41,9 @@ import { createTicketsModule } from '../../modules/tickets';
 // Tasks imports
 import { createTasksModule } from '../../modules/tasks';
 
+// Documents imports
+import { createDocumentsModule } from '../../modules/documents';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -110,11 +113,8 @@ v1Router.use('/tickets', ticketsRouter);
 const tasksRouter = createTasksModule(prisma, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/tasks', tasksRouter);
 
-/**
- * Placeholder mounts for future module routing:
- *
- * - Support Desk:   v1Router.use('/tickets', ticketsRouter);
- * - Portal Assets:  v1Router.use('/documents', documentsRouter);
- */
+// Initialize and Mount Documents Router
+const documentsRouter = createDocumentsModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/documents', documentsRouter);
 
 export default v1Router;

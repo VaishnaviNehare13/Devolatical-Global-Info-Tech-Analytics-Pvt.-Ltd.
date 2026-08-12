@@ -35,6 +35,9 @@ import { createLeadsModule } from '../../modules/leads';
 // Tickets imports
 import { createTicketsModule } from '../../modules/tickets';
 
+// Tasks imports
+import { createTasksModule } from '../../modules/tasks';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -95,6 +98,10 @@ v1Router.use('/leads', leadsRouter);
 // Initialize and Mount Tickets Router
 const ticketsRouter = createTicketsModule(prisma, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/tickets', ticketsRouter);
+
+// Initialize and Mount Tasks Router
+const tasksRouter = createTasksModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/tasks', tasksRouter);
 
 /**
  * Placeholder mounts for future module routing:

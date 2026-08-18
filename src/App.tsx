@@ -1,9 +1,11 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './components/ui/Toast';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { LoadingLayout } from './components/layout/LoadingLayout';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import ScrollToTop from './components/common/ScrollToTop';
 
 // Layouts (Eagerly loaded for instant shell render)
@@ -53,55 +55,71 @@ export const App: React.FC = () => {
       <ThemeProvider>
         <ToastProvider>
           <BrowserRouter>
-            <ScrollToTop />
-            <Suspense fallback={<LoadingLayout />}>
-              <Routes>
-                {/* Public Pages */}
-                <Route path="/" element={<PublicLayout />}>
-                  <Route index element={<Home />} />
-                  <Route path="about" element={<About />} />
-                  <Route path="services" element={<Services />} />
-                  <Route path="industries" element={<Industries />} />
-                  <Route path="case-studies" element={<CaseStudies />} />
-                  <Route path="insights" element={<Insights />} />
-                  <Route path="careers" element={<Careers />} />
-                  <Route path="contact" element={<Contact />} />
-                  <Route path="privacy" element={<Privacy />} />
-                  <Route path="terms" element={<Terms />} />
-                  <Route path="cookie-policy" element={<CookiePolicy />} />
-                </Route>
+            <AuthProvider>
+              <ScrollToTop />
+              <Suspense fallback={<LoadingLayout />}>
+                <Routes>
+                  {/* Public Marketing & Legal Pages */}
+                  <Route path="/" element={<PublicLayout />}>
+                    <Route index element={<Home />} />
+                    <Route path="about" element={<About />} />
+                    <Route path="services" element={<Services />} />
+                    <Route path="industries" element={<Industries />} />
+                    <Route path="case-studies" element={<CaseStudies />} />
+                    <Route path="insights" element={<Insights />} />
+                    <Route path="careers" element={<Careers />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="privacy" element={<Privacy />} />
+                    <Route path="terms" element={<Terms />} />
+                    <Route path="cookie-policy" element={<CookiePolicy />} />
+                  </Route>
 
-                {/* Authentication Pages */}
-                <Route path="/" element={<AuthLayout />}>
-                  <Route path="login" element={<Login />} />
-                  <Route path="register" element={<Register />} />
-                </Route>
+                  {/* Authentication Pages */}
+                  <Route path="/" element={<AuthLayout />}>
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                  </Route>
 
-                {/* Client Portal Pages */}
-                <Route path="/portal" element={<ClientPortalLayout />}>
-                  <Route index element={<ClientOverview />} />
-                  <Route path="projects" element={<ClientProjects />} />
-                  <Route path="invoices" element={<ClientInvoices />} />
-                  <Route path="support" element={<ClientSupport />} />
-                </Route>
+                  {/* Client Portal Pages (Guarded) */}
+                  <Route
+                    path="/portal"
+                    element={
+                      <ProtectedRoute>
+                        <ClientPortalLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route index element={<ClientOverview />} />
+                    <Route path="projects" element={<ClientProjects />} />
+                    <Route path="invoices" element={<ClientInvoices />} />
+                    <Route path="support" element={<ClientSupport />} />
+                  </Route>
 
-                {/* Admin Dashboard Pages */}
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="pipelines" element={<AdminPipelines />} />
-                  <Route path="audit" element={<AdminAudit />} />
-                  <Route path="security" element={<AdminSecurity />} />
-                  <Route path="settings" element={<AdminSettings />} />
-                </Route>
+                  {/* Admin Dashboard Pages (Role-Guarded for Administrative Roles) */}
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'Super Admin', 'Admin']}>
+                        <AdminLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="pipelines" element={<AdminPipelines />} />
+                    <Route path="audit" element={<AdminAudit />} />
+                    <Route path="security" element={<AdminSecurity />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
 
-                {/* Error Pages */}
-                <Route path="/" element={<ErrorLayout />}>
-                  <Route path="maintenance" element={<Maintenance />} />
-                  <Route path="404" element={<NotFound />} />
-                  <Route path="*" element={<Navigate to="/404" replace />} />
-                </Route>
-              </Routes>
-            </Suspense>
+                  {/* Error Pages */}
+                  <Route path="/" element={<ErrorLayout />}>
+                    <Route path="maintenance" element={<Maintenance />} />
+                    <Route path="404" element={<NotFound />} />
+                    <Route path="*" element={<Navigate to="/404" replace />} />
+                  </Route>
+                </Routes>
+              </Suspense>
+            </AuthProvider>
           </BrowserRouter>
         </ToastProvider>
       </ThemeProvider>

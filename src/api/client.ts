@@ -1,10 +1,14 @@
 import { ApiError } from '../types/api';
 import type { ApiErrorPayload } from '../types/api';
 
-/**
- * Type definition for dynamic token resolution callback.
- */
+// Dynamic token getter callback definition
 export type TokenGetter = () => string | null | Promise<string | null>;
+
+// Dynamic token refresh handler callback definition
+export type RefreshHandler = () => Promise<string | null>;
+
+// Dynamic unauthorized callback definition
+export type UnauthorizedHandler = () => void;
 
 /**
  * Extended request options for the centralized API client.
@@ -13,6 +17,7 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
   params?: Record<string, unknown>;
   body?: unknown;
   skipAuth?: boolean;
+  _isRetry?: boolean;
 }
 
 // Global API configuration
@@ -23,6 +28,9 @@ let apiBaseUrl: string =
 
 let currentAccessToken: string | null = null;
 let customTokenGetter: TokenGetter | null = null;
+let customRefreshHandler: RefreshHandler | null = null;
+let customUnauthorizedHandler: UnauthorizedHandler | null = null;
+let activeRefreshPromise: Promise<string | null> | null = null;
 
 /**
  * Configures the base URL for API requests.
@@ -57,6 +65,20 @@ export function getAccessToken(): string | null {
  */
 export function setTokenGetter(getter: TokenGetter | null): void {
   customTokenGetter = getter;
+}
+
+/**
+ * Registers a dynamic token refresh handler callback (e.g. from an AuthContext).
+ */
+export function setRefreshHandler(handler: RefreshHandler | null): void {
+  customRefreshHandler = handler;
+}
+
+/**
+ * Registers a dynamic unauthorized handler callback (e.g. to trigger session cleanup).
+ */
+export function setOnUnauthorized(handler: UnauthorizedHandler | null): void {
+  customUnauthorizedHandler = handler;
 }
 
 /**
@@ -170,6 +192,36 @@ export async function request<T>(endpoint: string, options: RequestOptions = {})
 
     // Handle HTTP Error responses
     if (!response.ok) {
+      // 401 Unauthorized handling & automatic token refresh
+      if (
+        response.status === 401 &&
+        !skipAuth &&
+        !options._isRetry &&
+        customRefreshHandler &&
+        !normalizedEndpoint.includes('/auth/login') &&
+        !normalizedEndpoint.includes('/auth/refresh-token')
+      ) {
+        if (!activeRefreshPromise) {
+          activeRefreshPromise = customRefreshHandler().finally(() => {
+            activeRefreshPromise = null;
+          });
+        }
+
+        const newAccessToken = await activeRefreshPromise;
+        if (newAccessToken) {
+          // Retry original request once with fresh token
+          return request<T>(endpoint, {
+            ...options,
+            _isRetry: true,
+          });
+        } else {
+          // Refresh failed
+          if (customUnauthorizedHandler) {
+            customUnauthorizedHandler();
+          }
+        }
+      }
+
       const errorPayload = isJson && responseData ? (responseData as ApiErrorPayload) : undefined;
       const errorMessage =
         errorPayload?.message ||

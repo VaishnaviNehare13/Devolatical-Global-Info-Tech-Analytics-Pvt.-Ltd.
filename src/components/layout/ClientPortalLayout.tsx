@@ -3,20 +3,27 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
 import logo from '../../assets/logo.png';
 
 
 export const ClientPortalLayout: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
+  const { logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    showToast('Successfully logged out of Client Portal.', 'info');
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      showToast('Successfully logged out of Client Portal.', 'info');
+      navigate('/login');
+    } catch {
+      navigate('/login');
+    }
   };
 
   const menuItems = [

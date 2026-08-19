@@ -40,6 +40,7 @@ const ClientSupport = lazy(() => import('./pages/client/ClientSupport'));
 
 // Admin Pages
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminPipelines = lazy(() => import('./pages/admin/AdminPipelines'));
 const AdminAudit = lazy(() => import('./pages/admin/AdminAudit'));
 const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
@@ -105,6 +106,7 @@ export const App: React.FC = () => {
                     }
                   >
                     <Route index element={<AdminDashboard />} />
+                    <Route path="users" element={<AdminUsers />} />
                     <Route path="pipelines" element={<AdminPipelines />} />
                     <Route path="audit" element={<AdminAudit />} />
                     <Route path="security" element={<AdminSecurity />} />

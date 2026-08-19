@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X, Terminal } from 'lucide-react';
+import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X, Terminal, Users } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
@@ -28,6 +28,7 @@ export const AdminLayout: React.FC = () => {
 
   const menuItems = [
     { name: 'Admin Dashboard', path: '/admin', icon: <BarChart3 className="h-5 w-5" /> },
+    { name: 'User Directory', path: '/admin/users', icon: <Users className="h-5 w-5" /> },
     { name: 'Data Pipelines', path: '/admin/pipelines', icon: <Database className="h-5 w-5" /> },
     { name: 'System Audit Logs', path: '/admin/audit', icon: <Terminal className="h-5 w-5" /> },
     { name: 'Security & Access', path: '/admin/security', icon: <ShieldAlert className="h-5 w-5" /> },

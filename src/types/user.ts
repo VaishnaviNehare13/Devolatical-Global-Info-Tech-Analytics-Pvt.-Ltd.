@@ -1,6 +1,6 @@
 import type { BaseQueryParams } from './api';
 
-export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'PENDING';
+export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'ARCHIVED';
 
 export interface UserRoleSummary {
   id: string;

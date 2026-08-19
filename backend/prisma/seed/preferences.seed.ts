@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client';
-import { DEFAULT_ADMIN } from './constants';
+import { SEED_USERS } from './constants';
 
 /**
  * User Preferences Seeder Module
- * 
+ *
  * Responsible for seeding default appearance, localization, and system notification
  * configurations linked directly to user profiles.
- * Runs atomically inside a transaction and supports full idempotency.
- * 
+ * Runs atomically inside a transaction per user and supports full idempotency.
+ *
  * @param prisma Shared PrismaClient instance
  */
 export async function seedPreferences(prisma: PrismaClient): Promise<void> {
@@ -19,55 +19,56 @@ export async function seedPreferences(prisma: PrismaClient): Promise<void> {
   // ==========================================
 
   // 1. Validate configuration constants
-  if (!DEFAULT_ADMIN) {
-    throw new Error('Preferences Seeder Error: Missing DEFAULT_ADMIN configuration.');
+  if (!SEED_USERS || !Array.isArray(SEED_USERS) || SEED_USERS.length === 0) {
+    throw new Error('Preferences Seeder Error: Missing SEED_USERS configuration.');
   }
-  if (!DEFAULT_ADMIN.email) {
-    throw new Error('Preferences Seeder Error: Missing DEFAULT_ADMIN.email.');
-  }
-
-  // 2. Find the bootstrap user using DEFAULT_ADMIN.email
-  const user = await prisma.user.findUnique({
-    where: { email: DEFAULT_ADMIN.email },
-    select: { id: true },
-  });
-
-  if (!user) {
-    throw new Error(
-      'Preferences Seeder Error: Bootstrap Super Admin user not found. Execute Users Seeder before Preferences Seeder.'
-    );
-  }
-  console.log('✓ Bootstrap user located');
-
-  // 3. Query the UserPreference table for this user
-  const existingPreference = await prisma.userPreference.findUnique({
-    where: { userId: user.id },
-    select: { id: true },
-  });
-
-  const isPreferenceMissing = !existingPreference;
 
   // ==========================================
-  // PHASE 2: DATABASE TRANSACTION (Writes Only)
+  // PHASE 2: IDEMPOTENT PREFERENCES SEEDING
   // ==========================================
-  try {
-    if (isPreferenceMissing) {
-      await prisma.$transaction(async (tx) => {
-        await tx.userPreference.create({
-          data: {
-            userId: user.id,
-          },
-        });
-      });
-      console.log('✓ Preferences created');
-    } else {
-      console.log('✓ Preferences already exist');
+  for (const userConfig of SEED_USERS) {
+    if (!userConfig.email) {
+      throw new Error('Preferences Seeder Error: Missing user email in configuration.');
     }
 
-    console.log('Preferences Seeder Completed Successfully');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  } catch (error: any) {
-    throw new Error(`Preferences Seeder Error: Database transaction failure. Details: ${error.message}`);
-  }
-}
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email: userConfig.email },
+      select: { id: true, email: true },
+    });
 
+    if (!user) {
+      throw new Error(
+        `Preferences Seeder Error: Bootstrap user (${userConfig.email}) not found. Execute Users Seeder before Preferences Seeder.`
+      );
+    }
+
+    // Query the UserPreference table for this user
+    const existingPreference = await prisma.userPreference.findUnique({
+      where: { userId: user.id },
+      select: { id: true },
+    });
+
+    const isPreferenceMissing = !existingPreference;
+
+    try {
+      if (isPreferenceMissing) {
+        await prisma.$transaction(async (tx) => {
+          await tx.userPreference.create({
+            data: {
+              userId: user.id,
+            },
+          });
+        });
+        console.log(`✓ Preferences created for ${user.email}`);
+      } else {
+        console.log(`✓ Preferences already exist for ${user.email}`);
+      }
+    } catch (error: any) {
+      throw new Error(`Preferences Seeder Error: Database transaction failure for ${user.email}. Details: ${error.message}`);
+    }
+  }
+
+  console.log('Preferences Seeder Completed Successfully');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━');
+}

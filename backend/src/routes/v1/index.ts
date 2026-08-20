@@ -56,6 +56,9 @@ import { createSystemMetricsModule } from '../../modules/system-metrics';
 // Careers imports
 import { createCareersModule } from '../../modules/careers';
 
+// Notifications imports
+import { createNotificationsModule } from '../../modules/notifications';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -147,6 +150,10 @@ v1Router.use('/system', systemMetricsRouter);
 // Initialize and Mount Careers Router
 const careersRouter = createCareersModule(prisma, authMiddleware.handle, authorizeAdmin);
 v1Router.use('/careers', careersRouter);
+
+// Initialize and Mount Notifications Router
+const { router: notificationsRouter } = createNotificationsModule(prisma, authMiddleware.handle);
+v1Router.use('/notifications', notificationsRouter);
 
 export default v1Router;
 

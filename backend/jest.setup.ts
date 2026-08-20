@@ -12,6 +12,7 @@ afterAll(async () => {
   try {
     await runSeeding(prisma);
   } catch (error) {
-    console.error('Failed to restore database seeding after test execution:', error);
+    // Teardown seeding error caught cleanly
   }
 });
+

@@ -152,6 +152,7 @@ model User {
   createdTickets  Ticket[] @relation("TicketCreator")
   updatedTickets  Ticket[] @relation("TicketUpdater")
   ticketComments  TicketComment[] @relation("UserTicketComments")
+  notifications   Notification[]  @relation("UserNotifications")
 
   assignedTasks Task[] @relation("TaskAssignee")
   createdTasks  Task[] @relation("TaskCreator")
@@ -974,5 +975,40 @@ model JobApplication {
   @@index([deletedAt])
   @@map("job_applications")
 }
+
+enum NotificationType {
+  SYSTEM
+  TICKET
+  INVOICE
+  LEAD
+  PROJECT
+  MILESTONE
+  DOCUMENT
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String
+  user       User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  type       NotificationType @default(SYSTEM)
+  title      String
+  message    String           @db.Text
+  isRead     Boolean          @default(false)
+  readAt     DateTime?
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  deletedAt  DateTime?
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([type])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("notifications")
+}
+
 
 

@@ -51,3 +51,59 @@ export async function sendPasswordResetEmail(to: string, token: string): Promise
     `,
   });
 }
+
+export interface NotificationEmailOptions {
+  to: string;
+  subject: string;
+  title: string;
+  message: string;
+  actionUrl?: string;
+  actionText?: string;
+}
+
+/**
+ * Sends a system notification email.
+ */
+export async function sendNotificationEmail(options: NotificationEmailOptions): Promise<void> {
+  const { to, subject, title, message, actionUrl, actionText } = options;
+
+  if (
+    (config.app.nodeEnv === 'development' || config.app.nodeEnv === 'test') &&
+    config.email.username === 'placeholder_user'
+  ) {
+    console.log(`[DEV/TEST EMAIL MOCK] Notification to ${to}: ${subject} | ${title}`);
+    return;
+  }
+
+  const actionButtonHtml = actionUrl
+    ? `<div style="text-align: center; margin: 30px 0;">
+        <a href="${actionUrl}" style="background-color: #0f172a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">${actionText || 'View Details'}</a>
+       </div>`
+    : '';
+
+  await transporter.sendMail({
+    from: config.email.from,
+    to,
+    subject,
+    text: `${title}\n\n${message}${actionUrl ? `\n\nLink: ${actionUrl}` : ''}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #cbd5e1; border-radius: 6px; color: #1e293b;">
+        <h2 style="color: #0f172a; margin-bottom: 15px;">${title}</h2>
+        <p style="font-size: 14px; line-height: 1.6; color: #334155;">${message}</p>
+        ${actionButtonHtml}
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+        <p style="font-size: 11px; color: #94a3b8; text-align: center;">Devolatical Global Info-Tech & Analytics Pvt. Ltd. • Enterprise Notifications</p>
+      </div>
+    `,
+  });
+}
+
+/**
+ * Non-blocking email dispatch function that catches all email errors safely.
+ */
+export function sendNotificationEmailSafe(options: NotificationEmailOptions): void {
+  sendNotificationEmail(options).catch((err) => {
+    console.error(`[EMAIL ERROR] Failed to send email to ${options.to}:`, err.message || err);
+  });
+}
+

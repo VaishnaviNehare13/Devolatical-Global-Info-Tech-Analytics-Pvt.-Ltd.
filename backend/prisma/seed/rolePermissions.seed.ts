@@ -30,24 +30,27 @@ export async function seedRolePermissions(prisma: PrismaClient): Promise<void> {
         throw new Error(`[Role-Permissions Seeder] Permission with code "${permissionCode}" not found in database.`);
       }
 
-      await prisma.rolePermission.upsert({
-        where: {
-          roleId_permissionId: {
+      try {
+        await prisma.rolePermission.upsert({
+          where: {
+            roleId_permissionId: {
+              roleId: role.id,
+              permissionId: permission.id,
+            },
+          },
+          update: {
+            isGranted: true,
+          },
+          create: {
             roleId: role.id,
             permissionId: permission.id,
+            isGranted: true,
           },
-        },
-        update: {
-          isGranted: true,
-        },
-        create: {
-          roleId: role.id,
-          permissionId: permission.id,
-          isGranted: true,
-        },
-      });
-
-      console.log(`✓ ${mapping.roleCode} -> ${permissionCode}`);
+        });
+        console.log(`✓ ${mapping.roleCode} -> ${permissionCode}`);
+      } catch (err) {
+        console.warn(`[Role-Permissions Seeder] Could not link ${mapping.roleCode} -> ${permissionCode}:`, (err as Error).message);
+      }
     }
   }
 

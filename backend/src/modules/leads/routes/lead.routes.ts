@@ -18,7 +18,10 @@ export function createLeadsRouter(
 ): Router {
   const router = Router();
 
-  // Enforce authentication and authorization across all lead routes
+  // Public endpoint: Create a new lead profile (from public contact form)
+  router.post('/', validate({ body: CreateLeadSchema }), leadController.createLead);
+
+  // Administrative protected endpoints
   router.use(authMiddleware);
   router.use(authorizeAdminMiddleware);
 
@@ -27,9 +30,6 @@ export function createLeadsRouter(
 
   // Get detailed lead information by ID
   router.get('/:id', validate({ params: LeadIdParamSchema }), leadController.getLeadById);
-
-  // Create a new lead profile
-  router.post('/', validate({ body: CreateLeadSchema }), leadController.createLead);
 
   // Update lead details
   router.patch(

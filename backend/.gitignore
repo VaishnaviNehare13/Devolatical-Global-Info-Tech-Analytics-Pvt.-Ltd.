@@ -7,6 +7,10 @@ web_stage/
 dist/
 build/
 
+# Uploaded files
+uploads/
+/uploads/
+
 # Environmental variables (contains sensitive secrets)
 .env
 .env.local
@@ -22,8 +26,7 @@ pnpm-debug.log*
 lerna-debug.log*
 *.log
 
-# Prisma generated artifacts (if generated locally outside node_modules)
-/prisma/migrations/
+# Prisma generated database artifacts
 /prisma/*.db
 
 # OS Files

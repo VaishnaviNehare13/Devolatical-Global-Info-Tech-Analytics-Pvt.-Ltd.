@@ -60,6 +60,44 @@ export class UserController {
     }
   };
 
+  public getMyPreferences = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const result = await this.userService.getMyPreferences(userId);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'User preferences retrieved successfully.',
+        data: result,
+      });
+    } catch (error) {
+      this.handleControllerError(error, next);
+    }
+  };
+
+  public updateMyPreferences = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const result = await this.userService.updateMyPreferences(userId, req.body);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'User preferences updated successfully.',
+        data: result,
+      });
+    } catch (error) {
+      this.handleControllerError(error, next);
+    }
+  };
+
   /**
    * Searches, filters, and paginates users list.
    * Access restricted to authorized administrative roles.

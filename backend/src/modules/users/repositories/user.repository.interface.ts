@@ -61,4 +61,14 @@ export interface IUserRepository {
    * @returns Boolean indicating whether deletion succeeded (false if user not found/already deleted)
    */
   softDeleteUser(userId: string): Promise<boolean>;
+
+  /**
+   * Retrieves or creates default user preferences.
+   */
+  findPreferencesByUserId(userId: string): Promise<any>;
+
+  /**
+   * Upserts user preferences.
+   */
+  updatePreferences(userId: string, data: any): Promise<any>;
 }

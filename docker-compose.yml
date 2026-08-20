@@ -1,0 +1,86 @@
+services:
+  # ==========================================
+  # PostgreSQL Database Service
+  # ==========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: sip_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-devolatical_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-devolatical_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sip_network
+
+  # ==========================================
+  # Backend API Service
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sip_backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-devolatical_db}?schema=public
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-super_secret_access_key_change_me_in_production_devolatical_12345678}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-super_secret_refresh_key_change_me_in_production_devolatical_12345678}
+      JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      JWT_ISSUER: ${JWT_ISSUER:-devolatical-global-api}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-devolatical-client-portal}
+      JWT_ALGORITHM: HS256
+      BCRYPT_SALT_ROUNDS: 12
+      SMTP_HOST: ${SMTP_HOST:-smtp.mailtrap.io}
+      SMTP_PORT: ${SMTP_PORT:-2525}
+      SMTP_USER: ${SMTP_USER:-placeholder_user}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-placeholder_password}
+      SMTP_FROM: ${SMTP_FROM:-noreply@devolatical.com}
+    volumes:
+      - upload_data:/app/uploads
+    networks:
+      - sip_network
+
+  # ==========================================
+  # Frontend Nginx SPA Service
+  # ==========================================
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api/v1
+    container_name: sip_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    networks:
+      - sip_network
+
+volumes:
+  postgres_data:
+    driver: local
+  upload_data:
+    driver: local
+
+networks:
+  sip_network:
+    driver: bridge

@@ -5,6 +5,7 @@ import { TextArea } from '../../components/ui/TextArea';
 import { Button } from '../../components/ui/Button';
 import { Accordion } from '../../components/ui/Accordion';
 import { useToast } from '../../components/ui/Toast';
+import { leadsApi } from '../../api/leads.api';
 import { Calendar, Mail, Clock, MapPin } from 'lucide-react';
 
 export const Contact: React.FC = () => {
@@ -17,18 +18,19 @@ export const Contact: React.FC = () => {
   const [scope, setScope] = useState('data-analytics');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Scheduler fields
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
 
-  const handleInquiry = (e: React.FormEvent) => {
+  const handleInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    if (!name) newErrors.name = 'Full representative name is required';
-    if (!company) newErrors.company = 'Company name is required';
-    if (!email) {
+    if (!name.trim()) newErrors.name = 'Full representative name is required';
+    if (!company.trim()) newErrors.company = 'Company name is required';
+    if (!email.trim()) {
       newErrors.email = 'Work email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = 'Invalid work email format';
@@ -41,11 +43,40 @@ export const Contact: React.FC = () => {
     }
 
     setErrors({});
-    showToast('Inquiry submitted successfully to devolaticalglobalinfotech@gmail.com! An architect will respond within 2 business hours.', 'success');
-    setName('');
-    setEmail('');
-    setCompany('');
-    setMessage('');
+    setIsSubmitting(true);
+
+    try {
+      await leadsApi.createLead({
+        name: name.trim(),
+        email: email.trim(),
+        companyName: company.trim(),
+        source: 'WEBSITE',
+        industry:
+          scope === 'data-analytics'
+            ? 'Advanced Data Analytics'
+            : scope === 'it-infrastructure'
+            ? 'IT Infrastructure'
+            : 'Custom Software',
+        notes: message.trim() || null,
+      });
+
+      showToast(
+        'Inquiry submitted successfully! An enterprise architect will review your scoping request.',
+        'success'
+      );
+      setName('');
+      setEmail('');
+      setCompany('');
+      setMessage('');
+    } catch (err: unknown) {
+      const errorMessage =
+        err && typeof err === 'object' && 'message' in err
+          ? (err as { message: string }).message
+          : 'Failed to submit scoping request. Please try again.';
+      showToast(errorMessage, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleBooking = (e: React.FormEvent) => {
@@ -140,6 +171,7 @@ export const Contact: React.FC = () => {
                     onChange={(e) => setName(e.target.value)}
                     error={errors.name}
                     required
+                    disabled={isSubmitting}
                   />
                   <Input
                     label="Work Email"
@@ -148,6 +180,7 @@ export const Contact: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     error={errors.email}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -157,6 +190,7 @@ export const Contact: React.FC = () => {
                     onChange={(e) => setCompany(e.target.value)}
                     error={errors.company}
                     required
+                    disabled={isSubmitting}
                   />
                   <div>
                     <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider font-mono">
@@ -165,6 +199,7 @@ export const Contact: React.FC = () => {
                     <select
                       value={scope}
                       onChange={(e) => setScope(e.target.value)}
+                      disabled={isSubmitting}
                       className="w-full px-4 py-3 bg-slate-50 dark:bg-dark border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-900 dark:text-white outline-none focus:border-secondary"
                     >
                       <option value="data-analytics">Advanced Data Analytics (BI, Viz, Dashboards)</option>
@@ -177,9 +212,15 @@ export const Contact: React.FC = () => {
                   label="Project Scope / Technical Requirements"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                  disabled={isSubmitting}
                 />
-                <Button type="submit" variant="secondary" className="w-full justify-center text-xs font-bold py-3">
-                  Submit Scoping Request
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  disabled={isSubmitting}
+                  className="w-full justify-center text-xs font-bold py-3"
+                >
+                  {isSubmitting ? 'Submitting Scoping Request...' : 'Submit Scoping Request'}
                 </Button>
               </form>
             </div>

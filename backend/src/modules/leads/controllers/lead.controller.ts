@@ -27,7 +27,7 @@ export class LeadController {
   public createLead = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const dto: CreateLeadDto = req.body;
-      const userId = req.user!.id;
+      const userId = req.user?.id;
       const result = await this.leadService.createLead(dto, userId);
 
       res.status(HttpStatus.CREATED).json({

@@ -7,6 +7,8 @@ import { UpdateStatusSchema } from '../dto/update-status.dto';
 export interface IUserController {
   getMyProfile(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   updateMyProfile(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  getMyPreferences(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  updateMyPreferences(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   getUsers(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   getUserById(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   updateUserStatus(req: Request, res: Response, next: NextFunction): void | Promise<void>;
@@ -35,6 +37,8 @@ export function createUsersRouter(
   // Self endpoints
   router.get('/me', userController.getMyProfile);
   router.patch('/me', validate(UpdateProfileSchema), userController.updateMyProfile);
+  router.get('/me/preferences', userController.getMyPreferences);
+  router.patch('/me/preferences', userController.updateMyPreferences);
 
   // Administrative endpoints
   router.get(

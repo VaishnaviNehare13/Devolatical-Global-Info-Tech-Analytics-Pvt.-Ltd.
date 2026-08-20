@@ -75,4 +75,14 @@ export interface IUserService {
    * @throws {UserServiceError} If repository database access fails
    */
   softDeleteUser(userId: string): Promise<void>;
+
+  /**
+   * Retrieves preferences for the current user.
+   */
+  getMyPreferences(userId: string): Promise<any>;
+
+  /**
+   * Updates preferences for the current user.
+   */
+  updateMyPreferences(userId: string, data: any): Promise<any>;
 }

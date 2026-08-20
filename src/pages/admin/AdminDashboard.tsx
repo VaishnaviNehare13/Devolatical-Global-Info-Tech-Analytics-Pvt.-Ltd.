@@ -1,143 +1,423 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Activity, ShieldCheck, Terminal, Users } from 'lucide-react';
+import { Skeleton } from '../../components/ui/Skeleton';
+import { useToast } from '../../components/ui/Toast';
+import { systemMetricsApi } from '../../api/system-metrics.api';
+import type { SystemMetricsPayload } from '../../api/system-metrics.api';
+import { auditApi } from '../../api/audit.api';
+import type { AuditLog } from '../../types/audit';
+import { ApiError } from '../../types/api';
+
+import {
+  Activity,
+  ShieldCheck,
+  Users,
+  Briefcase,
+  RefreshCw,
+  AlertCircle,
+  ArrowRight,
+  Terminal,
+  CheckCircle2,
+  Server,
+  Clock,
+  CheckSquare,
+  FileText,
+  CreditCard,
+  Building2,
+} from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
+  const { showToast } = useToast();
+
+  // Metrics & Activity state
+  const [metricsData, setMetricsData] = useState<SystemMetricsPayload | null>(null);
+  const [recentActivities, setRecentActivities] = useState<AuditLog[]>([]);
+
+  // Page status states
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const fetchDashboardData = useCallback(
+    async (silent = false) => {
+      if (silent) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
+      setLoadError(null);
+
+      try {
+        const [metricsRes, auditRes] = await Promise.allSettled([
+          systemMetricsApi.getSystemMetrics(),
+          auditApi.getAuditLogs({ page: 1, limit: 5 }),
+        ]);
+
+        // System metrics parsing
+        if (metricsRes.status === 'fulfilled' && metricsRes.value?.data) {
+          setMetricsData(metricsRes.value.data);
+        } else {
+          setMetricsData(null);
+          if (metricsRes.status === 'rejected') {
+            throw metricsRes.reason;
+          }
+        }
+
+        // Audit Logs parsing
+        if (auditRes.status === 'fulfilled' && auditRes.value?.data) {
+          setRecentActivities(auditRes.value.data.items || []);
+        }
+      } catch (err: unknown) {
+        const message = ApiError.isApiError(err)
+          ? err.message
+          : err instanceof Error
+          ? err.message
+          : 'Failed to synchronize system telemetry metrics.';
+        setLoadError(message);
+        showToast(message, 'error');
+      } finally {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
+    },
+    [showToast]
+  );
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  const isSystemHealthy = Boolean(
+    metricsData &&
+      metricsData.system.status === 'UP' &&
+      metricsData.system.database === 'connected'
+  );
+
+  const statusBadgeVariant = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'SUCCESS':
+      case 'OK':
+      case 'UP':
+        return 'success';
+      case 'DENIED':
+      case 'FAILED':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
+  };
+
   return (
     <div className="space-y-6 text-left">
-      {/* Title */}
-      <div className="flex flex-col space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">Ops Center Overview</h1>
-        <p className="text-sm text-slate-500">
-          Global analytics, pipeline ingestion speeds, and user session monitoring logs.
-        </p>
+      {/* Title & Refresh Control */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col space-y-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight">Ops Center Overview</h1>
+            <Badge variant={isSystemHealthy ? 'success' : 'warning'} className="font-mono text-xs">
+              {isSystemHealthy ? 'System Operational' : 'Telemetry Syncing'}
+            </Badge>
+          </div>
+          <p className="text-sm text-slate-500">
+            Real-time global system metrics, health status, and live administrative audit log events.
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fetchDashboardData(true)}
+          disabled={isLoading || isRefreshing}
+        >
+          <RefreshCw className={`h-4 w-4 mr-1.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Refresh Metrics
+        </Button>
       </div>
 
-      {/* Stats Dashboard Grid */}
+      {/* Primary KPI Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* KPI 1: System Health */}
         <Card>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase">Compute Nodes</span>
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              System Health
+            </span>
             <Activity className="h-5 w-5 text-secondary" />
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-bold">142 Active</h3>
-            <p className="text-xs text-green-500 mt-1">✓ CPU load at 42% average</p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-28" />
+            ) : (
+              <>
+                <h3 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
+                  {isSystemHealthy ? 'Operational' : 'Degraded'}
+                </h3>
+                <p className="text-xs text-emerald-500 font-mono mt-1 flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3" />
+                  DB {metricsData?.system.database || 'connected'} ({metricsData?.system.uptimeFormatted || 'active'})
+                </p>
+              </>
+            )}
           </div>
         </Card>
 
+        {/* KPI 2: User Directory Accounts */}
         <Card>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase">Data Pipelines</span>
-            <Terminal className="h-5 w-5 text-accent" />
-          </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-bold">8 Active</h3>
-            <p className="text-xs text-green-500 mt-1">✓ No ingestion locks detected</p>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase">Security Gates</span>
-            <ShieldCheck className="h-5 w-5 text-emerald-500" />
-          </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-bold">Zero-Trust Active</h3>
-            <p className="text-xs text-slate-400 mt-1">SSL certificates verify ok</p>
-          </div>
-        </Card>
-
-        <Card>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase">Client Sessions</span>
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Enterprise Users
+            </span>
             <Users className="h-5 w-5 text-indigo-500" />
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-bold">18 Connected</h3>
-            <p className="text-xs text-slate-400 mt-1">Across regional clusters</p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-28" />
+            ) : (
+              <>
+                <h3 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
+                  {metricsData?.metrics.users.total ?? 0} Accounts
+                </h3>
+                <p className="text-xs text-slate-400 font-mono mt-1">
+                  {metricsData?.metrics.users.active ?? 0} active directory profiles
+                </p>
+              </>
+            )}
+          </div>
+        </Card>
+
+        {/* KPI 3: Audit Log Events */}
+        <Card>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              System Audit Logs
+            </span>
+            <ShieldCheck className="h-5 w-5 text-emerald-500" />
+          </div>
+          <div className="mt-4">
+            {isLoading ? (
+              <Skeleton className="h-8 w-28" />
+            ) : (
+              <>
+                <h3 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
+                  {metricsData?.metrics.auditLogs.total ?? 0} Events
+                </h3>
+                <p className="text-xs text-slate-400 font-mono mt-1">
+                  Immutable security audit trail
+                </p>
+              </>
+            )}
+          </div>
+        </Card>
+
+        {/* KPI 4: Active Projects */}
+        <Card>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Active Projects
+            </span>
+            <Briefcase className="h-5 w-5 text-accent" />
+          </div>
+          <div className="mt-4">
+            {isLoading ? (
+              <Skeleton className="h-8 w-28" />
+            ) : (
+              <>
+                <h3 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
+                  {metricsData?.metrics.projects.active ?? 0} Active
+                </h3>
+                <p className="text-xs text-slate-400 font-mono mt-1">
+                  Out of {metricsData?.metrics.projects.total ?? 0} total workstreams
+                </p>
+              </>
+            )}
           </div>
         </Card>
       </div>
 
-      {/* Central Graphs Grid */}
+      {/* Error Alert Box */}
+      {loadError && (
+        <Card className="p-6 text-center space-y-3 bg-red-50/50 dark:bg-red-950/20 border border-red-200 dark:border-red-900">
+          <AlertCircle className="h-8 w-8 text-danger mx-auto" />
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
+              Telemetry Synchronization Alert
+            </h4>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">{loadError}</p>
+          </div>
+          <Button variant="secondary" size="sm" onClick={() => fetchDashboardData(false)}>
+            Retry Operational Sync
+          </Button>
+        </Card>
+      )}
+
+      {/* Main Operations Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Core System Graph Panel */}
+        {/* Workstream & System Telemetry Panel */}
         <Card className="lg:col-span-8">
           <CardHeader>
-            <CardTitle>Global Traffic Telemetry</CardTitle>
-            <CardDescription>Average API request speeds and processing latency limits (ms).</CardDescription>
+            <CardTitle>System Infrastructure & Workstreams</CardTitle>
+            <CardDescription>
+              Live overview of database status, active projects, tasks, invoices, and documents.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="h-64 flex flex-col justify-between">
-            <div className="flex-1 flex items-end space-x-4 border-b border-slate-100 dark:border-slate-800 pb-4">
-              <div className="flex-1 flex flex-col items-center">
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-40 flex items-end">
-                  <div className="w-full bg-secondary rounded-t h-3/4 animate-pulse" />
-                </div>
-                <span className="text-[10px] text-slate-400 font-semibold mt-1">08:00</span>
+          <CardContent className="space-y-6">
+            {isLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
               </div>
-              <div className="flex-1 flex flex-col items-center">
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-40 flex items-end">
-                  <div className="w-full bg-secondary rounded-t h-1/2" />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-slate-50 dark:bg-dark border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase">
+                    <Server className="h-4 w-4 text-secondary" />
+                    <span>Database Cluster</span>
+                  </div>
+                  <span className="text-sm font-bold font-mono text-slate-900 dark:text-white block uppercase">
+                    {metricsData?.system.database || 'Connected'}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    Env: {metricsData?.system.environment || 'development'}
+                  </span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold mt-1">10:00</span>
-              </div>
-              <div className="flex-1 flex flex-col items-center">
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-40 flex items-end">
-                  <div className="w-full bg-secondary rounded-t h-5/6" />
+
+                <div className="p-4 bg-slate-50 dark:bg-dark border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase">
+                    <Clock className="h-4 w-4 text-accent" />
+                    <span>Server Uptime</span>
+                  </div>
+                  <span className="text-sm font-bold font-mono text-slate-900 dark:text-white block">
+                    {metricsData?.system.uptimeFormatted || 'Active'}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    Node HTTP Process Uptime
+                  </span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold mt-1">12:00</span>
-              </div>
-              <div className="flex-1 flex flex-col items-center">
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-40 flex items-end">
-                  <div className="w-full bg-secondary rounded-t h-2/3" />
+
+                <div className="p-4 bg-slate-50 dark:bg-dark border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase">
+                    <CheckSquare className="h-4 w-4 text-emerald-500" />
+                    <span>Workstream Tasks</span>
+                  </div>
+                  <span className="text-sm font-bold font-mono text-slate-900 dark:text-white block">
+                    {metricsData?.metrics.tasks.active ?? 0} Active Tasks
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    {metricsData?.metrics.tasks.completed ?? 0} Completed ({metricsData?.metrics.tasks.total ?? 0} Total)
+                  </span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold mt-1">14:00</span>
-              </div>
-              <div className="flex-1 flex flex-col items-center">
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t h-40 flex items-end">
-                  <div className="w-full bg-accent rounded-t h-full animate-pulse" />
+
+                <div className="p-4 bg-slate-50 dark:bg-dark border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase">
+                    <CreditCard className="h-4 w-4 text-indigo-500" />
+                    <span>Invoices Engine</span>
+                  </div>
+                  <span className="text-sm font-bold font-mono text-slate-900 dark:text-white block">
+                    {metricsData?.metrics.invoices.total ?? 0} Invoices
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    {metricsData?.metrics.invoices.pending ?? 0} Pending • {metricsData?.metrics.invoices.paid ?? 0} Paid
+                  </span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold mt-1">16:00</span>
+
+                <div className="p-4 bg-slate-50 dark:bg-dark border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase">
+                    <FileText className="h-4 w-4 text-blue-500" />
+                    <span>Document Vault</span>
+                  </div>
+                  <span className="text-sm font-bold font-mono text-slate-900 dark:text-white block">
+                    {metricsData?.metrics.documents.total ?? 0} Files
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    Enterprise Repository Vault
+                  </span>
+                </div>
+
+                <div className="p-4 bg-slate-50 dark:bg-dark border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase">
+                    <Building2 className="h-4 w-4 text-purple-500" />
+                    <span>Client Organizations</span>
+                  </div>
+                  <span className="text-sm font-bold font-mono text-slate-900 dark:text-white block">
+                    {metricsData?.metrics.clients.total ?? 0} Clients
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    Tenant Isolated Accounts
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between items-center text-xs text-slate-400 mt-2 font-mono">
-              <span>Peak Latency: 12ms</span>
-              <span>Total processed transactions: 4.8 Million</span>
+            )}
+
+            {/* Performance Benchmark Bar */}
+            <div className="p-4 bg-slate-900 text-slate-200 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 font-mono text-xs">
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 text-accent animate-pulse" />
+                <span>System Uptime: {metricsData?.system.uptimeFormatted || '0s'} ({metricsData?.system.environment || 'development'} env)</span>
+              </div>
+              <Badge variant="success" className="text-[9px]">
+                RBAC Protected
+              </Badge>
             </div>
           </CardContent>
         </Card>
 
-        {/* Security / System Logs Panel */}
+        {/* Live System Activity Feed */}
         <Card className="lg:col-span-4">
-          <CardHeader>
-            <CardTitle>System Activity</CardTitle>
-            <CardDescription>Active administrative audit log feeds.</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Recent System Activity</CardTitle>
+              <CardDescription>Live administrative audit log events.</CardDescription>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-start justify-between border-b border-slate-50 dark:border-slate-800/40 pb-3">
-              <div>
-                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">Admin Authorized root login</h4>
-                <p className="text-[10px] text-slate-400 mt-0.5">IP address: 198.162.1.200</p>
+          <CardContent className="space-y-3 pt-2">
+            {isLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
               </div>
-              <Badge variant="success">OK</Badge>
-            </div>
-            
-            <div className="flex items-start justify-between border-b border-slate-50 dark:border-slate-800/40 pb-3">
-              <div>
-                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">Ingested Schema updated</h4>
-                <p className="text-[10px] text-slate-400 mt-0.5">Affected database: schema_mktg</p>
+            ) : recentActivities.length > 0 ? (
+              recentActivities.map((act) => (
+                <div
+                  key={act.id}
+                  className="p-2.5 bg-slate-50 dark:bg-dark/50 border border-slate-100 dark:border-slate-800 rounded-xl flex items-start justify-between gap-2"
+                >
+                  <div className="space-y-0.5 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <Badge variant="outline" className="text-[8px] font-mono uppercase">
+                        {act.module}
+                      </Badge>
+                      <h4 className="text-xs font-bold font-mono text-slate-900 dark:text-white truncate">
+                        {act.action}
+                      </h4>
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-mono truncate">
+                      {act.user?.email || act.userId || 'System'} • {new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                  <Badge variant={statusBadgeVariant(act.status)} className="text-[9px]">
+                    {act.status || 'OK'}
+                  </Badge>
+                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center space-y-1">
+                <Terminal className="h-6 w-6 text-slate-300 dark:text-slate-600 mx-auto" />
+                <p className="text-xs text-slate-400">No recent audit log events</p>
               </div>
-              <Badge variant="secondary">Sync</Badge>
-            </div>
+            )}
 
-            <div className="flex items-start justify-between">
-              <div>
-                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">AWS cluster scale triggered</h4>
-                <p className="text-[10px] text-slate-400 mt-0.5">Nodes provisioned: +12 instances</p>
-              </div>
-              <Badge variant="warning">Scale</Badge>
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+              <Link
+                to="/admin/audit"
+                className="text-xs font-semibold text-secondary hover:underline flex items-center justify-between w-full p-1 cursor-pointer"
+              >
+                <span>View Full Audit Log Ledger</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -145,4 +425,5 @@ export const AdminDashboard: React.FC = () => {
     </div>
   );
 };
+
 export default AdminDashboard;

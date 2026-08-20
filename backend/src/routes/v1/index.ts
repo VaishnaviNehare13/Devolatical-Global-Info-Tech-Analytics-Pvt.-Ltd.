@@ -44,6 +44,18 @@ import { createTasksModule } from '../../modules/tasks';
 // Documents imports
 import { createDocumentsModule } from '../../modules/documents';
 
+// Invoices imports
+import { createInvoicesModule } from '../../modules/invoices/invoices.module';
+
+// Client Portal imports
+import { createClientPortalModule } from '../../modules/client-portal/client-portal.module';
+
+// System Metrics imports
+import { createSystemMetricsModule } from '../../modules/system-metrics';
+
+// Careers imports
+import { createCareersModule } from '../../modules/careers';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -62,6 +74,9 @@ const authRepository = new AuthRepository();
 const authMiddleware = new AuthMiddleware(authRepository);
 const authorizeAdmin = authorize({
   roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ADMIN], // Authorization roles using centralized constants
+});
+const authorizeStaff = authorize({
+  roles: [SYSTEM_ROLES.SUPER_ADMIN, SYSTEM_ROLES.ADMIN, SYSTEM_ROLES.EMPLOYEE], // Internal staff roles
 });
 
 // Initialize and Mount Auth Router
@@ -94,11 +109,11 @@ const clientsRouter = createClientsModule(prisma, authMiddleware.handle, authori
 v1Router.use('/clients', clientsRouter);
 
 // Initialize and Mount Projects Router
-const projectsRouter = createProjectsModule(prisma, authMiddleware.handle, authorizeAdmin);
+const projectsRouter = createProjectsModule(prisma, authMiddleware.handle, authorizeStaff);
 v1Router.use('/projects', projectsRouter);
 
 // Initialize and Mount Milestones Router
-const milestonesRouter = createMilestonesModule(prisma, authMiddleware.handle, authorizeAdmin);
+const milestonesRouter = createMilestonesModule(prisma, authMiddleware.handle, authorizeStaff);
 v1Router.use('/projects/:projectId/milestones', milestonesRouter);
 
 // Initialize and Mount Leads Router
@@ -110,11 +125,28 @@ const ticketsRouter = createTicketsModule(prisma, authMiddleware.handle, authori
 v1Router.use('/tickets', ticketsRouter);
 
 // Initialize and Mount Tasks Router
-const tasksRouter = createTasksModule(prisma, authMiddleware.handle, authorizeAdmin);
+const tasksRouter = createTasksModule(prisma, authMiddleware.handle, authorizeStaff);
 v1Router.use('/tasks', tasksRouter);
 
 // Initialize and Mount Documents Router
-const documentsRouter = createDocumentsModule(prisma, authMiddleware.handle, authorizeAdmin);
+const documentsRouter = createDocumentsModule(prisma, authMiddleware.handle, authorizeStaff);
 v1Router.use('/documents', documentsRouter);
 
+// Initialize and Mount Invoices Router
+const invoicesRouter = createInvoicesModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/invoices', invoicesRouter);
+
+// Initialize and Mount Client Portal Router
+const clientPortalRouter = createClientPortalModule(prisma, authMiddleware.handle);
+v1Router.use('/client-portal', clientPortalRouter);
+
+// Initialize and Mount System Metrics Router
+const systemMetricsRouter = createSystemMetricsModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/system', systemMetricsRouter);
+
+// Initialize and Mount Careers Router
+const careersRouter = createCareersModule(prisma, authMiddleware.handle, authorizeAdmin);
+v1Router.use('/careers', careersRouter);
+
 export default v1Router;
+

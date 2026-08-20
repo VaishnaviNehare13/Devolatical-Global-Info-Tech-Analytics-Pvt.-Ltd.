@@ -203,6 +203,48 @@ export class UserRepository implements IUserRepository {
   }
 
   /**
+   * Retrieves or creates default user preferences for a user.
+   */
+  public async findPreferencesByUserId(userId: string): Promise<any> {
+    try {
+      let pref = await this.prisma.userPreference.findUnique({
+        where: { userId },
+      });
+      if (!pref) {
+        pref = await this.prisma.userPreference.create({
+          data: { userId },
+        });
+      }
+      return pref;
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_READ_FAILED',
+        `Database read failed while fetching preferences for user ${userId}.`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Upserts preferences for a user.
+   */
+  public async updatePreferences(userId: string, data: any): Promise<any> {
+    try {
+      return await this.prisma.userPreference.upsert({
+        where: { userId },
+        update: data,
+        create: { userId, ...data },
+      });
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_UPDATE_FAILED',
+        `Database update failed while upserting preferences for user ${userId}.`,
+        error
+      );
+    }
+  }
+
+  /**
    * Helper to retrieve active user by ID.
    */
   private async findActiveUserById(userId: string): Promise<{ readonly id: string } | null> {

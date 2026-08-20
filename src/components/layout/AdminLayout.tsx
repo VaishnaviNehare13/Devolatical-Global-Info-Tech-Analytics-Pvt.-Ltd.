@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X, Terminal, Users } from 'lucide-react';
+import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X, Terminal, Users, Inbox, Briefcase } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
@@ -10,13 +10,36 @@ import logo from '../../assets/logo.png';
 
 export const AdminLayout: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Derive dynamic admin identity
+  const userProfile = user && 'displayName' in user ? (user as { displayName?: string; firstName?: string; lastName?: string }) : null;
+  const displayName =
+    userProfile?.displayName ||
+    (userProfile?.firstName ? `${userProfile.firstName} ${userProfile.lastName || ''}`.trim() : '') ||
+    user?.email ||
+    'System Admin';
+
+  const initials = displayName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n: string) => n[0].toUpperCase())
+    .join('') || 'SA';
+
+  const firstRole = user?.roles?.[0];
+  const primaryRole = typeof firstRole === 'string'
+    ? firstRole
+    : (firstRole as { name?: string; code?: string } | undefined)?.name ||
+      (firstRole as { name?: string; code?: string } | undefined)?.code ||
+      'Super Admin';
+
   const handleLogout = async () => {
+
     try {
       await logout();
       showToast('Successfully logged out of Admin Panel.', 'info');
@@ -29,6 +52,8 @@ export const AdminLayout: React.FC = () => {
   const menuItems = [
     { name: 'Admin Dashboard', path: '/admin', icon: <BarChart3 className="h-5 w-5" /> },
     { name: 'User Directory', path: '/admin/users', icon: <Users className="h-5 w-5" /> },
+    { name: 'Lead Directory', path: '/admin/leads', icon: <Inbox className="h-5 w-5" /> },
+    { name: 'Recruitment', path: '/admin/careers', icon: <Briefcase className="h-5 w-5" /> },
     { name: 'Data Pipelines', path: '/admin/pipelines', icon: <Database className="h-5 w-5" /> },
     { name: 'System Audit Logs', path: '/admin/audit', icon: <Terminal className="h-5 w-5" /> },
     { name: 'Security & Access', path: '/admin/security', icon: <ShieldAlert className="h-5 w-5" /> },
@@ -193,18 +218,19 @@ export const AdminLayout: React.FC = () => {
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full ring-2 ring-white dark:ring-dark-card" />
             </button>
-            
+
             {/* Admin Avatar Info */}
-            <div className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6">
-              <div className="h-9 w-9 rounded-full bg-slate-900 dark:bg-slate-800 border border-slate-800 dark:border-slate-700 flex items-center justify-center text-accent font-bold text-sm">
-                SA
+            <div className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 text-left">
+              <div className="h-9 w-9 rounded-full bg-slate-900 dark:bg-slate-800 border border-slate-800 dark:border-slate-700 flex items-center justify-center text-accent font-bold text-sm font-heading">
+                {initials}
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-950 dark:text-white">System Admin</span>
-                <span className="text-[10px] text-slate-400 font-medium">Clearance: Level 5</span>
+                <span className="text-sm font-bold text-slate-950 dark:text-white leading-tight">{displayName}</span>
+                <span className="text-[10px] text-slate-400 font-medium font-mono">Clearance: {primaryRole}</span>
               </div>
             </div>
           </div>
+
         </header>
 
         {/* Routed Sub-pages content viewport */}

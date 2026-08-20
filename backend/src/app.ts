@@ -14,6 +14,9 @@ import v1Router from './routes/v1';
 
 const app: Application = express();
 
+// Trust first proxy (Nginx) for correct client IP identification
+app.set('trust proxy', 1);
+
 // ==========================================
 // SECURITY & REQUEST PARSING MIDDLEWARE
 // ==========================================

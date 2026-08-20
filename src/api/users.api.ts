@@ -57,4 +57,18 @@ export const usersApi = {
    */
   softDeleteUser: (id: string): Promise<ApiResponse<null>> =>
     apiClient.delete<ApiResponse<null>>(`/users/${id}`),
+
+  /**
+   * Fetch current authenticated user's preferences.
+   * GET /api/v1/users/me/preferences
+   */
+  getMyPreferences: (): Promise<ApiResponse<any>> =>
+    apiClient.get<ApiResponse<any>>('/users/me/preferences'),
+
+  /**
+   * Update current authenticated user's preferences.
+   * PATCH /api/v1/users/me/preferences
+   */
+  updateMyPreferences: (data: any): Promise<ApiResponse<any>> =>
+    apiClient.patch<ApiResponse<any>>('/users/me/preferences', data),
 };

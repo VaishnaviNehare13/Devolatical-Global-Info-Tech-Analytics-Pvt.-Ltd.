@@ -147,8 +147,17 @@ export async function seedUsers(prisma: PrismaClient): Promise<void> {
               throw new Error(`Users Seeder Error: Cannot assign role "${roleCode}" without a valid userId for ${userConfig.email}.`);
             }
 
-            await tx.userRole.create({
-              data: {
+            await tx.userRole.upsert({
+              where: {
+                userId_roleId: {
+                  userId: userId,
+                  roleId: role.id,
+                },
+              },
+              update: {
+                isActive: true,
+              },
+              create: {
                 userId: userId,
                 roleId: role.id,
                 isActive: true,

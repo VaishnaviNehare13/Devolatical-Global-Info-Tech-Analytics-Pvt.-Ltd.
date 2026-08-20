@@ -14,7 +14,7 @@ import {
  * Encapsulates validations, audit tracking, and repository boundaries.
  */
 export interface ILeadService {
-  createLead(data: CreateLeadServiceInput, currentUserId: string): Promise<LeadDetailOutput>;
+  createLead(data: CreateLeadServiceInput, currentUserId?: string): Promise<LeadDetailOutput>;
   getLeadById(id: string): Promise<LeadDetailOutput>;
   getLeadByEmail(email: string): Promise<LeadDetailOutput>;
   listLeads(options: FindLeadsServiceOptions): Promise<PaginatedLeadsOutput>;

@@ -55,10 +55,25 @@ export const DEFAULT_EMPLOYEE: SeedUserConfig = {
   ],
 };
 
+export const DEFAULT_CLIENT: SeedUserConfig = {
+  firstName: 'Acme',
+  lastName: 'Client',
+  displayName: 'Acme Corp Client',
+  email: 'client@devolatical.com',
+  password: 'Client@123',
+  emailVerified: true,
+  status: UserStatus.ACTIVE,
+  roles: [
+    ROLE_CODES.CLIENT,
+  ],
+};
+
 /**
  * List of all bootstrap users to seed into the database
  */
 export const SEED_USERS: SeedUserConfig[] = [
   DEFAULT_ADMIN,
   DEFAULT_EMPLOYEE,
+  DEFAULT_CLIENT,
 ];
+

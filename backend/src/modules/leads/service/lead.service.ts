@@ -38,7 +38,7 @@ export class LeadService implements ILeadService {
    */
   public async createLead(
     data: CreateLeadServiceInput,
-    currentUserId: string
+    currentUserId?: string
   ): Promise<LeadDetailOutput> {
     try {
       if (data.assignedToId) {
@@ -50,7 +50,7 @@ export class LeadService implements ILeadService {
 
       const created = await this.leadRepository.create({
         ...data,
-        createdById: currentUserId,
+        createdById: currentUserId || null,
       });
 
       // Log side-effect auditing
@@ -60,7 +60,7 @@ export class LeadService implements ILeadService {
           module: AuditModule.LEADS,
           status: AuditStatus.SUCCESS,
           severity: AuditSeverity.INFO,
-          userId: currentUserId,
+          userId: currentUserId || null,
           entityType: 'Lead',
           entityId: created.id,
           resourceName: created.name,

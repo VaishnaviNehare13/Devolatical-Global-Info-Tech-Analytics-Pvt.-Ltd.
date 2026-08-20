@@ -2,47 +2,51 @@
 
 > Enterprise Management System, Client Portal & Core Backend API
 
-A robust, enterprise-grade backend platform engineered for **Devolatical Global Info-Tech & Analytics Pvt. Ltd.** The system provides a centralized RESTful API foundation supporting corporate operations, client lifecycle management, project and milestone tracking, lead conversion pipelines, support desk ticketing, task management, document asset storage, and granular audit logging.
+A robust, enterprise-grade platform engineered for **Devolatical Global Info-Tech & Analytics Pvt. Ltd.** The system provides a centralized RESTful API foundation and modern React single-page application supporting corporate operations, client lifecycle management, project and milestone tracking, lead conversion pipelines, support desk ticketing, task management, document asset storage, recruitment management, client portal tenant isolation, and granular audit logging.
 
 ---
 
 ## Project Overview
 
-This backend platform delivers a scalable, modular foundation designed around enterprise best practices, strict layer decoupling, comprehensive type safety, and role-based access control.
+This platform delivers a scalable, modular foundation designed around enterprise best practices, strict layer decoupling, comprehensive type safety, absolute tenant security, and role-based access control (RBAC).
 
 ### Key Capabilities
 
-- **Secure Authentication & RBAC**: JWT-based authentication with token rotation, permission management, and system role guards.
+- **Secure Authentication & RBAC**: JWT-based authentication with token rotation, session tracking, permission management, and system role guards (`SUPER_ADMIN`, `ADMIN`, `EMPLOYEE`, `CLIENT`).
 - **Client & Project Management**: Organization accounts, multi-tier project tracking, and milestone-level deliverables.
+- **Client Portal Tenant Isolation**: Absolute tenant isolation ensuring CLIENT users access only their linked organization's projects, invoices, and support desk tickets.
+- **Invoices & Financial Management**: Invoice status tracking (`DRAFT`, `PENDING`, `PAID`, `OVERDUE`, `CANCELLED`) with strict tenant isolation.
 - **Task & Ticketing Pipelines**: Comprehensive task scheduling, time tracking, priority assignments, and support desk tickets.
-- **Lead Pipeline**: Lead stage progression, tracking, and qualification activities.
+- **Lead Pipeline**: Lead stage progression, website inquiry submissions, tracking, qualification activities, and administrative lead directory.
+- **Recruitment & Careers Portal**: Public job postings, application submissions, resume file uploads (Multer disk storage with MIME/size validation), and administrative candidate review queue.
+- **System Telemetry & Metrics**: Real-time database counts, process uptime, memory usage, and database health metrics.
 - **Document Management**: Secure multipart file uploads via Multer with metadata mapping, MIME type validation, and soft-delete lifecycles.
 - **Enterprise Audit Logging**: Structured audit recording across all domain mutations for regulatory compliance and accountability.
 
 ---
 
-## Backend Implementation Status
+## System Implementation Status
 
-The backend core architecture is fully implemented, wired, buildable, and registered in the versioned API router.
+The core architecture is fully implemented, wired, buildable, and registered in the versioned API router.
 
 | Component | Status | Details |
 |---|:---:|---|
-| **Database & Schema** | ✅ Complete | 13 models, indexes, relational constraints, and soft-delete columns |
+| **Database & Schema** | ✅ Complete | 15 models, 13 migrations up to date, indexes, relational constraints, and soft-delete columns |
 | **Data Transfer Objects (DTOs)** | ✅ Complete | Strict Zod validation schemas for request bodies, params, and queries |
 | **Repository Layer** | ✅ Complete | Decoupled Prisma repositories with select projections and error mapping |
 | **Mapper Layer** | ✅ Complete | Pure presentation mappers stripping internal database audit fields |
-| **Service Layer** | ✅ Complete | Domain business logic, relational integrity checks, and audit logging |
+| **Service Layer** | ✅ Complete | Domain business logic, relational integrity checks, tenant isolation, and audit logging |
 | **Controller Layer** | ✅ Complete | Thin HTTP controllers with domain-to-HTTP error translation |
-| **Routes & Security** | ✅ Complete | Versioned express routers with JWT auth, RBAC, and rate limiting |
+| **Routes & Security** | ✅ Complete | Versioned express routers with JWT auth, RBAC, tenant guards, and rate limiting |
 | **Module Bootstrapping** | ✅ Complete | Dependency injection factories sharing a singleton PrismaClient |
-| **API Registration** | ✅ Complete | All 13 modules mounted under versioned `/api/v1/*` routes |
-| **Integration Testing** | ✅ 66/66 Passing | Automated integration suites covering RBAC, Audit Logs, and Documents |
+| **API Registration** | ✅ Complete | All modules mounted under versioned `/api/v1/*` routes |
+| **Integration Testing** | ✅ 100/100 Passing | Automated integration suites covering Auth, User Admin, RBAC, Client Portal, Leads, System Metrics, Careers, and Documents |
 
 ---
 
 ## Backend Modules
 
-All 13 backend modules follow a uniform 8-layer modular architecture:
+All backend modules follow a uniform 8-layer modular architecture:
 
 | Module | Purpose | Status |
 |---|---|:---:|
@@ -53,44 +57,16 @@ All 13 backend modules follow a uniform 8-layer modular architecture:
 | **Role-Permissions** | Relational mapping between roles and permission matrices | **Complete** |
 | **Audit Logs** | Immutable system-wide audit trail capturing actions, severity, and actor metadata | **Complete** |
 | **Clients** | Client company directory, contact records, and relationship tracking | **Complete** |
+| **Client Portal** | Tenant-isolated endpoints for client overview, projects, invoices, and support desk | **Complete** |
 | **Projects** | Project lifecycles, budgets, deadlines, and client associations | **Complete** |
 | **Milestones** | Project phase tracking, deliverables, and progress states | **Complete** |
-| **Leads** | Sales pipeline tracking, lead stages, and qualification activities | **Complete** |
+| **Invoices** | Financial invoice lifecycle, payment status, and client linking | **Complete** |
+| **Leads** | Sales pipeline tracking, public contact submissions, and lead lifecycle | **Complete** |
+| **Careers** | Job posting management, applicant tracking, and resume file upload engine | **Complete** |
+| **System Metrics** | Real-time telemetry, memory usage, process uptime, and database health metrics | **Complete** |
 | **Tickets** | Customer support desk, ticket prioritization, statuses, and resolution | **Complete** |
 | **Tasks** | Granular work items, estimated/logged hours, assignees, and parent/subtask trees | **Complete** |
 | **Documents** | Multipart file upload management, MIME whitelisting, metadata, and entity linking | **Complete** |
-
----
-
-## Architecture & Design Patterns
-
-The backend follows a strict 8-layer decoupled architecture:
-
-```text
-HTTP Request
-    │
-    ▼
-Routes & Middleware  ──▶ [Auth Middleware + RBAC Guard + Multer + Zod Validation]
-    │
-    ▼
-Controller           ──▶ [Extracts payload/params, calls Service, invokes Mapper]
-    │
-    ▼
-Service Layer        ──▶ [Business rules, entity integrity, audit logging via IAuditLogService]
-    │
-    ▼
-Repository Layer     ──▶ [Prisma queries, select projections, dynamic filters, soft-delete]
-    │
-    ▼
-Database             ──▶ [PostgreSQL via Prisma ORM]
-```
-
-### Presentation Safety & Data Masking
-
-Domain outputs are strictly sanitized through static `Mapper` classes before returning API responses:
-- Internal database tracking fields (`createdById`, `updatedById`, `deletedAt`) are stripped from public responses.
-- `Date` objects are serialized to standard ISO 8601 strings.
-- Prisma `Decimal` values are cast to JavaScript `number` types.
 
 ---
 
@@ -108,61 +84,55 @@ All endpoints are registered under `/api/v1` in `backend/src/routes/v1/index.ts`
 | `/api/v1/permissions` | System permission catalog | Authenticated + Admin |
 | `/api/v1/audit-logs` | Queryable audit trail with filtering and search | Authenticated + Admin |
 | `/api/v1/clients` | Client directory and profile endpoints | Authenticated + Admin |
-| `/api/v1/projects` | Project management endpoints | Authenticated + Admin |
-| `/api/v1/projects/:projectId/milestones` | Project milestone deliverables | Authenticated + Admin |
-| `/api/v1/leads` | Lead pipeline and conversion tracking | Authenticated + Admin |
-| `/api/v1/tickets` | Support desk ticketing system | Authenticated + Admin |
-| `/api/v1/tasks` | Task allocation, time logs, and hierarchy | Authenticated + Admin |
-| `/api/v1/documents` | Document upload, metadata, and lifecycle | Authenticated + Admin |
-
----
-
-## Documents Module & File Storage
-
-The Documents module provides secure asset management integrated into business entities:
-
-- **Multipart Upload**: Handled via Multer `diskStorage` writing to isolated `uploads/documents/`.
-- **Upload Limit**: 25 MB per document (`DOCUMENT_VALIDATION.MAX_FILE_SIZE`).
-- **MIME Whitelist**: Restricts uploads to standard business formats (PDF, Word, Excel, PowerPoint, Plain Text, CSV, JPEG, PNG, WebP, ZIP).
-- **Collision & Traversal Protection**: Uploaded files are saved with randomized unique identifiers (`doc-<timestamp>-<randomBytes>.<ext>`) rather than raw client filenames.
-- **Relational Integrity**: Documents can be linked optionally to a `Client`, `Project`, and `Milestone` (with cross-project alignment validation).
-- **Lifecycle Management**: Supports soft-deletion (`DELETE /:id`) and restoration (`POST /:id/restore`).
-- **Storage Note**: Document binary file streaming/download is planned as a future storage adapter extension; current endpoints manage metadata persistence, validation, and retrieval.
+| `/api/v1/client-portal` | Tenant-isolated client overview, projects, invoices, tickets | Authenticated + Client |
+| `/api/v1/projects` | Project management endpoints | Authenticated + Staff / Admin |
+| `/api/v1/invoices` | Invoice creation and administration | Authenticated + Admin |
+| `/api/v1/leads` | Lead pipeline submission and management | Public Submit / Admin Mgmt |
+| `/api/v1/careers` | Job postings, job applications, resume file download | Public Jobs/Apply / Admin Mgmt |
+| `/api/v1/system/metrics` | Real-time system telemetry and database health | Authenticated + Admin |
+| `/api/v1/tickets` | Support desk ticketing system | Authenticated + Staff / Admin |
+| `/api/v1/tasks` | Task allocation, time logs, and hierarchy | Authenticated + Staff / Admin |
+| `/api/v1/documents` | Document upload, metadata, and lifecycle | Authenticated + Staff / Admin |
 
 ---
 
 ## Technology Stack
 
+### Frontend
+- **Framework**: React 19, React Router DOM 7
+- **Bundler**: Vite 8
+- **Styling**: TailwindCSS 4, Framer Motion, Lucide React
+- **Linter**: Oxlint
+
 ### Backend
 - **Runtime**: Node.js (v18+)
 - **Framework**: Express.js
 - **Language**: TypeScript (strict mode)
-- **Database & ORM**: PostgreSQL, Prisma ORM (v5.22.0)
+- **Database & ORM**: PostgreSQL, Prisma ORM (v5.10.2)
 - **File Uploads**: Multer
 - **Validation**: Zod
 - **Testing**: Jest, Supertest
-
-### Security & Middleware
-- **Authentication**: JWT (JSON Web Tokens) with HS256 / RS256 support
-- **Authorization**: Role-Based Access Control (RBAC)
-- **Headers & Rate Limiting**: Helmet, Express Rate Limit
-- **Data Protection**: Deep-freeze sanitization, parameterized SQL via Prisma
 
 ---
 
 ## Quality & Verification
 
-The backend passes all static verification checks, compilation, and automated test suites:
+The project passes all static verification checks, compilation, and automated test suites:
 
-- **Prisma Schema**: Validated and formatted (`npx prisma validate`, `npx prisma format --check`) ✅
-- **TypeScript**: Strict compile check passing with 0 errors (`npx tsc --noEmit`) ✅
-- **ESLint**: Linter passing (`npm run lint`) ✅
-- **Prettier**: Code style verified across all files (`npx prettier --check`) ✅
-- **Production Build**: Clean compilation to `dist/` (`npm run build`) ✅
-- **Automated Tests**: **66 / 66 tests passing** across 3 integration test suites ✅
+- **Prisma Schema**: Validated (`npx prisma validate`) ✅
+- **Prisma Migrations**: Schema up to date (`13 migrations found in prisma/migrations`) ✅
+- **Frontend Build**: Clean compilation (`npm run build` -> `✓ built in 984ms`) ✅
+- **Backend Build**: Clean TypeScript compilation (`npm run build` -> `tsc` exit code 0) ✅
+- **Linter**: Passed with 0 errors (`npx oxlint`) ✅
+- **Automated Integration Tests**: **100 / 100 tests passing** across 8 integration test suites ✅
+  - `Authentication & Session Integration Tests`: 13 tests passing
+  - `User Admin Management Integration Tests`: 7 tests passing
   - `Role-Permission Mapping Integration Tests`: 18 tests passing
-  - `Audit Logs Integration Tests`: 24 tests passing
-  - `Documents Module Integration Tests`: 24 tests passing
+  - `Client Portal Tenant Isolation Integration Tests`: 17 tests passing
+  - `Public Lead Submission Integration Test`: 2 tests passing
+  - `Admin Lead Management Integration Tests`: 7 tests passing
+  - `System Metrics Telemetry Integration Tests`: 5 tests passing
+  - `Careers & Recruitment Integration Tests`: 11 tests passing
 
 ---
 
@@ -203,18 +173,9 @@ The backend passes all static verification checks, compilation, and automated te
    npm run test
    ```
 
-6. **Start Development Server**:
-   ```bash
-   npm run dev
-   ```
-
----
-
-## Known & Future Improvements
-
-- **Binary Download Streaming**: Adding a dedicated streaming download endpoint (`GET /api/v1/documents/:id/download`) and cloud storage adapters (e.g. AWS S3 / GCS).
-- **Test Coverage Expansion**: Extending automated integration test suites to remaining earlier domain modules (`Tasks`, `Tickets`, `Leads`, `Projects`, `Milestones`, `Clients`).
-- **Frontend Integration**: Connecting the React/Vite client portal and admin dashboard to the `/api/v1/*` backend APIs.
+6. **Start Development Servers**:
+   - Backend: `npm run dev` (in `/backend`)
+   - Frontend: `npm run dev` (in `/`)
 
 ---
 

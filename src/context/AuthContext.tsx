@@ -78,8 +78,21 @@ export function getDestinationForUser(user: CurrentUser): string {
     checkUserRole(user, 'Super Admin') ||
     checkUserRole(user, 'Admin');
 
-  return isAdmin ? '/admin' : '/portal';
+  if (isAdmin) {
+    return '/admin';
+  }
+
+  const isEmployee =
+    checkUserRole(user, 'EMPLOYEE') ||
+    checkUserRole(user, 'Employee');
+
+  if (isEmployee) {
+    return '/employee';
+  }
+
+  return '/portal';
 }
+
 
 interface AuthProviderProps {
   children: React.ReactNode;

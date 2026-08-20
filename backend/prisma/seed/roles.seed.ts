@@ -38,6 +38,13 @@ export async function seedRoles(prisma: PrismaClient): Promise<void> {
       priority: ROLE_PRIORITIES[ROLE_CODES.EMPLOYEE],
       isDefault: true,
     },
+    {
+      code: ROLE_CODES.CLIENT,
+      name: 'Client',
+      description: 'Enterprise Client role with restricted tenant portal access.',
+      priority: ROLE_PRIORITIES[ROLE_CODES.CLIENT],
+      isDefault: false,
+    },
   ];
 
   for (const role of rolesToSeed) {

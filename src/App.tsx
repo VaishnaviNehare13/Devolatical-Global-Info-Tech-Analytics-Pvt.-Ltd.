@@ -12,6 +12,7 @@ import ScrollToTop from './components/common/ScrollToTop';
 import { PublicLayout } from './components/layout/PublicLayout';
 import { AuthLayout } from './components/layout/AuthLayout';
 import { ClientPortalLayout } from './components/layout/ClientPortalLayout';
+import { EmployeeLayout } from './components/layout/EmployeeLayout';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { ErrorLayout } from './components/layout/ErrorLayout';
 
@@ -38,9 +39,18 @@ const ClientProjects = lazy(() => import('./pages/client/ClientProjects'));
 const ClientInvoices = lazy(() => import('./pages/client/ClientInvoices'));
 const ClientSupport = lazy(() => import('./pages/client/ClientSupport'));
 
+// Employee Workspace Pages
+const EmployeeDashboard = lazy(() => import('./pages/employee/EmployeeDashboard'));
+const EmployeeTasks = lazy(() => import('./pages/employee/EmployeeTasks'));
+const EmployeeProjects = lazy(() => import('./pages/employee/EmployeeProjects'));
+const EmployeeDocuments = lazy(() => import('./pages/employee/EmployeeDocuments'));
+const EmployeeProfile = lazy(() => import('./pages/employee/EmployeeProfile'));
+
 // Admin Pages
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminLeads = lazy(() => import('./pages/admin/AdminLeads'));
+const AdminCareers = lazy(() => import('./pages/admin/AdminCareers'));
 const AdminPipelines = lazy(() => import('./pages/admin/AdminPipelines'));
 const AdminAudit = lazy(() => import('./pages/admin/AdminAudit'));
 const AdminSecurity = lazy(() => import('./pages/admin/AdminSecurity'));
@@ -96,6 +106,24 @@ export const App: React.FC = () => {
                     <Route path="support" element={<ClientSupport />} />
                   </Route>
 
+                  {/* Employee Workspace Pages (Role-Guarded for Internal Staff & Admin Preview) */}
+                  <Route
+                    path="/employee"
+                    element={
+                      <ProtectedRoute
+                        allowedRoles={['EMPLOYEE', 'Employee', 'SUPER_ADMIN', 'ADMIN', 'Super Admin', 'Admin']}
+                      >
+                        <EmployeeLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route index element={<EmployeeDashboard />} />
+                    <Route path="tasks" element={<EmployeeTasks />} />
+                    <Route path="projects" element={<EmployeeProjects />} />
+                    <Route path="documents" element={<EmployeeDocuments />} />
+                    <Route path="profile" element={<EmployeeProfile />} />
+                  </Route>
+
                   {/* Admin Dashboard Pages (Role-Guarded for Administrative Roles) */}
                   <Route
                     path="/admin"
@@ -107,6 +135,8 @@ export const App: React.FC = () => {
                   >
                     <Route index element={<AdminDashboard />} />
                     <Route path="users" element={<AdminUsers />} />
+                    <Route path="leads" element={<AdminLeads />} />
+                    <Route path="careers" element={<AdminCareers />} />
                     <Route path="pipelines" element={<AdminPipelines />} />
                     <Route path="audit" element={<AdminAudit />} />
                     <Route path="security" element={<AdminSecurity />} />

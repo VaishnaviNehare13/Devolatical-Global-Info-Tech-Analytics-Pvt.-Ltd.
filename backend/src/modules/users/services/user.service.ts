@@ -132,6 +132,22 @@ export class UserService implements IUserService {
     }
   }
 
+  public async getMyPreferences(userId: string): Promise<any> {
+    try {
+      return await this.userRepository.findPreferencesByUserId(userId);
+    } catch (error) {
+      this.handleError(error, `Failed to get preferences for user ${userId}.`);
+    }
+  }
+
+  public async updateMyPreferences(userId: string, data: any): Promise<any> {
+    try {
+      return await this.userRepository.updatePreferences(userId, data);
+    } catch (error) {
+      this.handleError(error, `Failed to update preferences for user ${userId}.`);
+    }
+  }
+
   /**
    * Checks if a user is a protected system account (e.g., the bootstrap super admin
    * or any account holding the Super Admin role).

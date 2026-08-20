@@ -147,6 +147,26 @@ export class LeadController {
   };
 
   /**
+   * Approves a lead and provisions a Client User and Client Organization.
+   */
+  public approveLead = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const userId = req.user!.id;
+      const password = req.body.password;
+      const result = await (this.leadService as any).approveLeadAndProvisionClient(id, userId, password);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Lead approved and Client Portal account provisioned successfully.',
+        data: result,
+      });
+    } catch (error) {
+      this.handleControllerError(error, next);
+    }
+  };
+
+  /**
    * Helper to translate domain service exceptions into standard Express HTTP operational AppErrors.
    */
   private handleControllerError(error: unknown, next: NextFunction): void {

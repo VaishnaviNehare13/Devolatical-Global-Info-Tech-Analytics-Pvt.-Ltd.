@@ -47,5 +47,8 @@ export function createLeadsRouter(
   // Restore an archived lead back to active status
   router.post('/:id/restore', validate({ params: LeadIdParamSchema }), leadController.restoreLead);
 
+  // Approve lead and provision Client User & Client Organization
+  router.post('/:id/approve', validate({ params: LeadIdParamSchema }), leadController.approveLead);
+
   return router;
 }

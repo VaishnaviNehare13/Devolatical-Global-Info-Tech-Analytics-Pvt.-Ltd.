@@ -65,6 +65,26 @@ export const AdminLeads: React.FC = () => {
   const [isSubmittingUpdate, setIsSubmittingUpdate] = useState<boolean>(false);
   const [isSubmittingCreate, setIsSubmittingCreate] = useState<boolean>(false);
   const [isSubmittingArchive, setIsSubmittingArchive] = useState<boolean>(false);
+  const [isApproving, setIsApproving] = useState<boolean>(false);
+
+  const handleApproveLead = async () => {
+    if (!selectedLead) return;
+    setIsApproving(true);
+    try {
+      const res = (await leadsApi.approveLead(selectedLead.id)) as any;
+      const initialPassword = res.data?.initialPassword || 'Client@123';
+      showToast(`Lead "${selectedLead.name}" approved! Client user created for ${selectedLead.email}. Password: ${initialPassword}`, 'success');
+      setIsDetailModalOpen(false);
+      fetchLeads();
+    } catch (err: unknown) {
+      const message = ApiError.isApiError(err)
+        ? err.message
+        : 'Failed to approve lead and provision client account.';
+      showToast(message, 'error');
+    } finally {
+      setIsApproving(false);
+    }
+  };
 
   // Fetch leads from backend
   const fetchLeads = useCallback(
@@ -656,12 +676,22 @@ export const AdminLeads: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex flex-wrap justify-end gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+              {selectedLead.email && selectedLead.status !== 'QUALIFIED' && selectedLead.status !== 'WON' && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleApproveLead}
+                  disabled={isApproving || isSubmittingUpdate}
+                >
+                  {isApproving ? 'Provisioning...' : 'Approve & Provision Client Account'}
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsDetailModalOpen(false)}
-                disabled={isSubmittingUpdate}
+                disabled={isSubmittingUpdate || isApproving}
               >
                 Cancel
               </Button>
@@ -669,7 +699,7 @@ export const AdminLeads: React.FC = () => {
                 variant="secondary"
                 size="sm"
                 onClick={handleSaveLeadUpdate}
-                disabled={isSubmittingUpdate}
+                disabled={isSubmittingUpdate || isApproving}
               >
                 {isSubmittingUpdate ? 'Saving...' : 'Save Lead Updates'}
               </Button>

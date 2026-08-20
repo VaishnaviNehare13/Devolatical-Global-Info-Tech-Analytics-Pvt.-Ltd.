@@ -1,4 +1,5 @@
-import { AuditAction, AuditModule, AuditStatus, AuditSeverity } from '@prisma/client';
+import { PrismaClient, AuditAction, AuditModule, AuditStatus, AuditSeverity } from '@prisma/client';
+import bcrypt from 'bcrypt';
 import { ILeadRepository } from '../repository/lead.repository.interface';
 import { IUserRepository } from '../../users/repositories/user.repository.interface';
 import { IAuditLogService } from '../../audit-logs/service/audit-log.service';
@@ -30,7 +31,8 @@ export class LeadService implements ILeadService {
   constructor(
     private readonly leadRepository: ILeadRepository,
     private readonly userRepository: IUserRepository,
-    private readonly auditLogService: IAuditLogService
+    private readonly auditLogService: IAuditLogService,
+    private readonly prisma: PrismaClient
   ) {}
 
   /**
@@ -294,6 +296,167 @@ export class LeadService implements ILeadService {
       return await this.leadRepository.count(filters);
     } catch (error) {
       throw new LeadServiceError(`Failed to count leads: ${(error as Error).message}`);
+    }
+  }
+
+  public async approveLeadAndProvisionClient(
+    leadId: string,
+    currentUserId: string,
+    password?: string
+  ): Promise<{
+    lead: LeadDetailOutput;
+    user: { id: string; email: string; displayName: string };
+    client: { id: string; name: string; code: string };
+    initialPassword: string;
+  }> {
+    const lead = await this.leadRepository.findById(leadId);
+    if (!lead) {
+      throw new LeadNotFoundError(leadId);
+    }
+
+    if (!lead.email) {
+      throw new LeadServiceError('Lead record does not have a valid email address for provisioning.');
+    }
+
+    const targetEmail = lead.email.trim().toLowerCase();
+    const initialPassword = password || 'Client@123';
+
+    try {
+      const result = await this.prisma.$transaction(async (tx: any) => {
+        // 1. Check or create User
+        let existingUser = await tx.user.findFirst({
+          where: { email: targetEmail },
+        });
+
+        if (!existingUser) {
+          const nameParts = (lead.name || 'Client User').trim().split(' ');
+          const firstName = nameParts[0];
+          const lastName = nameParts.slice(1).join(' ') || '';
+
+          existingUser = await tx.user.create({
+            data: {
+              firstName,
+              lastName,
+              displayName: lead.name,
+              email: targetEmail,
+              emailVerified: true,
+              status: 'ACTIVE',
+            },
+          });
+
+          const passwordHash = await bcrypt.hash(initialPassword, 12);
+          await tx.credential.create({
+            data: {
+              userId: existingUser.id,
+              passwordHash,
+              passwordChangedAt: new Date(),
+            },
+          });
+
+          const clientRole = await tx.role.findFirst({
+            where: { code: 'CLIENT' },
+          });
+
+          if (clientRole) {
+            await tx.userRole.upsert({
+              where: {
+                userId_roleId: {
+                  userId: existingUser.id,
+                  roleId: clientRole.id,
+                },
+              },
+              update: { isActive: true },
+              create: {
+                userId: existingUser.id,
+                roleId: clientRole.id,
+                isActive: true,
+              },
+            });
+          }
+        }
+
+        // 2. Check or create Client organization
+        const orgName = lead.companyName || lead.name;
+        let existingClient = await tx.client.findFirst({
+          where: {
+            deletedAt: null,
+            OR: [{ email: targetEmail }, { name: orgName }],
+          },
+        });
+
+        if (!existingClient) {
+          const codePrefix = orgName
+            .toUpperCase()
+            .replace(/[^A-Z0-9]/g, '')
+            .slice(0, 10) || 'CLIENT';
+          const code = `${codePrefix}_${Date.now().toString().slice(-4)}`;
+
+          existingClient = await tx.client.create({
+            data: {
+              name: orgName,
+              code,
+              email: targetEmail,
+              phone: lead.phone || null,
+              status: 'ACTIVE',
+              createdById: currentUserId,
+            },
+          });
+        }
+
+        // 3. Update Lead status to QUALIFIED
+        const updatedLead = await tx.lead.update({
+          where: { id: leadId },
+          data: {
+            status: 'QUALIFIED',
+            notes: lead.notes
+              ? `${lead.notes}\n[Approved & Provisioned as Client Account]`
+              : '[Approved & Provisioned as Client Account]',
+            updatedById: currentUserId,
+          },
+        });
+
+        // 4. Create Audit Log
+        await tx.auditLog.create({
+          data: {
+            action: AuditAction.CREATE,
+            module: AuditModule.CLIENTS,
+            status: AuditStatus.SUCCESS,
+            severity: AuditSeverity.INFO,
+            userId: currentUserId,
+            entityType: 'Client',
+            entityId: existingClient.id,
+            resourceName: existingClient.name,
+          },
+        });
+
+        return {
+          updatedLead,
+          user: existingUser,
+          client: existingClient,
+        };
+      });
+
+      const leadDetail = await this.leadRepository.findById(leadId);
+
+      return {
+        lead: leadDetail || (result.updatedLead as unknown as LeadDetailOutput),
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          displayName: result.user.displayName,
+        },
+        client: {
+          id: result.client.id,
+          name: result.client.name,
+          code: result.client.code,
+        },
+        initialPassword,
+      };
+    } catch (error) {
+      if (error instanceof LeadServiceError) {
+        throw error;
+      }
+      throw new LeadServiceError(`Failed to approve lead & provision client: ${(error as Error).message}`);
     }
   }
 }

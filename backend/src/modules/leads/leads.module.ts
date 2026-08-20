@@ -29,7 +29,7 @@ export function createLeadsModule(
   const auditLogRepository = new AuditLogRepository(prisma);
   const auditLogService = new AuditLogService(auditLogRepository);
 
-  const leadService = new LeadService(leadRepository, userRepository, auditLogService);
+  const leadService = new LeadService(leadRepository, userRepository, auditLogService, prisma);
   const leadController = new LeadController(leadService);
 
   return createLeadsRouter(leadController, authMiddleware, authorizeAdminMiddleware);

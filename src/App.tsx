@@ -38,6 +38,7 @@ const ClientOverview = lazy(() => import('./pages/client/ClientOverview'));
 const ClientProjects = lazy(() => import('./pages/client/ClientProjects'));
 const ClientInvoices = lazy(() => import('./pages/client/ClientInvoices'));
 const ClientSupport = lazy(() => import('./pages/client/ClientSupport'));
+const ClientProfile = lazy(() => import('./pages/client/ClientProfile'));
 
 // Employee Workspace Pages
 const EmployeeDashboard = lazy(() => import('./pages/employee/EmployeeDashboard'));
@@ -104,6 +105,7 @@ export const App: React.FC = () => {
                     <Route path="projects" element={<ClientProjects />} />
                     <Route path="invoices" element={<ClientInvoices />} />
                     <Route path="support" element={<ClientSupport />} />
+                    <Route path="profile" element={<ClientProfile />} />
                   </Route>
 
                   {/* Employee Workspace Pages (Role-Guarded for Internal Staff & Admin Preview) */}

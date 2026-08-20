@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, User, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
@@ -10,11 +10,26 @@ import logo from '../../assets/logo.png';
 
 export const ClientPortalLayout: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Derive dynamic client identity
+  const userProfile = user && 'displayName' in user ? (user as { displayName?: string; firstName?: string; lastName?: string }) : null;
+  const displayName =
+    userProfile?.displayName ||
+    (userProfile?.firstName ? `${userProfile.firstName} ${userProfile.lastName || ''}`.trim() : '') ||
+    user?.email ||
+    'Acme Corp.';
+
+  const initials = displayName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n: string) => n[0].toUpperCase())
+    .join('') || 'AC';
 
   const handleLogout = async () => {
     try {
@@ -30,7 +45,8 @@ export const ClientPortalLayout: React.FC = () => {
     { name: 'Workspace Overview', path: '/portal', icon: <LayoutDashboard className="h-5 w-5" /> },
     { name: 'Active Project Boards', path: '/portal/projects', icon: <ClipboardList className="h-5 w-5" /> },
     { name: 'Invoices & Billing', path: '/portal/invoices', icon: <FileText className="h-5 w-5" /> },
-    { name: 'Support & Helpdesk', path: '/portal/support', icon: <LifeBuoy className="h-5 w-5" /> }
+    { name: 'Support & Helpdesk', path: '/portal/support', icon: <LifeBuoy className="h-5 w-5" /> },
+    { name: 'Account & Settings', path: '/portal/profile', icon: <User className="h-5 w-5" /> }
   ];
 
   return (
@@ -193,15 +209,15 @@ export const ClientPortalLayout: React.FC = () => {
             </button>
             
             {/* Client Avatar Info */}
-            <div className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6">
-              <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center text-white font-bold text-sm">
-                AC
+            <Link to="/portal/profile" className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 cursor-pointer group">
+              <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center text-white font-bold text-sm font-heading group-hover:scale-105 transition-transform">
+                {initials}
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-950 dark:text-white">Acme Corp.</span>
-                <span className="text-[10px] text-slate-400 font-medium">Subscription: Enterprise Plus</span>
+              <div className="flex flex-col text-left">
+                <span className="text-sm font-bold text-slate-950 dark:text-white group-hover:text-secondary transition-colors">{displayName}</span>
+                <span className="text-[10px] text-slate-400 font-medium font-mono">Client Account</span>
               </div>
-            </div>
+            </Link>
           </div>
         </header>
 

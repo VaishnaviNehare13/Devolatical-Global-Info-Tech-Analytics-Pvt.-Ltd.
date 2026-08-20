@@ -220,15 +220,15 @@ export const AdminLayout: React.FC = () => {
             </button>
 
             {/* Admin Avatar Info */}
-            <div className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 text-left">
-              <div className="h-9 w-9 rounded-full bg-slate-900 dark:bg-slate-800 border border-slate-800 dark:border-slate-700 flex items-center justify-center text-accent font-bold text-sm font-heading">
+            <Link to="/admin/settings" className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 text-left cursor-pointer group">
+              <div className="h-9 w-9 rounded-full bg-slate-900 dark:bg-slate-800 border border-slate-800 dark:border-slate-700 flex items-center justify-center text-accent font-bold text-sm font-heading group-hover:scale-105 transition-transform">
                 {initials}
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-950 dark:text-white leading-tight">{displayName}</span>
+                <span className="text-sm font-bold text-slate-950 dark:text-white leading-tight group-hover:text-accent transition-colors">{displayName}</span>
                 <span className="text-[10px] text-slate-400 font-medium font-mono">Clearance: {primaryRole}</span>
               </div>
-            </div>
+            </Link>
           </div>
 
         </header>

@@ -5,24 +5,27 @@ import { Button } from '../../components/ui/Button';
 import { Checkbox } from '../../components/ui/Checkbox';
 import { useToast } from '../../components/ui/Toast';
 import { Building, User, Mail } from 'lucide-react';
+import { leadsApi } from '../../api/leads.api';
+import { ApiError } from '../../types/api';
 
 export const Register: React.FC = () => {
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
   const [terms, setTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    if (!name) newErrors.name = 'Full name is required';
-    if (!company) newErrors.company = 'Company name is required';
+    if (!name.trim()) newErrors.name = 'Full name is required';
+    if (!company.trim()) newErrors.company = 'Company name is required';
     
-    if (!email) {
+    if (!email.trim()) {
       newErrors.email = 'Work email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = 'Invalid work email format';
@@ -39,8 +42,30 @@ export const Register: React.FC = () => {
     }
 
     setErrors({});
-    showToast('Workspace request received. Access parameters will be dispatched via email.', 'success');
-    navigate('/login');
+    setIsSubmitting(true);
+
+    try {
+      await leadsApi.createLead({
+        name: name.trim(),
+        companyName: company.trim(),
+        email: email.trim(),
+        source: 'WEBSITE',
+        priority: 'HIGH',
+        notes: `Workspace access requested via Public Register page for enterprise corporate entity "${company.trim()}".`,
+      });
+
+      showToast('Workspace request submitted successfully. Our team will review your inquiry.', 'success');
+      navigate('/login');
+    } catch (err: unknown) {
+      const message = ApiError.isApiError(err)
+        ? err.message
+        : err instanceof Error
+        ? err.message
+        : 'Failed to submit workspace request. Please try again.';
+      showToast(message, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -103,8 +128,8 @@ export const Register: React.FC = () => {
           />
         </div>
 
-        <Button type="submit" variant="secondary" className="w-full py-3 justify-center">
-          Request Workspace Credentials
+        <Button type="submit" variant="secondary" className="w-full py-3 justify-center" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting Request...' : 'Request Workspace Credentials'}
         </Button>
       </form>
 

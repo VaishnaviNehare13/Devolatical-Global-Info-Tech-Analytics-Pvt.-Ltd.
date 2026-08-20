@@ -87,4 +87,7 @@ export const leadsApi = {
 
   restoreLead: (id: string): Promise<ApiResponse<LeadResponseItem>> =>
     apiClient.post<ApiResponse<LeadResponseItem>>(`/leads/${id}/restore`),
+
+  approveLead: (id: string, payload?: { password?: string }): Promise<ApiResponse<unknown>> =>
+    apiClient.post<ApiResponse<unknown>>(`/leads/${id}/approve`, payload || {}),
 };

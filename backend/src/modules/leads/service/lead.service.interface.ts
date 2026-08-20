@@ -26,4 +26,14 @@ export interface ILeadService {
   archiveLead(id: string, currentUserId: string): Promise<LeadDetailOutput>;
   restoreLead(id: string, currentUserId: string): Promise<LeadDetailOutput>;
   countLeads(filters: LeadFiltersInput): Promise<number>;
+  approveLeadAndProvisionClient(
+    leadId: string,
+    currentUserId: string,
+    password?: string
+  ): Promise<{
+    lead: LeadDetailOutput;
+    user: { id: string; email: string; displayName: string };
+    client: { id: string; name: string; code: string };
+    initialPassword: string;
+  }>;
 }

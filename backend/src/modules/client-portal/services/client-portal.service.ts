@@ -257,4 +257,23 @@ export class ClientPortalService {
       absolutePath,
     };
   }
+
+  public async getInvoicePdfForDownload(userId: string, userEmail: string, invoiceId: string) {
+    const clientId = await this.getClientIdForUser(userId, userEmail);
+
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { id: invoiceId, clientId, deletedAt: null },
+      include: {
+        client: { select: { id: true, name: true, code: true, email: true, phone: true, addressLine1: true, city: true, country: true } },
+        project: { select: { id: true, name: true, code: true } },
+        milestone: { select: { id: true, title: true, status: true, description: true } },
+      },
+    });
+
+    if (!invoice) {
+      throw new AppError('Invoice not found or access denied.', 404);
+    }
+
+    return invoice;
+  }
 }

@@ -1,6 +1,7 @@
 import { Invoice } from '@prisma/client';
 import { InvoiceRepository, PaginatedInvoicesOutput } from '../repository/invoice.repository';
 import { CreateInvoiceInput, UpdateInvoiceInput, FindInvoicesInput } from '../dto/invoice.dto';
+import { AppError } from '../../../utils/appError';
 
 export class InvoiceService {
   constructor(private readonly invoiceRepository: InvoiceRepository) {}
@@ -15,7 +16,7 @@ export class InvoiceService {
   public async getInvoiceById(id: string): Promise<Invoice> {
     const invoice = await this.invoiceRepository.findById(id);
     if (!invoice) {
-      throw new Error(`Invoice with ID '${id}' not found.`);
+      throw new AppError(`Invoice with ID '${id}' was not found.`, 404);
     }
     return invoice;
   }
@@ -27,7 +28,7 @@ export class InvoiceService {
   public async updateInvoice(id: string, data: UpdateInvoiceInput, currentUserId?: string): Promise<Invoice> {
     const invoice = await this.invoiceRepository.findById(id);
     if (!invoice) {
-      throw new Error(`Invoice with ID '${id}' not found.`);
+      throw new AppError(`Invoice with ID '${id}' was not found.`, 404);
     }
     const updated = await this.invoiceRepository.update(id, {
       ...data,

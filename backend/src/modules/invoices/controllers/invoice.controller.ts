@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { InvoiceService } from '../service/invoice.service';
 import { CreateInvoiceInput, UpdateInvoiceInput, FindInvoicesInput } from '../dto/invoice.dto';
+import { generateInvoicePdf } from '../utils/invoice-pdf.generator';
 
 export class InvoiceController {
   constructor(private readonly invoiceService: InvoiceService) {}
@@ -28,6 +29,20 @@ export class InvoiceController {
         message: 'Invoice retrieved successfully.',
         data: invoice,
       });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public downloadInvoicePdf = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const invoice = await this.invoiceService.getInvoiceById(id);
+      const pdfBuffer = await generateInvoicePdf(invoice);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="Invoice-${invoice.invoiceNumber}.pdf"`);
+      res.status(200).send(pdfBuffer);
     } catch (error) {
       next(error);
     }

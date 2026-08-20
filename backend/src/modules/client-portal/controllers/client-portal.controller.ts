@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ClientPortalService } from '../services/client-portal.service';
+import { generateInvoicePdf } from '../../invoices/utils/invoice-pdf.generator';
 
 export class ClientPortalController {
   constructor(private readonly clientPortalService: ClientPortalService) {}
@@ -155,6 +156,22 @@ export class ClientPortalController {
           next(err);
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public downloadInvoicePdf = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const userEmail = req.user!.email;
+      const invoiceId = req.params.id;
+      const invoice = await this.clientPortalService.getInvoicePdfForDownload(userId, userEmail, invoiceId);
+      const pdfBuffer = await generateInvoicePdf(invoice);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="Invoice-${invoice.invoiceNumber}.pdf"`);
+      res.status(200).send(pdfBuffer);
     } catch (error) {
       next(error);
     }

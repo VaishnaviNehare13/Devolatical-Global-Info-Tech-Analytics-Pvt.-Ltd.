@@ -625,6 +625,7 @@ model Milestone {
   deletedAt   DateTime?
   tasks       Task[]          @relation("MilestoneTasks")
   documents   Document[]      @relation("MilestoneDocuments")
+  invoices    Invoice[]       @relation("MilestoneInvoices")
 
   @@index([projectId])
   @@index([status])
@@ -872,6 +873,9 @@ model Invoice {
   projectId String?
   project   Project? @relation("ProjectInvoices", fields: [projectId], references: [id], onDelete: SetNull)
 
+  milestoneId String?
+  milestone   Milestone? @relation("MilestoneInvoices", fields: [milestoneId], references: [id], onDelete: SetNull)
+
   createdAt   DateTime  @default(now())
   createdById String?
   createdBy   User?     @relation("InvoiceCreator", fields: [createdById], references: [id], onDelete: SetNull)
@@ -882,6 +886,7 @@ model Invoice {
 
   @@index([clientId])
   @@index([projectId])
+  @@index([milestoneId])
   @@index([status])
   @@index([invoiceNumber])
   @@index([deletedAt])

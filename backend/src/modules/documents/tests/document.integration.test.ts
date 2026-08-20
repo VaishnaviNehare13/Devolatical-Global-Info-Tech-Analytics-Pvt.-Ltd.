@@ -650,11 +650,19 @@ describe('Documents Module Integration Tests', () => {
       });
       clientBUserToken = generateAccessToken({ sub: clientUserB.id, email: clientUserB.email });
 
-      // 3. Link Client User A to activeClientId (Acme Corp) via email matching
-      await prisma.client.update({
-        where: { id: activeClientId },
-        data: { email: 'clientA.doc@example.com' },
+      let clientAOrgId: string;
+
+      // 3. Create Client Org A and link Client User A
+      const clientAOrg = await prisma.client.create({
+        data: {
+          name: 'Alpha Corp',
+          code: 'ALPHA-DOC',
+          status: 'ACTIVE',
+          email: 'clientA.doc@example.com',
+          accountManagerId: clientUserA.id,
+        },
       });
+      clientAOrgId = clientAOrg.id;
 
       // 4. Create Client Org B and link Client User B
       const clientBOrg = await prisma.client.create({
@@ -663,6 +671,7 @@ describe('Documents Module Integration Tests', () => {
           code: 'BETA-DOC',
           status: 'ACTIVE',
           email: 'clientB.doc@example.com',
+          accountManagerId: clientUserB.id,
         },
       });
       clientBOrgId = clientBOrg.id;
@@ -672,7 +681,7 @@ describe('Documents Module Integration Tests', () => {
         .post('/api/v1/documents')
         .set('Authorization', `Bearer ${adminToken}`)
         .field('title', 'Client A Confidential Report')
-        .field('clientId', activeClientId)
+        .field('clientId', clientAOrgId)
         .attach('file', Buffer.from('Client A document file binary content'), {
           filename: 'client-a-report.pdf',
           contentType: 'application/pdf',
@@ -703,7 +712,8 @@ describe('Documents Module Integration Tests', () => {
       expect(res.status).toBe(200);
       expect(res.headers['content-type']).toContain('application/pdf');
       expect(res.headers['content-disposition']).toContain('attachment');
-      expect(res.text).toContain('Client A document file binary content');
+      const content = res.text || (res.body ? res.body.toString('utf8') : '');
+      expect(content).toContain('Client A document file binary content');
     });
 
     it('7.2 should return 400 for invalid document UUID on download', async () => {
@@ -741,7 +751,8 @@ describe('Documents Module Integration Tests', () => {
 
       expect(res.status).toBe(200);
       expect(res.headers['content-type']).toContain('application/pdf');
-      expect(res.text).toContain('Client A document file binary content');
+      const content = res.text || (res.body ? res.body.toString('utf8') : '');
+      expect(content).toContain('Client A document file binary content');
     });
 
     it('7.6 should DENY Client A attempting to download Client B document with 404', async () => {

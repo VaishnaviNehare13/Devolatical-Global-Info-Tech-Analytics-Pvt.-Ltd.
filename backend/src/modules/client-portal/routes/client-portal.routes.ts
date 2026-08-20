@@ -12,6 +12,7 @@ export function createClientPortalRouter(
   router.get('/overview', controller.getOverview);
   router.get('/projects', controller.getProjects);
   router.get('/invoices', controller.getInvoices);
+  router.get('/invoices/:id/pdf', controller.downloadInvoicePdf);
   router.get('/tickets', controller.getTickets);
   router.get('/tickets/:id', controller.getTicketById);
   router.post('/tickets', controller.createTicket);

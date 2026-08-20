@@ -14,6 +14,7 @@ export const CreateInvoiceSchema = z.object({
   dueDate: z.coerce.date().optional(),
   clientId: z.string().uuid({ message: 'Client ID must be a valid UUID.' }),
   projectId: z.string().uuid({ message: 'Project ID must be a valid UUID.' }).optional(),
+  milestoneId: z.string().uuid({ message: 'Milestone ID must be a valid UUID.' }).optional(),
 });
 
 export const UpdateInvoiceSchema = z.object({
@@ -23,6 +24,7 @@ export const UpdateInvoiceSchema = z.object({
   status: z.nativeEnum(InvoiceStatus).optional(),
   dueDate: z.coerce.date().optional(),
   paidAt: z.coerce.date().optional(),
+  milestoneId: z.string().uuid().optional(),
 });
 
 export const FindInvoicesSchema = z.object({
@@ -32,6 +34,7 @@ export const FindInvoicesSchema = z.object({
   status: z.nativeEnum(InvoiceStatus).optional(),
   clientId: z.string().uuid().optional(),
   projectId: z.string().uuid().optional(),
+  milestoneId: z.string().uuid().optional(),
   sortField: z.enum(['createdAt', 'amount', 'dueDate', 'invoiceNumber']).default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });

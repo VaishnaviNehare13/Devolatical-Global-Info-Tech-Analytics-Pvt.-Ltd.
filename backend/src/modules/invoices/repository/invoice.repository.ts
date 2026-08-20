@@ -23,11 +23,13 @@ export class InvoiceRepository {
         dueDate: data.dueDate ?? null,
         clientId: data.clientId,
         projectId: data.projectId ?? null,
+        milestoneId: data.milestoneId ?? null,
         createdById: data.createdById ?? null,
       },
       include: {
         client: { select: { id: true, name: true, code: true } },
         project: { select: { id: true, name: true, code: true } },
+        milestone: { select: { id: true, title: true, status: true } },
       },
     });
   }
@@ -36,8 +38,9 @@ export class InvoiceRepository {
     return this.prisma.invoice.findFirst({
       where: { id, deletedAt: null },
       include: {
-        client: { select: { id: true, name: true, code: true } },
+        client: { select: { id: true, name: true, code: true, email: true, phone: true, addressLine1: true, city: true, country: true } },
         project: { select: { id: true, name: true, code: true } },
+        milestone: { select: { id: true, title: true, status: true, description: true } },
       },
     });
   }
@@ -60,6 +63,9 @@ export class InvoiceRepository {
     if (options.projectId) {
       where.projectId = options.projectId;
     }
+    if (options.milestoneId) {
+      where.milestoneId = options.milestoneId;
+    }
     if (options.search) {
       const searchTrim = options.search.trim();
       where.OR = [
@@ -78,6 +84,7 @@ export class InvoiceRepository {
         include: {
           client: { select: { id: true, name: true, code: true } },
           project: { select: { id: true, name: true, code: true } },
+          milestone: { select: { id: true, title: true, status: true } },
         },
         orderBy: { [sortField]: sortOrder },
         skip,
@@ -105,6 +112,9 @@ export class InvoiceRepository {
     if (data.status !== undefined) updateData.status = data.status;
     if (data.dueDate !== undefined) updateData.dueDate = data.dueDate;
     if (data.paidAt !== undefined) updateData.paidAt = data.paidAt;
+    if (data.milestoneId !== undefined) {
+      updateData.milestone = data.milestoneId ? { connect: { id: data.milestoneId } } : { disconnect: true };
+    }
 
     try {
       return await this.prisma.invoice.update({
@@ -113,6 +123,7 @@ export class InvoiceRepository {
         include: {
           client: { select: { id: true, name: true, code: true } },
           project: { select: { id: true, name: true, code: true } },
+          milestone: { select: { id: true, title: true, status: true } },
         },
       });
     } catch {

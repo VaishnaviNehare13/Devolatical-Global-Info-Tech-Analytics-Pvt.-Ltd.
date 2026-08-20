@@ -62,6 +62,9 @@ import { createNotificationsModule } from '../../modules/notifications';
 // Pipelines imports
 import { createPipelinesModule } from '../../modules/pipelines';
 
+// Analytics imports
+import { createAnalyticsModule } from '../../modules/analytics';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -160,6 +163,9 @@ v1Router.use('/notifications', notificationsRouter);
 
 // Initialize and Mount Pipelines Router
 v1Router.use('/pipelines', createPipelinesModule(prisma, authMiddleware.handle, authorizeStaff));
+
+// Initialize and Mount Analytics Router
+v1Router.use('/analytics', createAnalyticsModule(prisma, authMiddleware.handle, authorizeStaff));
 
 export default v1Router;
 

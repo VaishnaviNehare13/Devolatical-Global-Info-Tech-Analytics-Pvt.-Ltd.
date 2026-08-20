@@ -13,6 +13,7 @@ import { usersApi } from '../../api/users.api';
 import { authApi } from '../../api/auth.api';
 import type { UserProfile } from '../../types/user';
 import { ApiError } from '../../types/api';
+import { MfaSettings } from '../../components/auth/MfaSettings';
 import {
   User,
   ShieldCheck,
@@ -22,6 +23,7 @@ import {
   Save,
   Key,
 } from 'lucide-react';
+
 
 export const EmployeeProfile: React.FC = () => {
   const { showToast } = useToast();
@@ -412,6 +414,9 @@ export const EmployeeProfile: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* MFA / 2FA Settings Card */}
+            <MfaSettings />
           </div>
         </div>
       )}

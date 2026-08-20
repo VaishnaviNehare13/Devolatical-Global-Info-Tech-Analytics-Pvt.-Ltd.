@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { usersApi } from '../../api/users.api';
 import { authApi } from '../../api/auth.api';
 import { ApiError } from '../../types/api';
+import { MfaSettings } from '../../components/auth/MfaSettings';
 import { Settings, ShieldAlert, CheckCircle2, Lock, Key } from 'lucide-react';
 
 export const AdminSettings: React.FC = () => {
@@ -234,6 +235,9 @@ export const AdminSettings: React.FC = () => {
               </form>
             </CardContent>
           </Card>
+
+          {/* MFA / 2FA Settings Card */}
+          <MfaSettings />
         </div>
       </div>
     </div>

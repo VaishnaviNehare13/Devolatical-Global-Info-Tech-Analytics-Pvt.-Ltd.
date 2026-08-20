@@ -21,6 +21,16 @@ export const REFRESH_TOKEN_KEY = 'devolatical_refresh_token';
 export type CurrentUser = UserProfile | AuthUser;
 
 /**
+ * Result payload returned from the primary login function.
+ */
+export interface AuthResult {
+  mfaRequired?: boolean;
+  mfaToken?: string;
+  user?: CurrentUser;
+  destination?: string;
+}
+
+/**
  * Authentication Context Interface contract.
  */
 export interface AuthContextType {
@@ -28,7 +38,10 @@ export interface AuthContextType {
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginRequest) => Promise<{ user: CurrentUser; destination: string }>;
+  mfaChallengeToken: string | null;
+  login: (credentials: LoginRequest) => Promise<AuthResult>;
+  verifyMfaLogin: (code: string) => Promise<{ user: CurrentUser; destination: string }>;
+  clearMfaChallenge: () => void;
   logout: () => Promise<void>;
   hasRole: (role: string) => boolean;
   hasAnyRole: (roles: string[]) => boolean;
@@ -101,6 +114,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [accessToken, setAccessTokenState] = useState<string | null>(null);
+  const [mfaChallengeToken, setMfaChallengeToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Synchronize access token in memory with the API client
@@ -165,6 +179,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       updateAccessToken(null);
       setStoredRefreshToken(null);
       setUser(null);
+      setMfaChallengeToken(null);
     }
   }, [accessToken, updateAccessToken, setStoredRefreshToken]);
 
@@ -209,8 +224,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
    * Executes credentials login workflow.
    */
   const login = useCallback(
-    async (credentials: LoginRequest): Promise<{ user: CurrentUser; destination: string }> => {
+    async (credentials: LoginRequest): Promise<AuthResult> => {
       const response = await authApi.login(credentials);
+      const data = response.data;
+
+      if (data.mfaRequired && data.mfaToken) {
+        setMfaChallengeToken(data.mfaToken);
+        return { mfaRequired: true, mfaToken: data.mfaToken };
+      }
+
+      const newAccessToken = data.accessToken!;
+      const newRefreshToken = data.refreshToken!;
+      const authUser = data.user!;
+
+      updateAccessToken(newAccessToken);
+      if (newRefreshToken) {
+        setStoredRefreshToken(newRefreshToken);
+      }
+
+      let activeUser: CurrentUser = authUser;
+      try {
+        const profileResponse = await usersApi.getMyProfile();
+        activeUser = profileResponse.data;
+        setUser(activeUser);
+      } catch {
+        setUser(authUser);
+      }
+
+      setMfaChallengeToken(null);
+      const destination = getDestinationForUser(activeUser);
+      return { user: activeUser, destination };
+    },
+    [updateAccessToken, setStoredRefreshToken]
+  );
+
+  /**
+   * Executes 6-digit TOTP verification challenge during MFA login flow.
+   */
+  const verifyMfaLogin = useCallback(
+    async (code: string): Promise<{ user: CurrentUser; destination: string }> => {
+      if (!mfaChallengeToken) {
+        throw new Error('MFA challenge session expired. Please log in again.');
+      }
+
+      const response = await authApi.verifyMfaLogin({
+        mfaToken: mfaChallengeToken,
+        code,
+      });
+
       const { accessToken: newAccessToken, refreshToken: newRefreshToken, user: authUser } =
         response.data;
 
@@ -228,11 +289,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(authUser);
       }
 
+      setMfaChallengeToken(null);
       const destination = getDestinationForUser(activeUser);
       return { user: activeUser, destination };
     },
-    [updateAccessToken, setStoredRefreshToken]
+    [mfaChallengeToken, updateAccessToken, setStoredRefreshToken]
   );
+
+  /**
+   * Resets active MFA challenge token state.
+   */
+  const clearMfaChallenge = useCallback(() => {
+    setMfaChallengeToken(null);
+  }, []);
 
   // Register token getter and refresh interceptors with the centralized API client
   useEffect(() => {
@@ -271,6 +340,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       updateAccessToken(null);
       setStoredRefreshToken(null);
       setUser(null);
+      setMfaChallengeToken(null);
     });
   }, [accessToken, getStoredRefreshToken, updateAccessToken, setStoredRefreshToken]);
 
@@ -329,13 +399,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       accessToken,
       isAuthenticated: !!user && !!accessToken,
       isLoading,
+      mfaChallengeToken,
       login,
+      verifyMfaLogin,
+      clearMfaChallenge,
       logout,
       hasRole,
       hasAnyRole,
       refreshSession,
     }),
-    [user, accessToken, isLoading, login, logout, hasRole, hasAnyRole, refreshSession]
+    [
+      user,
+      accessToken,
+      isLoading,
+      mfaChallengeToken,
+      login,
+      verifyMfaLogin,
+      clearMfaChallenge,
+      logout,
+      hasRole,
+      hasAnyRole,
+      refreshSession,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

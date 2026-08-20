@@ -11,6 +11,7 @@ import { usersApi } from '../../api/users.api';
 import { authApi } from '../../api/auth.api';
 import type { UserProfile } from '../../types/user';
 import { ApiError } from '../../types/api';
+import { MfaSettings } from '../../components/auth/MfaSettings';
 import { User, ShieldCheck, Lock, Sun, Moon, Save, Key } from 'lucide-react';
 
 export const ClientProfile: React.FC = () => {
@@ -329,6 +330,9 @@ export const ClientProfile: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* MFA / 2FA Settings Card */}
+            <MfaSettings />
           </div>
         </div>
       )}

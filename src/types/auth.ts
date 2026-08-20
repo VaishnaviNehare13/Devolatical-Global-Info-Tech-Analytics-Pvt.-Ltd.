@@ -20,6 +20,58 @@ export interface AuthTokensResponseData {
 }
 
 /**
+ * Response payload for primary login (may require MFA step).
+ */
+export interface LoginResponseData {
+  mfaRequired?: boolean;
+  mfaToken?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  user?: AuthUser;
+}
+
+/**
+ * Response payload for MFA status query.
+ */
+export interface MfaStatusResponseData {
+  enabled: boolean;
+  enabledAt: string | null;
+}
+
+/**
+ * Response payload for MFA setup initiation.
+ */
+export interface MfaSetupResponseData {
+  secret: string;
+  otpauthUrl: string;
+  qrCodeUrl: string;
+}
+
+/**
+ * Request payload for verifying 6-digit TOTP code during MFA setup.
+ */
+export interface VerifyMfaRequest {
+  code: string;
+}
+
+/**
+ * Request payload for disabling MFA.
+ */
+export interface DisableMfaRequest {
+  password?: string;
+  code?: string;
+}
+
+/**
+ * Request payload for completing MFA login verification challenge.
+ */
+export interface VerifyMfaLoginRequest {
+  mfaToken: string;
+  code: string;
+}
+
+
+/**
  * Login Request DTO.
  */
 export interface LoginRequest {

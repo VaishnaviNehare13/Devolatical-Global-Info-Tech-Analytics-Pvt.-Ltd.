@@ -546,9 +546,10 @@ model Client {
   deletedAt        DateTime?
 
   projects  Project[]
-  tickets   Ticket[]   @relation("ClientTickets")
-  documents Document[] @relation("ClientDocuments")
-  invoices  Invoice[]  @relation("ClientInvoices")
+  tickets   Ticket[]       @relation("ClientTickets")
+  documents Document[]     @relation("ClientDocuments")
+  invoices  Invoice[]      @relation("ClientInvoices")
+  pipelines DataPipeline[] @relation("ClientPipelines")
 
   @@index([name])
   @@index([status])
@@ -589,10 +590,11 @@ model Project {
   deletedAt        DateTime?
 
   milestones Milestone[]
-  tickets    Ticket[]    @relation("ProjectTickets")
-  tasks      Task[]      @relation("ProjectTasks")
-  documents  Document[]  @relation("ProjectDocuments")
-  invoices   Invoice[]   @relation("ProjectInvoices")
+  tickets    Ticket[]       @relation("ProjectTickets")
+  tasks      Task[]         @relation("ProjectTasks")
+  documents  Document[]     @relation("ProjectDocuments")
+  invoices   Invoice[]      @relation("ProjectInvoices")
+  pipelines  DataPipeline[] @relation("ProjectPipelines")
 
   @@index([clientId])
   @@index([projectManagerId])
@@ -1009,6 +1011,45 @@ model Notification {
   @@index([deletedAt])
   @@map("notifications")
 }
+
+enum PipelineStatus {
+  ACTIVE
+  SYNCING
+  STOPPED
+  COMPLETED
+  FAILED
+}
+
+model DataPipeline {
+  id           String         @id @default(uuid())
+  name         String
+  description  String?        @db.Text
+  status       PipelineStatus @default(ACTIVE)
+  source       String         @default("Kafka Ingestion Engine")
+  target       String         @default("Snowflake Core DW")
+  volume       String         @default("1.2M req/hr")
+  progress     Int            @default(0)
+  lastRunAt    DateTime?
+  nextRunAt    DateTime?
+  errorMessage String?        @db.Text
+
+  clientId     String?
+  client       Client?        @relation("ClientPipelines", fields: [clientId], references: [id], onDelete: Cascade)
+
+  projectId    String?
+  project      Project?       @relation("ProjectPipelines", fields: [projectId], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+
+  @@index([clientId])
+  @@index([projectId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("data_pipelines")
+}
+
 
 
 

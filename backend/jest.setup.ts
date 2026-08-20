@@ -11,7 +11,7 @@ import { runSeeding } from './prisma/seed/index';
 afterAll(async () => {
   try {
     await runSeeding(prisma);
-  } catch (error) {
+  } catch (_error) {
     // Teardown seeding error caught cleanly
   }
 });

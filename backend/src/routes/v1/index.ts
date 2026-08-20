@@ -59,6 +59,9 @@ import { createCareersModule } from '../../modules/careers';
 // Notifications imports
 import { createNotificationsModule } from '../../modules/notifications';
 
+// Pipelines imports
+import { createPipelinesModule } from '../../modules/pipelines';
+
 // Shared imports
 import { SYSTEM_ROLES } from '../../shared/constants/roles';
 
@@ -154,6 +157,9 @@ v1Router.use('/careers', careersRouter);
 // Initialize and Mount Notifications Router
 const { router: notificationsRouter } = createNotificationsModule(prisma, authMiddleware.handle);
 v1Router.use('/notifications', notificationsRouter);
+
+// Initialize and Mount Pipelines Router
+v1Router.use('/pipelines', createPipelinesModule(prisma, authMiddleware.handle, authorizeStaff));
 
 export default v1Router;
 

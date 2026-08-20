@@ -171,5 +171,53 @@ export async function seedInvoicesAndClientData(prisma: PrismaClient): Promise<v
     }
   }
 
-  console.log('✅ [Client Data Seeder] Clients, projects, invoices, and tickets seeded successfully.');
+  const samplePipelines = [
+    {
+      name: 'healthcare-telemetry-ingest',
+      description: 'Ingestion stream processing medical device metrics.',
+      status: 'ACTIVE' as const,
+      source: 'Azure IoT Hub',
+      target: 'Databricks Lakehouse',
+      volume: '800k req/hr',
+      progress: 85,
+      clientId: acmeClient.id,
+      projectId: proj1.id,
+    },
+    {
+      name: 'financial-ledger-sync',
+      description: 'Real-time transaction synchronization for ledger reporting.',
+      status: 'ACTIVE' as const,
+      source: 'Kinesis Kafka',
+      target: 'Snowflake Core DW',
+      volume: '1.2M req/hr',
+      progress: 94,
+      clientId: acmeClient.id,
+      projectId: proj1.id,
+    },
+    {
+      name: 'retail-recommender-update',
+      description: 'Syncing clickstream user features into feature store.',
+      status: 'SYNCING' as const,
+      source: 'Web Telemetry SDK',
+      target: 'MongoDB Atlas',
+      volume: '3.4M req/hr',
+      progress: 34,
+      clientId: acmeClient.id,
+      projectId: proj1.id,
+    },
+  ];
+
+  for (const pip of samplePipelines) {
+    const existing = await prisma.dataPipeline.findFirst({
+      where: { name: pip.name, clientId: pip.clientId },
+    });
+    if (!existing) {
+      await prisma.dataPipeline.create({
+        data: pip,
+      });
+    }
+  }
+
+  console.log('✅ [Client Data Seeder] Clients, projects, invoices, tickets, and pipelines seeded successfully.');
 }
+

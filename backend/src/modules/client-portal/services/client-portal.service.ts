@@ -29,7 +29,7 @@ export class ClientPortalService {
   public async getOverview(userId: string, userEmail: string) {
     const clientId = await this.getClientIdForUser(userId, userEmail);
 
-    const [projectsCount, invoicesCount, invoicesSum, openTicketsCount] = await Promise.all([
+    const [projectsCount, invoicesCount, invoicesSum, openTicketsCount, pipelines, milestones] = await Promise.all([
       this.prisma.project.count({ where: { clientId, deletedAt: null } }),
       this.prisma.invoice.count({ where: { clientId, deletedAt: null } }),
       this.prisma.invoice.aggregate({
@@ -37,23 +37,52 @@ export class ClientPortalService {
         _sum: { amount: true },
       }),
       this.prisma.ticket.count({ where: { clientId, status: 'OPEN', deletedAt: null } }),
+      this.prisma.dataPipeline.findMany({
+        where: { clientId, deletedAt: null },
+        orderBy: { updatedAt: 'desc' },
+        take: 5,
+      }),
+      this.prisma.milestone.findMany({
+        where: { project: { clientId }, deletedAt: null },
+        include: { project: { select: { name: true } } },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+      }),
     ]);
 
-    const activePipelines = [
-      { id: 'pip-1', name: 'healthcare-telemetry-ingest', status: 'Active', progress: 85 },
-      { id: 'pip-2', name: 'financial-ledger-sync', status: 'Active', progress: 94 },
-      { id: 'pip-3', name: 'retail-recommender-update', status: 'Syncing', progress: 34 },
-    ];
+    const activePipelines = pipelines.map((pip) => ({
+      id: pip.id,
+      name: pip.name,
+      status:
+        pip.status === 'ACTIVE'
+          ? 'Active'
+          : pip.status === 'SYNCING'
+          ? 'Syncing'
+          : pip.status === 'STOPPED'
+          ? 'Stopped'
+          : pip.status === 'COMPLETED'
+          ? 'Completed'
+          : 'Failed',
+      progress: pip.progress,
+    }));
 
-    const projectMilestones = [
-      { id: 'ms-1', name: 'Phase 3: Security Hardening', description: 'Integration of IAM protocols and OAuth 2.0 gates.', status: 'In Progress' },
-      { id: 'ms-2', name: 'Phase 2: Spark Cluster Setup', description: 'Deployment of PySpark analytics compute cluster.', status: 'Completed' },
-      { id: 'ms-3', name: 'Phase 4: BI Dashboards Rollout', description: 'Provisioning Metabase templates and metrics.', status: 'Scheduled' },
-    ];
+    const projectMilestones = milestones.map((ms) => ({
+      id: ms.id,
+      name: `${ms.project.name}: ${ms.title}`,
+      description: ms.description || `Milestone objective for ${ms.project.name}`,
+      status:
+        ms.status === 'COMPLETED'
+          ? 'Completed'
+          : ms.status === 'IN_PROGRESS'
+          ? 'In Progress'
+          : ms.status === 'PENDING'
+          ? 'Scheduled'
+          : 'Delayed',
+    }));
 
     return {
       systemStatus: 'Optimal',
-      dataVolume: 'High Volume',
+      dataVolume: `${pipelines.length} Active Stream${pipelines.length === 1 ? '' : 's'}`,
       activeProjectsCount: projectsCount,
       totalInvoicesCount: invoicesCount,
       pendingInvoiceTotal: invoicesSum._sum.amount ? Number(invoicesSum._sum.amount) : 0,

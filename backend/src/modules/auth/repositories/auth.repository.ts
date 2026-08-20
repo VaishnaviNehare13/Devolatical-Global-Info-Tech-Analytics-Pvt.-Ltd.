@@ -176,4 +176,87 @@ export class AuthRepository implements IAuthRepository {
       );
     }
   }
+
+  public async getUserMfaDetails(userId: string) {
+    try {
+      const pref = await prisma.userPreference.findUnique({
+        where: { userId },
+        select: {
+          twoFactorEnabled: true,
+          totpSecret: true,
+          totpTempSecret: true,
+          totpEnabledAt: true,
+        },
+      });
+      return pref;
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_READ_FAILED',
+        'Database query failed while retrieving user MFA details.',
+        error
+      );
+    }
+  }
+
+  public async saveTempTotpSecret(userId: string, tempSecret: string): Promise<void> {
+    try {
+      await prisma.userPreference.upsert({
+        where: { userId },
+        create: {
+          userId,
+          totpTempSecret: tempSecret,
+        },
+        update: {
+          totpTempSecret: tempSecret,
+        },
+      });
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_UPDATE_FAILED',
+        'Database write failed while saving temporary TOTP secret.',
+        error
+      );
+    }
+  }
+
+  public async enableMfa(userId: string, activeSecret: string): Promise<void> {
+    try {
+      await prisma.userPreference.update({
+        where: { userId },
+        data: {
+          twoFactorEnabled: true,
+          totpSecret: activeSecret,
+          totpTempSecret: null,
+          totpEnabledAt: new Date(),
+        },
+      });
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_UPDATE_FAILED',
+        'Database write failed while enabling MFA.',
+        error
+      );
+    }
+  }
+
+  public async disableMfa(userId: string): Promise<void> {
+    try {
+      await prisma.userPreference.update({
+        where: { userId },
+        data: {
+          twoFactorEnabled: false,
+          totpSecret: null,
+          totpTempSecret: null,
+          totpEnabledAt: null,
+        },
+      });
+    } catch (error) {
+      throw new RepositoryError(
+        'DATABASE_UPDATE_FAILED',
+        'Database write failed while disabling MFA.',
+        error
+      );
+    }
+  }
 }
+

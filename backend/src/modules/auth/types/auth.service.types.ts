@@ -14,7 +14,10 @@ export interface AuthUser {
  * Result structure returned by authentication services (Readonly)
  */
 export interface LoginResult {
-  readonly accessToken: string;
-  readonly refreshToken: string;
-  readonly user: AuthUser;
+  readonly mfaRequired?: boolean;
+  readonly mfaToken?: string;
+  readonly accessToken?: string;
+  readonly refreshToken?: string;
+  readonly user?: AuthUser;
 }
+

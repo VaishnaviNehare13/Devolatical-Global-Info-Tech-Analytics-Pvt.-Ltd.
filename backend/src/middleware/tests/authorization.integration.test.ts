@@ -74,7 +74,7 @@ describe('Dynamic Granular Permission Enforcement Integration Tests', () => {
     });
     userReadPermId = userReadPerm.id;
 
-    await prisma.permission.upsert({
+    const userCreatePerm = await prisma.permission.upsert({
       where: { code: 'USER_CREATE' },
       update: { isActive: true },
       create: {
@@ -84,6 +84,14 @@ describe('Dynamic Granular Permission Enforcement Integration Tests', () => {
         resource: Resource.USER,
         action: Action.CREATE,
         isActive: true,
+      },
+    });
+
+    // Ensure USER_CREATE is NOT granted to Admin role for negative test assertion
+    await prisma.rolePermission.deleteMany({
+      where: {
+        roleId: adminRoleId,
+        permissionId: userCreatePerm.id,
       },
     });
 
@@ -245,6 +253,16 @@ describe('Dynamic Granular Permission Enforcement Integration Tests', () => {
     });
 
     it('should DENY Admin user when requested permission (USER_CREATE) is NOT granted in database with 403', async () => {
+      const userCreatePerm = await prisma.permission.findUnique({ where: { code: 'USER_CREATE' } });
+      if (userCreatePerm) {
+        await prisma.rolePermission.deleteMany({
+          where: {
+            roleId: adminRoleId,
+            permissionId: userCreatePerm.id,
+          },
+        });
+      }
+
       const res = await request(testApp)
         .post('/test/user-create')
         .set('Authorization', `Bearer ${adminToken}`);

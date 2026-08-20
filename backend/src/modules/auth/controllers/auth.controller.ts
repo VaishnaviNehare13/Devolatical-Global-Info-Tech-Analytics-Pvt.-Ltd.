@@ -129,4 +129,92 @@ export class AuthController {
       next(error);
     }
   };
+
+  /**
+   * Controller handler for initiating MFA setup.
+   */
+  public setupMfa = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const result = await this.authService.setupMfa(userId);
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'MFA setup initiated successfully.',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Controller handler for verifying TOTP and activating MFA.
+   */
+  public verifyAndEnableMfa = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const { code } = req.body;
+      const result = await this.authService.verifyAndEnableMfa(userId, code);
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'MFA enabled successfully.',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Controller handler for disabling MFA.
+   */
+  public disableMfa = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const { password, code } = req.body;
+      const result = await this.authService.disableMfa(userId, password, code);
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'MFA disabled successfully.',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Controller handler for retrieving MFA status.
+   */
+  public getMfaStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const result = await this.authService.getMfaStatus(userId);
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'MFA status retrieved successfully.',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Controller handler for validating login MFA challenge token & TOTP code.
+   */
+  public verifyMfaLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { mfaToken, code } = req.body;
+      const result = await this.authService.verifyMfaLogin(mfaToken, code);
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'MFA verification successful.',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
+

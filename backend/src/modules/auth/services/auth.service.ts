@@ -10,9 +10,17 @@ import {
   verifyRefreshToken,
   generatePasswordResetToken,
   verifyPasswordResetToken,
+  generateMfaChallengeToken,
+  verifyMfaChallengeToken,
 } from '../../../shared/utils/jwt';
 import { AuthMapper } from '../mappers/auth.mapper';
 import { sendPasswordResetEmail } from '../../../shared/utils/email';
+import {
+  encryptSecret,
+  decryptSecret,
+  generateTotpSetup,
+  verifyTotpToken,
+} from '../utils/totp.util';
 
 /**
  * Concrete Authentication Business Service implementing IAuthService.
@@ -26,13 +34,19 @@ export class AuthService implements IAuthService {
    *
    * @param email Plain text user email
    * @param password Plain text user password
-   * @returns Immutable LoginResult with token pair and identity
+   * @returns Immutable LoginResult with token pair and identity or MFA challenge token
    * @throws {AuthenticationError} For business authentication failures
    */
   public async login(email: string, password: string): Promise<LoginResult> {
     const user = await this.validateCredentials(email, password);
 
     this.ensureAccountIsActive(user.status);
+
+    const mfaDetails = await this.authRepository.getUserMfaDetails(user.id);
+    if (mfaDetails?.twoFactorEnabled && mfaDetails?.totpSecret) {
+      const mfaToken = generateMfaChallengeToken({ sub: user.id, email: user.email });
+      return AuthMapper.toMfaChallengeResult(mfaToken);
+    }
 
     const tokens = this.generateTokenPair(user.id, user.email);
 
@@ -390,4 +404,117 @@ export class AuthService implements IAuthService {
       );
     }
   }
+
+  public async setupMfa(userId: string): Promise<{ secret: string; otpauthUrl: string; qrCodeUrl: string }> {
+    const user = await this.authRepository.findUserById(userId);
+    if (!user) {
+      throw new AuthenticationError('ACCOUNT_NOT_FOUND', 'User account not found.');
+    }
+    this.ensureAccountIsActive(user.status);
+
+    const setup = await generateTotpSetup(user.email);
+    const encryptedTempSecret = encryptSecret(setup.secret);
+
+    await this.authRepository.saveTempTotpSecret(userId, encryptedTempSecret);
+
+    return {
+      secret: setup.secret,
+      otpauthUrl: setup.otpauthUrl,
+      qrCodeUrl: setup.qrCodeUrl,
+    };
+  }
+
+  public async verifyAndEnableMfa(userId: string, code: string): Promise<{ enabled: boolean }> {
+    const user = await this.authRepository.findUserById(userId);
+    if (!user) {
+      throw new AuthenticationError('ACCOUNT_NOT_FOUND', 'User account not found.');
+    }
+    this.ensureAccountIsActive(user.status);
+
+    const mfaDetails = await this.authRepository.getUserMfaDetails(userId);
+    if (!mfaDetails || !mfaDetails.totpTempSecret) {
+      throw new AuthenticationError('INVALID_CREDENTIALS', 'No pending MFA setup found. Please initiate setup first.');
+    }
+
+    const plainTempSecret = decryptSecret(mfaDetails.totpTempSecret);
+    const isValid = verifyTotpToken(code, plainTempSecret);
+
+    if (!isValid) {
+      throw new AuthenticationError('INVALID_CREDENTIALS', 'Invalid MFA verification code.');
+    }
+
+    await this.authRepository.enableMfa(userId, mfaDetails.totpTempSecret);
+    return { enabled: true };
+  }
+
+  public async disableMfa(userId: string, password?: string, code?: string): Promise<{ enabled: boolean }> {
+    const userCreds = await this.authRepository.findUserCredentialsById(userId);
+    if (!userCreds) {
+      throw new AuthenticationError('ACCOUNT_NOT_FOUND', 'User account not found.');
+    }
+    this.ensureAccountIsActive(userCreds.status);
+
+    if (password) {
+      const isMatch = await comparePassword(password, userCreds.passwordHash);
+      if (!isMatch) {
+        throw new AuthenticationError('INVALID_PASSWORD', 'Invalid current password.');
+      }
+    }
+
+    const mfaDetails = await this.authRepository.getUserMfaDetails(userId);
+    if (mfaDetails?.twoFactorEnabled && mfaDetails.totpSecret && code) {
+      const plainSecret = decryptSecret(mfaDetails.totpSecret);
+      const isValid = verifyTotpToken(code, plainSecret);
+      if (!isValid) {
+        throw new AuthenticationError('INVALID_CREDENTIALS', 'Invalid MFA verification code.');
+      }
+    }
+
+    await this.authRepository.disableMfa(userId);
+    return { enabled: false };
+  }
+
+  public async getMfaStatus(userId: string): Promise<{ enabled: boolean; enabledAt: string | null }> {
+    const mfaDetails = await this.authRepository.getUserMfaDetails(userId);
+    return {
+      enabled: mfaDetails?.twoFactorEnabled || false,
+      enabledAt: mfaDetails?.totpEnabledAt ? mfaDetails.totpEnabledAt.toISOString() : null,
+    };
+  }
+
+  public async verifyMfaLogin(mfaToken: string, code: string): Promise<LoginResult> {
+    const verifyResult = verifyMfaChallengeToken(mfaToken);
+    if (!verifyResult.success) {
+      let message = 'MFA login challenge token is invalid.';
+      if (verifyResult.error === 'EXPIRED') {
+        message = 'MFA login challenge token has expired.';
+      }
+      throw new AuthenticationError('INVALID_CREDENTIALS', message);
+    }
+
+    const userId = verifyResult.payload.sub;
+    const user = await this.authRepository.findUserCredentialsById(userId);
+    if (!user) {
+      throw new AuthenticationError('ACCOUNT_NOT_FOUND', 'Account not found during MFA login.');
+    }
+    this.ensureAccountIsActive(user.status);
+
+    const mfaDetails = await this.authRepository.getUserMfaDetails(userId);
+    if (!mfaDetails || !mfaDetails.twoFactorEnabled || !mfaDetails.totpSecret) {
+      throw new AuthenticationError('INVALID_CREDENTIALS', 'MFA is not enabled on this account.');
+    }
+
+    const plainSecret = decryptSecret(mfaDetails.totpSecret);
+    const isValid = verifyTotpToken(code, plainSecret);
+
+    if (!isValid) {
+      throw new AuthenticationError('INVALID_CREDENTIALS', 'Invalid MFA verification code.');
+    }
+
+    const tokens = this.generateTokenPair(user.id, user.email);
+    await this.updateLastLogin(user.id);
+
+    return AuthMapper.toLoginResult(tokens.accessToken, tokens.refreshToken, user);
+  }
 }
+

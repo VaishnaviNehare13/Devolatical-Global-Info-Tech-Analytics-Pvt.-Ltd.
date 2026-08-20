@@ -155,3 +155,41 @@ export function verifyPasswordResetToken(token: string): JwtVerifyResult<BaseJwt
 
   return result;
 }
+
+/**
+ * Generates a short-lived MFA Login Challenge Token (5 minutes).
+ */
+export function generateMfaChallengeToken(payload: Omit<BaseJwtPayload, 'type'>): string {
+  const claims = {
+    ...payload,
+    type: JWT_CONSTANTS.TOKEN_TYPES.MFA_CHALLENGE,
+  };
+
+  return signToken(claims, jwtConfig.access.secret, {
+    expiresIn: '5m', // MFA login challenge expires in 5 minutes
+    issuer: jwtConfig.issuer,
+    audience: jwtConfig.audience,
+    algorithm: jwtConfig.algorithm,
+  });
+}
+
+/**
+ * Verifies and decodes an MFA Login Challenge Token.
+ */
+export function verifyMfaChallengeToken(token: string): JwtVerifyResult<BaseJwtPayload> {
+  const result = verifyToken<BaseJwtPayload>(token, jwtConfig.access.secret, {
+    issuer: jwtConfig.issuer,
+    audience: jwtConfig.audience,
+    algorithms: [jwtConfig.algorithm],
+  });
+
+  if (result.success && result.payload.type !== JWT_CONSTANTS.TOKEN_TYPES.MFA_CHALLENGE) {
+    return {
+      success: false,
+      error: 'INVALID',
+    };
+  }
+
+  return result;
+}
+

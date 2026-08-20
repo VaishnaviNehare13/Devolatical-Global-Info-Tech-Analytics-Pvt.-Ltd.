@@ -16,7 +16,14 @@ export interface IAuthController {
   forgotPassword(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   resetPassword(req: Request, res: Response, next: NextFunction): void | Promise<void>;
   changePassword(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  setupMfa(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  verifyAndEnableMfa(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  disableMfa(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  getMfaStatus(req: Request, res: Response, next: NextFunction): void | Promise<void>;
+  verifyMfaLogin(req: Request, res: Response, next: NextFunction): void | Promise<void>;
 }
+
+import { VerifyMfaSchema, DisableMfaSchema, VerifyMfaLoginSchema } from '../dto/mfa.dto';
 
 /**
  * Configures and returns the Authentication Router.
@@ -55,5 +62,13 @@ export function createAuthRouter(
     authController.changePassword
   );
 
+  // MFA / 2FA Endpoints
+  router.get('/mfa/status', authMiddleware, authController.getMfaStatus);
+  router.post('/mfa/setup', authMiddleware, authController.setupMfa);
+  router.post('/mfa/verify', authMiddleware, validate(VerifyMfaSchema), authController.verifyAndEnableMfa);
+  router.post('/mfa/disable', authMiddleware, validate(DisableMfaSchema), authController.disableMfa);
+  router.post('/mfa/login', validate(VerifyMfaLoginSchema), authController.verifyMfaLogin);
+
   return router;
 }
+

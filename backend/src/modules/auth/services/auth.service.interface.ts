@@ -52,4 +52,30 @@ export interface IAuthService {
    * @param newPassword The new plain text password
    */
   changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
+
+  /**
+   * Generates a new pending TOTP secret and setup QR code for MFA setup.
+   */
+  setupMfa(userId: string): Promise<{ secret: string; otpauthUrl: string; qrCodeUrl: string }>;
+
+  /**
+   * Verifies TOTP code against pending secret and activates MFA.
+   */
+  verifyAndEnableMfa(userId: string, code: string): Promise<{ enabled: boolean }>;
+
+  /**
+   * Disables MFA for user account.
+   */
+  disableMfa(userId: string, password?: string, code?: string): Promise<{ enabled: boolean }>;
+
+  /**
+   * Retrieves MFA status for user account.
+   */
+  getMfaStatus(userId: string): Promise<{ enabled: boolean; enabledAt: string | null }>;
+
+  /**
+   * Completes login by verifying short-lived MFA challenge token & TOTP code.
+   */
+  verifyMfaLogin(mfaToken: string, code: string): Promise<LoginResult>;
 }
+

@@ -52,4 +52,12 @@ export class AuthMapper {
       user: this.toAuthUser(user),
     };
   }
+
+  public static toMfaChallengeResult(mfaToken: string): LoginResult {
+    return {
+      mfaRequired: true,
+      mfaToken,
+    };
+  }
 }
+

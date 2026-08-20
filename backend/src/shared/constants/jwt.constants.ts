@@ -9,6 +9,7 @@ export const JWT_CONSTANTS = Object.freeze({
     ACCESS: 'ACCESS',
     REFRESH: 'REFRESH',
     RESET: 'RESET',
+    MFA_CHALLENGE: 'MFA_CHALLENGE',
   } as const,
   HEADER: {
     PREFIX: 'Bearer ' as const,

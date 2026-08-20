@@ -45,4 +45,30 @@ export interface IAuthRepository {
    * @returns Resolves when updated successfully
    */
   updatePassword(userId: string, passwordHash: string): Promise<void>;
+
+  /**
+   * Retrieves user MFA details from UserPreference.
+   */
+  getUserMfaDetails(userId: string): Promise<{
+    twoFactorEnabled: boolean;
+    totpSecret: string | null;
+    totpTempSecret: string | null;
+    totpEnabledAt: Date | null;
+  } | null>;
+
+  /**
+   * Saves a temporary TOTP secret for MFA setup.
+   */
+  saveTempTotpSecret(userId: string, tempSecret: string): Promise<void>;
+
+  /**
+   * Enables MFA for user, copying temp secret to active TOTP secret.
+   */
+  enableMfa(userId: string, activeSecret: string): Promise<void>;
+
+  /**
+   * Disables MFA for user and wipes secrets.
+   */
+  disableMfa(userId: string): Promise<void>;
 }
+

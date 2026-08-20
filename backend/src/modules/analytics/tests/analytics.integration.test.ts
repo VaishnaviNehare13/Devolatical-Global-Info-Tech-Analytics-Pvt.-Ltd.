@@ -103,6 +103,12 @@ describe('Domain Analytics, Reporting & CSV/PDF Exports Integration Tests', () =
     });
     clientBOrgId = clientBOrg.id;
 
+    if (clientRole) {
+      await prisma.userRole.create({
+        data: { userId: clientBUserId, roleId: clientRole.id },
+      });
+    }
+
     // 4. Test Projects & Records
     const projectA = await prisma.project.create({
       data: {

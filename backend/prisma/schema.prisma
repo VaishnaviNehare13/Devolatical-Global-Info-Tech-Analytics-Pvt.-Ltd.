@@ -225,9 +225,12 @@ model UserPreference {
   smsNotifications   Boolean @default(false)
   pushNotifications  Boolean @default(true)
 
-  // Account Preferences
-  profileVisibility Boolean @default(true)
-  twoFactorEnabled  Boolean @default(false)
+  // Account & MFA Preferences
+  profileVisibility Boolean   @default(true)
+  twoFactorEnabled  Boolean   @default(false)
+  totpSecret        String?   @db.Text
+  totpTempSecret    String?   @db.Text
+  totpEnabledAt     DateTime?
 
   // Audit Fields
   createdAt DateTime @default(now())

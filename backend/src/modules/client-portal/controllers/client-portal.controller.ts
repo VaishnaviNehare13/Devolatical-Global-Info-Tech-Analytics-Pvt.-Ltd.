@@ -84,4 +84,42 @@ export class ClientPortalController {
       next(error);
     }
   };
+
+  public getTicketById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const userEmail = req.user!.email;
+      const ticketId = req.params.id;
+      const data = await this.clientPortalService.getTicketById(userId, userEmail, ticketId);
+      res.status(200).json({
+        success: true,
+        message: 'Client ticket details retrieved successfully.',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public createTicketComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const userEmail = req.user!.email;
+      const ticketId = req.params.id;
+      const { message } = req.body;
+      const comment = await this.clientPortalService.addTicketComment(
+        userId,
+        userEmail,
+        ticketId,
+        message
+      );
+      res.status(201).json({
+        success: true,
+        message: 'Ticket comment posted successfully.',
+        data: comment,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

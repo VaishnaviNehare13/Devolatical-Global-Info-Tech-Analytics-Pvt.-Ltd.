@@ -2,6 +2,7 @@ import {
   CreateTicketRepositoryInput,
   UpdateTicketRepositoryInput,
   TicketDetailOutput,
+  TicketCommentOutput,
   FindTicketsRepositoryOptions,
   TicketFiltersInput,
   PaginatedTicketsOutput,
@@ -16,4 +17,16 @@ export interface ITicketRepository {
   update(id: string, data: UpdateTicketRepositoryInput): Promise<TicketDetailOutput | null>;
   softDelete(id: string): Promise<boolean>;
   restore(id: string): Promise<TicketDetailOutput>;
+
+  createComment(data: {
+    ticketId: string;
+    userId: string;
+    message: string;
+    isInternal?: boolean;
+  }): Promise<TicketCommentOutput>;
+
+  findCommentsByTicketId(
+    ticketId: string,
+    options?: { includeInternal?: boolean }
+  ): Promise<TicketCommentOutput[]>;
 }

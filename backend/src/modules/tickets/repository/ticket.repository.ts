@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, TicketStatus, TicketPriority } from '@prisma/client';
+import { PrismaClient, Prisma, TicketStatus, TicketPriority, TicketCategory } from '@prisma/client';
 import { ITicketRepository } from './ticket.repository.interface';
 import { TICKET_BASE_SELECT, TICKET_DETAIL_SELECT } from './ticket.repository.select';
 import {
@@ -6,6 +6,7 @@ import {
   UpdateTicketRepositoryInput,
   TicketBaseOutput,
   TicketDetailOutput,
+  TicketCommentOutput,
   FindTicketsRepositoryOptions,
   TicketFiltersInput,
   PaginatedTicketsOutput,
@@ -32,6 +33,7 @@ export class TicketRepository implements ITicketRepository {
           description: data.description,
           status: data.status || TicketStatus.OPEN,
           priority: data.priority || TicketPriority.MEDIUM,
+          category: data.category || TicketCategory.GENERAL,
           assignedToId: data.assignedToId || null,
           clientId: data.clientId || null,
           projectId: data.projectId || null,
@@ -87,6 +89,7 @@ export class TicketRepository implements ITicketRepository {
         search: options.search,
         status: options.status,
         priority: options.priority,
+        category: options.category,
         assignedToId: options.assignedToId,
         clientId: options.clientId,
         projectId: options.projectId,
@@ -152,6 +155,7 @@ export class TicketRepository implements ITicketRepository {
           description: data.description,
           status: data.status,
           priority: data.priority,
+          category: data.category,
           assignedToId: data.assignedToId,
           clientId: data.clientId,
           projectId: data.projectId,
@@ -222,6 +226,72 @@ export class TicketRepository implements ITicketRepository {
   }
 
   /**
+   * Creates a comment on a ticket.
+   */
+  public async createComment(data: {
+    ticketId: string;
+    userId: string;
+    message: string;
+    isInternal?: boolean;
+  }): Promise<TicketCommentOutput> {
+    try {
+      const comment = await this.prisma.ticketComment.create({
+        data: {
+          ticketId: data.ticketId,
+          userId: data.userId,
+          message: data.message,
+          isInternal: data.isInternal ?? false,
+        },
+        include: {
+          user: {
+            select: { id: true, displayName: true, email: true },
+          },
+        },
+      });
+
+      return comment as unknown as TicketCommentOutput;
+    } catch (error) {
+      throw new TicketRepositoryError(
+        'DATABASE_WRITE_FAILED',
+        'Database write failed while creating ticket comment.',
+        error
+      );
+    }
+  }
+
+  /**
+   * Fetches comments for a ticket. Excludes internal comments if includeInternal is false.
+   */
+  public async findCommentsByTicketId(
+    ticketId: string,
+    options?: { includeInternal?: boolean }
+  ): Promise<TicketCommentOutput[]> {
+    try {
+      const comments = await this.prisma.ticketComment.findMany({
+        where: {
+          ticketId,
+          deletedAt: null,
+          isInternal: options?.includeInternal ? undefined : false,
+        },
+        include: {
+          user: {
+            select: { id: true, displayName: true, email: true },
+          },
+        },
+        orderBy: { createdAt: 'asc' },
+      });
+
+      return comments as unknown as TicketCommentOutput[];
+    } catch (error) {
+      throw new TicketRepositoryError(
+        'DATABASE_READ_FAILED',
+        `Database read failed while fetching comments for ticket ${ticketId}.`,
+        error
+      );
+    }
+  }
+
+  /**
    * Helper to build Prisma dynamic filters object.
    */
   private buildWhereClause(filters: TicketFiltersInput): Prisma.TicketWhereInput {
@@ -237,6 +307,10 @@ export class TicketRepository implements ITicketRepository {
 
     if (filters.priority) {
       where.priority = filters.priority;
+    }
+
+    if (filters.category) {
+      where.category = filters.category;
     }
 
     if (filters.assignedToId) {

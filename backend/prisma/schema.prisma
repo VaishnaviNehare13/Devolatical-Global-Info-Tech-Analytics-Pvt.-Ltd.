@@ -151,6 +151,7 @@ model User {
   assignedTickets Ticket[] @relation("TicketAssignee")
   createdTickets  Ticket[] @relation("TicketCreator")
   updatedTickets  Ticket[] @relation("TicketUpdater")
+  ticketComments  TicketComment[] @relation("UserTicketComments")
 
   assignedTasks Task[] @relation("TaskAssignee")
   createdTasks  Task[] @relation("TaskCreator")
@@ -687,6 +688,14 @@ model Lead {
   @@map("leads")
 }
 
+enum TicketCategory {
+  TECHNICAL
+  BILLING
+  GENERAL
+  FEATURE_REQUEST
+  BUG
+}
+
 enum TicketStatus {
   OPEN
   RESOLVED
@@ -706,6 +715,7 @@ model Ticket {
   description  String         @db.Text
   status       TicketStatus   @default(OPEN)
   priority     TicketPriority @default(MEDIUM)
+  category     TicketCategory @default(GENERAL)
   assignedToId String?
   assignedTo   User?          @relation("TicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
   clientId     String?
@@ -720,13 +730,36 @@ model Ticket {
   updatedBy    User?          @relation("TicketUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
   deletedAt    DateTime?
 
+  comments TicketComment[] @relation("TicketComments")
+
   @@index([status])
   @@index([priority])
+  @@index([category])
   @@index([assignedToId])
   @@index([clientId])
   @@index([projectId])
   @@index([deletedAt])
   @@map("tickets")
+}
+
+model TicketComment {
+  id         String    @id @default(uuid())
+  ticketId   String
+  ticket     Ticket    @relation("TicketComments", fields: [ticketId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User      @relation("UserTicketComments", fields: [userId], references: [id], onDelete: Cascade)
+  message    String    @db.Text
+  isInternal Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([ticketId])
+  @@index([userId])
+  @@index([isInternal])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("ticket_comments")
 }
 
 enum TaskStatus {

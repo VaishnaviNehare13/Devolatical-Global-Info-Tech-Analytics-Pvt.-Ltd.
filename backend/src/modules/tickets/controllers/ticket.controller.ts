@@ -152,6 +152,44 @@ export class TicketController {
   };
 
   /**
+   * Retrieves comments for a ticket (Staff / Admin view: includes internal comments).
+   */
+  public getComments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const result = await this.ticketService.getComments(id, { includeInternal: true });
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Ticket comments retrieved successfully.',
+        data: result,
+      });
+    } catch (error) {
+      this.handleControllerError(error, next);
+    }
+  };
+
+  /**
+   * Adds a comment to a ticket (Staff / Admin view: supports isInternal).
+   */
+  public createComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const { message, isInternal } = req.body;
+      const userId = req.user!.id;
+      const result = await this.ticketService.addComment(id, userId, message, isInternal);
+
+      res.status(HttpStatus.CREATED).json({
+        success: true,
+        message: 'Ticket comment created successfully.',
+        data: result,
+      });
+    } catch (error) {
+      this.handleControllerError(error, next);
+    }
+  };
+
+  /**
    * Helper to translate domain service exceptions into standard Express HTTP operational AppErrors.
    */
   private handleControllerError(error: unknown, next: NextFunction): void {

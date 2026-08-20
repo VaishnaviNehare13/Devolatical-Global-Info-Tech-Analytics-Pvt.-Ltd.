@@ -9,6 +9,7 @@ export interface TicketSummaryResponse {
   subject: string;
   status: string;
   priority: string;
+  category: string;
   assignedToId: string | null;
   clientId: string | null;
   projectId: string | null;
@@ -41,6 +42,7 @@ export class TicketMapper {
       subject: ticket.subject,
       status: ticket.status,
       priority: ticket.priority,
+      category: ticket.category,
       assignedToId: ticket.assignedToId,
       clientId: ticket.clientId,
       projectId: ticket.projectId,
@@ -59,6 +61,7 @@ export class TicketMapper {
       subject: ticket.subject,
       status: ticket.status,
       priority: ticket.priority,
+      category: ticket.category,
       assignedToId: ticket.assignedToId,
       clientId: ticket.clientId,
       projectId: ticket.projectId,

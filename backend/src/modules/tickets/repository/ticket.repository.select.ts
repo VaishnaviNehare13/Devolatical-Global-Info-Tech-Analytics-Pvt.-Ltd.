@@ -7,6 +7,7 @@ export const TICKET_BASE_SELECT = {
   subject: true,
   status: true,
   priority: true,
+  category: true,
   assignedToId: true,
   clientId: true,
   projectId: true,

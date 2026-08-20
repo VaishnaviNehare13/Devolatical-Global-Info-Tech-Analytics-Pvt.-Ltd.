@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TicketStatus, TicketPriority } from '@prisma/client';
+import { TicketStatus, TicketPriority, TicketCategory } from '@prisma/client';
 import { TICKET_VALIDATION } from '../constants/ticket.constants';
 
 export const TicketSubjectSchema = z
@@ -28,6 +28,10 @@ export const TicketStatusSchema = z.nativeEnum(TicketStatus, {
 
 export const TicketPrioritySchema = z.nativeEnum(TicketPriority, {
   invalid_type_error: 'Invalid ticket priority format.',
+});
+
+export const TicketCategorySchema = z.nativeEnum(TicketCategory, {
+  invalid_type_error: 'Invalid ticket category format.',
 });
 
 export const TicketAssignedToIdSchema = z

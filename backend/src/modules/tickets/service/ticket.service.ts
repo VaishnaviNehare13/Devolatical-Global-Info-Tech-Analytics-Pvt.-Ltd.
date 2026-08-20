@@ -6,6 +6,7 @@ import { IProjectRepository } from '../../projects/repository/project.repository
 import { IAuditLogService } from '../../audit-logs/service/audit-log.service';
 import {
   TicketDetailOutput,
+  TicketCommentOutput,
   PaginatedTicketsOutput,
   TicketFiltersInput,
 } from '../repository/ticket.repository.types';
@@ -343,6 +344,79 @@ export class TicketService implements ITicketService {
       return await this.ticketRepository.count(filters);
     } catch (error) {
       throw new TicketServiceError(`Failed to count tickets: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Adds a comment to a ticket.
+   */
+  public async addComment(
+    ticketId: string,
+    userId: string,
+    message: string,
+    isInternal?: boolean
+  ): Promise<TicketCommentOutput> {
+    try {
+      const ticket = await this.ticketRepository.findById(ticketId);
+      if (!ticket) {
+        throw new TicketNotFoundError(ticketId);
+      }
+
+      if (ticket.deletedAt !== null) {
+        throw new TicketArchivedError(ticketId);
+      }
+
+      const comment = await this.ticketRepository.createComment({
+        ticketId,
+        userId,
+        message,
+        isInternal: isInternal ?? false,
+      });
+
+      // Audit log entry
+      try {
+        await this.auditLogService.record({
+          action: AuditAction.CREATE,
+          module: AuditModule.SUPPORT,
+          status: AuditStatus.SUCCESS,
+          severity: AuditSeverity.INFO,
+          userId,
+          entityType: 'TicketComment',
+          entityId: comment.id,
+          resourceName: ticket.subject,
+        });
+      } catch (auditError) {
+        console.error('Failed to create audit log for ticket comment:', auditError);
+      }
+
+      return comment;
+    } catch (error) {
+      if (error instanceof TicketServiceError) {
+        throw error;
+      }
+      throw new TicketServiceError(`Failed to add comment to ticket ${ticketId}: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Retrieves comments for a ticket.
+   */
+  public async getComments(
+    ticketId: string,
+    options?: { includeInternal?: boolean }
+  ): Promise<TicketCommentOutput[]> {
+    try {
+      const ticket = await this.ticketRepository.findById(ticketId);
+      if (!ticket) {
+        throw new TicketNotFoundError(ticketId);
+      }
+
+      return await this.ticketRepository.findCommentsByTicketId(ticketId, options);
+    } catch (error) {
+      if (error instanceof TicketServiceError) {
+        throw error;
+      }
+      throw new TicketServiceError(`Failed to fetch comments for ticket ${ticketId}: ${(error as Error).message}`);
     }
   }
 }

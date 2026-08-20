@@ -56,5 +56,19 @@ export function createTicketsRouter(
     ticketController.restoreTicket
   );
 
+  // Get comments for a ticket
+  router.get(
+    '/:id/comments',
+    validate({ params: TicketIdParamSchema }),
+    ticketController.getComments
+  );
+
+  // Add a comment to a ticket
+  router.post(
+    '/:id/comments',
+    validate({ params: TicketIdParamSchema }),
+    ticketController.createComment
+  );
+
   return router;
 }

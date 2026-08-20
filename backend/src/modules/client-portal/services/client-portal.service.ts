@@ -143,4 +143,63 @@ export class ClientPortalService {
 
     return newTicket;
   }
+
+  public async getTicketById(userId: string, userEmail: string, ticketId: string) {
+    const clientId = await this.getClientIdForUser(userId, userEmail);
+
+    const ticket = await this.prisma.ticket.findFirst({
+      where: { id: ticketId, clientId, deletedAt: null },
+      include: {
+        project: { select: { id: true, name: true, code: true } },
+        comments: {
+          where: { deletedAt: null, isInternal: false },
+          include: {
+            user: { select: { id: true, displayName: true, email: true } },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+
+    if (!ticket) {
+      throw new AppError('Ticket not found or access denied.', 404);
+    }
+
+    return ticket;
+  }
+
+  public async addTicketComment(
+    userId: string,
+    userEmail: string,
+    ticketId: string,
+    message: string
+  ) {
+    const clientId = await this.getClientIdForUser(userId, userEmail);
+
+    const ticket = await this.prisma.ticket.findFirst({
+      where: { id: ticketId, clientId, deletedAt: null },
+    });
+
+    if (!ticket) {
+      throw new AppError('Ticket not found or access denied.', 404);
+    }
+
+    if (!message || !message.trim()) {
+      throw new AppError('Comment message cannot be empty.', 400);
+    }
+
+    const comment = await this.prisma.ticketComment.create({
+      data: {
+        ticketId,
+        userId,
+        message: message.trim(),
+        isInternal: false,
+      },
+      include: {
+        user: { select: { id: true, displayName: true, email: true } },
+      },
+    });
+
+    return comment;
+  }
 }

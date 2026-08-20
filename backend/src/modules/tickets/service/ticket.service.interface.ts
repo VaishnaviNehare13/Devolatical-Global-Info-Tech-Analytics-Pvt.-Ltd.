@@ -1,5 +1,6 @@
 import {
   TicketDetailOutput,
+  TicketCommentOutput,
   PaginatedTicketsOutput,
   TicketFiltersInput,
 } from '../repository/ticket.repository.types';
@@ -25,4 +26,14 @@ export interface ITicketService {
   archiveTicket(id: string, currentUserId: string): Promise<TicketDetailOutput>;
   restoreTicket(id: string, currentUserId: string): Promise<TicketDetailOutput>;
   countTickets(filters: TicketFiltersInput): Promise<number>;
+  addComment(
+    ticketId: string,
+    userId: string,
+    message: string,
+    isInternal?: boolean
+  ): Promise<TicketCommentOutput>;
+  getComments(
+    ticketId: string,
+    options?: { includeInternal?: boolean }
+  ): Promise<TicketCommentOutput[]>;
 }

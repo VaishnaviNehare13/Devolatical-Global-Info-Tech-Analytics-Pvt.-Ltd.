@@ -1,10 +1,11 @@
-import { TicketStatus, TicketPriority } from '@prisma/client';
+import { TicketStatus, TicketPriority, TicketCategory } from '@prisma/client';
 
 export interface CreateTicketRepositoryInput {
   subject: string;
   description: string;
   status?: TicketStatus;
   priority?: TicketPriority;
+  category?: TicketCategory;
   assignedToId?: string | null;
   clientId?: string | null;
   projectId?: string | null;
@@ -16,6 +17,7 @@ export interface UpdateTicketRepositoryInput {
   description?: string;
   status?: TicketStatus;
   priority?: TicketPriority;
+  category?: TicketCategory;
   assignedToId?: string | null;
   clientId?: string | null;
   projectId?: string | null;
@@ -28,6 +30,7 @@ export interface TicketBaseOutput {
   subject: string;
   status: TicketStatus;
   priority: TicketPriority;
+  category: TicketCategory;
   assignedToId: string | null;
   clientId: string | null;
   projectId: string | null;
@@ -42,6 +45,21 @@ export interface TicketDetailOutput extends TicketBaseOutput {
   deletedAt: Date | null;
 }
 
+export interface TicketCommentOutput {
+  id: string;
+  ticketId: string;
+  userId: string;
+  user?: {
+    id: string;
+    displayName: string;
+    email: string;
+  };
+  message: string;
+  isInternal: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface FindTicketsRepositoryOptions {
   pagination?: {
     page: number;
@@ -50,6 +68,7 @@ export interface FindTicketsRepositoryOptions {
   search?: string;
   status?: TicketStatus;
   priority?: TicketPriority;
+  category?: TicketCategory;
   assignedToId?: string;
   clientId?: string;
   projectId?: string;
@@ -62,6 +81,7 @@ export interface TicketFiltersInput {
   search?: string;
   status?: TicketStatus;
   priority?: TicketPriority;
+  category?: TicketCategory;
   assignedToId?: string;
   clientId?: string;
   projectId?: string;

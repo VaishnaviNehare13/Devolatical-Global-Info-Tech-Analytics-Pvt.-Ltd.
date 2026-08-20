@@ -16,6 +16,8 @@ export function createClientPortalRouter(
   router.get('/tickets/:id', controller.getTicketById);
   router.post('/tickets', controller.createTicket);
   router.post('/tickets/:id/comments', controller.createTicketComment);
+  router.get('/documents', controller.getDocuments);
+  router.get('/documents/:id/download', controller.downloadDocument);
 
   return router;
 }

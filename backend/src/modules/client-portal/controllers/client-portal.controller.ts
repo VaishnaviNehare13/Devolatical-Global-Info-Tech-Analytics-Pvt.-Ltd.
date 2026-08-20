@@ -122,4 +122,41 @@ export class ClientPortalController {
       next(error);
     }
   };
+
+  public getDocuments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const userEmail = req.user!.email;
+      const data = await this.clientPortalService.getDocuments(userId, userEmail);
+      res.status(200).json({
+        success: true,
+        message: 'Client documents retrieved successfully.',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public downloadDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const userEmail = req.user!.email;
+      const documentId = req.params.id;
+      const { document, absolutePath } = await this.clientPortalService.getDocumentForDownload(
+        userId,
+        userEmail,
+        documentId
+      );
+
+      res.setHeader('Content-Type', document.mimeType);
+      res.download(absolutePath, document.fileName, (err) => {
+        if (err && !res.headersSent) {
+          next(err);
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -146,6 +146,13 @@ export function createDocumentsRouter(
     documentController.getDocumentById
   );
 
+  // Securely download physical document file
+  router.get(
+    '/:id/download',
+    validate({ params: DocumentIdParamSchema }),
+    documentController.downloadDocument
+  );
+
   // Update document metadata
   router.patch(
     '/:id',

@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
+import path from 'path';
+import fs from 'fs';
 import { IDocumentService } from '../service/document.service.interface';
 import { DocumentMapper } from '../mappers/document.mapper';
 import { UploadDocumentDto } from '../dto/upload-document.dto';
@@ -84,6 +86,37 @@ export class DocumentController {
         success: true,
         message: 'Document details retrieved successfully.',
         data: DocumentMapper.toDetailResponse(result),
+      });
+    } catch (error) {
+      this.handleControllerError(error, next);
+    }
+  };
+
+  /**
+   * Downloads the physical document file securely.
+   */
+  public downloadDocument = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const id = req.params.id;
+      const result = await this.documentService.getDocumentById(id);
+
+      const absolutePath = path.isAbsolute(result.fileUrl)
+        ? result.fileUrl
+        : path.resolve(process.cwd(), result.fileUrl);
+
+      if (!fs.existsSync(absolutePath)) {
+        throw new AppError('Physical document file not found on server disk.', HttpStatus.NOT_FOUND);
+      }
+
+      res.setHeader('Content-Type', result.mimeType);
+      res.download(absolutePath, result.fileName, (err) => {
+        if (err && !res.headersSent) {
+          next(err);
+        }
       });
     } catch (error) {
       this.handleControllerError(error, next);

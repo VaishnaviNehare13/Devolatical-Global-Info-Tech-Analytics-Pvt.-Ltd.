@@ -603,4 +603,163 @@ describe('Documents Module Integration Tests', () => {
       expect(res.body.success).toBe(false);
     });
   });
+
+  describe('7. Secure Document Download & Client Portal Access Integration Tests', () => {
+    let sampleDocId: string;
+    let clientAUserToken: string;
+    let clientBUserToken: string;
+    let clientBOrgId: string;
+    let docClientAId: string;
+    let docClientBId: string;
+
+    beforeAll(async () => {
+      // 1. Create client role if needed
+      let clientRole = await prisma.role.findUnique({ where: { code: 'CLIENT' } });
+      if (!clientRole) {
+        clientRole = await prisma.role.create({
+          data: { name: 'Client Role', code: 'CLIENT', isSystem: true },
+        });
+      }
+
+      // 2. Create Client Users
+      const clientUserA = await prisma.user.create({
+        data: {
+          firstName: 'ClientA',
+          lastName: 'DocUser',
+          displayName: 'ClientA DocUser',
+          email: 'clientA.doc@example.com',
+          status: 'ACTIVE',
+        },
+      });
+      await prisma.userRole.create({
+        data: { userId: clientUserA.id, roleId: clientRole.id },
+      });
+      clientAUserToken = generateAccessToken({ sub: clientUserA.id, email: clientUserA.email });
+
+      const clientUserB = await prisma.user.create({
+        data: {
+          firstName: 'ClientB',
+          lastName: 'DocUser',
+          displayName: 'ClientB DocUser',
+          email: 'clientB.doc@example.com',
+          status: 'ACTIVE',
+        },
+      });
+      await prisma.userRole.create({
+        data: { userId: clientUserB.id, roleId: clientRole.id },
+      });
+      clientBUserToken = generateAccessToken({ sub: clientUserB.id, email: clientUserB.email });
+
+      // 3. Link Client User A to activeClientId (Acme Corp) via email matching
+      await prisma.client.update({
+        where: { id: activeClientId },
+        data: { email: 'clientA.doc@example.com' },
+      });
+
+      // 4. Create Client Org B and link Client User B
+      const clientBOrg = await prisma.client.create({
+        data: {
+          name: 'Beta Corp',
+          code: 'BETA-DOC',
+          status: 'ACTIVE',
+          email: 'clientB.doc@example.com',
+        },
+      });
+      clientBOrgId = clientBOrg.id;
+
+      // 5. Upload document for Client A
+      const uploadResA = await request(app)
+        .post('/api/v1/documents')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .field('title', 'Client A Confidential Report')
+        .field('clientId', activeClientId)
+        .attach('file', Buffer.from('Client A document file binary content'), {
+          filename: 'client-a-report.pdf',
+          contentType: 'application/pdf',
+        });
+      docClientAId = uploadResA.body.data.id;
+      sampleDocId = docClientAId;
+      trackFileForCleanup(uploadResA.body.data.fileUrl);
+
+      // 6. Upload document for Client B
+      const uploadResB = await request(app)
+        .post('/api/v1/documents')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .field('title', 'Client B Private Financials')
+        .field('clientId', clientBOrgId)
+        .attach('file', Buffer.from('Client B financial binary data'), {
+          filename: 'client-b-financials.pdf',
+          contentType: 'application/pdf',
+        });
+      docClientBId = uploadResB.body.data.id;
+      trackFileForCleanup(uploadResB.body.data.fileUrl);
+    });
+
+    it('7.1 should allow Admin to download document via GET /api/v1/documents/:id/download', async () => {
+      const res = await request(app)
+        .get(`/api/v1/documents/${sampleDocId}/download`)
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toContain('application/pdf');
+      expect(res.headers['content-disposition']).toContain('attachment');
+      expect(res.text).toContain('Client A document file binary content');
+    });
+
+    it('7.2 should return 400 for invalid document UUID on download', async () => {
+      const res = await request(app)
+        .get('/api/v1/documents/invalid-uuid/download')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(res.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('7.3 should return 404 for non-existent document UUID on download', async () => {
+      const res = await request(app)
+        .get('/api/v1/documents/00000000-0000-0000-0000-000000000000/download')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(res.status).toBe(HttpStatus.NOT_FOUND);
+    });
+
+    it('7.4 should allow Client A to list their own organization documents via Client Portal', async () => {
+      const res = await request(app)
+        .get('/api/v1/client-portal/documents')
+        .set('Authorization', `Bearer ${clientAUserToken}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      const docIds = res.body.data.map((d: any) => d.id);
+      expect(docIds).toContain(docClientAId);
+      expect(docIds).not.toContain(docClientBId);
+    });
+
+    it('7.5 should allow Client A to download their own organization document', async () => {
+      const res = await request(app)
+        .get(`/api/v1/client-portal/documents/${docClientAId}/download`)
+        .set('Authorization', `Bearer ${clientAUserToken}`);
+
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toContain('application/pdf');
+      expect(res.text).toContain('Client A document file binary content');
+    });
+
+    it('7.6 should DENY Client A attempting to download Client B document with 404', async () => {
+      const res = await request(app)
+        .get(`/api/v1/client-portal/documents/${docClientBId}/download`)
+        .set('Authorization', `Bearer ${clientAUserToken}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body.success).toBe(false);
+    });
+
+    it('7.7 should DENY Client B attempting to download Client A document with 404', async () => {
+      const res = await request(app)
+        .get(`/api/v1/client-portal/documents/${docClientAId}/download`)
+        .set('Authorization', `Bearer ${clientBUserToken}`);
+
+      expect(res.status).toBe(404);
+      expect(res.body.success).toBe(false);
+    });
+  });
 });

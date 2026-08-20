@@ -1,3 +1,5 @@
+import path from 'path';
+import fs from 'fs';
 import { PrismaClient, TicketPriority, TicketStatus } from '@prisma/client';
 import { AppError } from '../../../utils/appError';
 
@@ -201,5 +203,58 @@ export class ClientPortalService {
     });
 
     return comment;
+  }
+
+  public async getDocuments(userId: string, userEmail: string) {
+    const clientId = await this.getClientIdForUser(userId, userEmail);
+
+    const documents = await this.prisma.document.findMany({
+      where: {
+        deletedAt: null,
+        OR: [
+          { clientId },
+          { project: { clientId } },
+        ],
+      },
+      include: {
+        client: { select: { id: true, name: true, code: true } },
+        project: { select: { id: true, name: true, code: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return documents;
+  }
+
+  public async getDocumentForDownload(userId: string, userEmail: string, documentId: string) {
+    const clientId = await this.getClientIdForUser(userId, userEmail);
+
+    const document = await this.prisma.document.findFirst({
+      where: {
+        id: documentId,
+        deletedAt: null,
+        OR: [
+          { clientId },
+          { project: { clientId } },
+        ],
+      },
+    });
+
+    if (!document) {
+      throw new AppError('Document not found or access denied.', 404);
+    }
+
+    const absolutePath = path.isAbsolute(document.fileUrl)
+      ? document.fileUrl
+      : path.resolve(process.cwd(), document.fileUrl);
+
+    if (!fs.existsSync(absolutePath)) {
+      throw new AppError('Physical document file not found on server disk.', 404);
+    }
+
+    return {
+      document,
+      absolutePath,
+    };
   }
 }

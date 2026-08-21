@@ -167,10 +167,10 @@ export const AdminSecurity: React.FC = () => {
 
     setIsSubmittingRemove(true);
     try {
+      await rolesApi.removePermission(selectedRoleId, permissionToRemove.id);
       showToast(`Permission ${permissionToRemove.code} revoked from role.`, 'info');
       setPermissionToRemove(null);
       await fetchRolePermissions(selectedRoleId);
-
     } catch (err: unknown) {
       const message = ApiError.isApiError(err)
         ? err.message

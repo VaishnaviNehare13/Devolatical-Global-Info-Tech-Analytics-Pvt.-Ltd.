@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, User, LogOut, Sun, Moon, ChevronRight, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, User, LogOut, Sun, Moon, ChevronRight, Menu, X, FolderGit2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
@@ -45,6 +45,7 @@ export const ClientPortalLayout: React.FC = () => {
   const menuItems = [
     { name: 'Workspace Overview', path: '/portal', icon: <LayoutDashboard className="h-5 w-5" /> },
     { name: 'Active Project Boards', path: '/portal/projects', icon: <ClipboardList className="h-5 w-5" /> },
+    { name: 'Documents & Vault', path: '/portal/documents', icon: <FolderGit2 className="h-5 w-5" /> },
     { name: 'Invoices & Billing', path: '/portal/invoices', icon: <FileText className="h-5 w-5" /> },
     { name: 'Support & Helpdesk', path: '/portal/support', icon: <LifeBuoy className="h-5 w-5" /> },
     { name: 'Account & Settings', path: '/portal/profile', icon: <User className="h-5 w-5" /> }

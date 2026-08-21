@@ -36,6 +36,7 @@ const Register = lazy(() => import('./pages/auth/Register'));
 // Client Portal Pages
 const ClientOverview = lazy(() => import('./pages/client/ClientOverview'));
 const ClientProjects = lazy(() => import('./pages/client/ClientProjects'));
+const ClientDocuments = lazy(() => import('./pages/client/ClientDocuments'));
 const ClientInvoices = lazy(() => import('./pages/client/ClientInvoices'));
 const ClientSupport = lazy(() => import('./pages/client/ClientSupport'));
 const ClientProfile = lazy(() => import('./pages/client/ClientProfile'));
@@ -108,6 +109,7 @@ export const App: React.FC = () => {
                   >
                     <Route index element={<ClientOverview />} />
                     <Route path="projects" element={<ClientProjects />} />
+                    <Route path="documents" element={<ClientDocuments />} />
                     <Route path="invoices" element={<ClientInvoices />} />
                     <Route path="support" element={<ClientSupport />} />
                     <Route path="profile" element={<ClientProfile />} />

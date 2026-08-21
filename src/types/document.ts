@@ -12,6 +12,7 @@ export interface DocumentSummary {
   milestoneId: string | null;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 export interface DocumentDetail extends DocumentSummary {
@@ -40,4 +41,5 @@ export interface FindDocumentsQuery extends BaseQueryParams {
   clientId?: string;
   projectId?: string;
   milestoneId?: string;
+  includeDeleted?: boolean;
 }

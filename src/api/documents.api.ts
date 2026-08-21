@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, getApiBaseUrl, getAccessToken, buildQueryString } from './client';
 import type { ApiResponse, PaginatedResponse } from '../types/api';
 import type {
   DocumentSummary,
@@ -7,6 +7,42 @@ import type {
   UpdateDocumentRequest,
   FindDocumentsQuery,
 } from '../types/document';
+
+/**
+ * Helper function to fetch binary/blob file response with auth header.
+ */
+async function fetchBlob(endpoint: string, params?: Record<string, unknown>): Promise<Blob> {
+  const baseUrl = getApiBaseUrl();
+  const queryString = buildQueryString(params);
+  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const fullUrl = `${baseUrl.replace(/\/+$/, '')}${normalizedEndpoint}${queryString}`;
+  const token = getAccessToken();
+
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(fullUrl, { headers });
+  if (!response.ok) {
+    throw new Error(`Document download request failed with status ${response.status} (${response.statusText})`);
+  }
+  return response.blob();
+}
+
+/**
+ * Helper function to trigger browser file download from Blob response.
+ */
+function triggerBlobDownload(blob: Blob, fallbackFilename: string) {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', fallbackFilename);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
 
 /**
  * Documents API Service Module.
@@ -59,6 +95,15 @@ export const documentsApi = {
    */
   getDocumentById: (id: string): Promise<ApiResponse<DocumentDetail>> =>
     apiClient.get<ApiResponse<DocumentDetail>>(`/documents/${id}`),
+
+  /**
+   * Securely download physical document file.
+   * GET /api/v1/documents/:id/download
+   */
+  downloadDocument: async (id: string, fileName?: string): Promise<void> => {
+    const blob = await fetchBlob(`/documents/${id}/download`);
+    triggerBlobDownload(blob, fileName || `document_${id}`);
+  },
 
   /**
    * Update document title, description, or entity links.

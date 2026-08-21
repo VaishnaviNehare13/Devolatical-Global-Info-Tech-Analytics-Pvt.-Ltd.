@@ -57,6 +57,25 @@ export interface ClientTicketItem {
   project?: { id: string; name: string };
 }
 
+export interface ClientTicketComment {
+  id: string;
+  ticketId: string;
+  userId: string;
+  message: string;
+  isInternal: boolean;
+  createdAt: string;
+  updatedAt: string;
+  user?: {
+    id: string;
+    displayName: string;
+    email: string;
+  };
+}
+
+export interface ClientTicketDetail extends ClientTicketItem {
+  comments?: ClientTicketComment[];
+}
+
 export interface CreateClientTicketRequest {
   subject: string;
   description: string;
@@ -79,4 +98,14 @@ export const clientPortalApi = {
 
   createTicket: (data: CreateClientTicketRequest): Promise<ApiResponse<ClientTicketItem>> =>
     apiClient.post<ApiResponse<ClientTicketItem>>('/client-portal/tickets', data),
+
+  getTicketById: (id: string): Promise<ApiResponse<ClientTicketDetail>> =>
+    apiClient.get<ApiResponse<ClientTicketDetail>>(`/client-portal/tickets/${id}`),
+
+  createTicketComment: (
+    id: string,
+    data: { message: string }
+  ): Promise<ApiResponse<ClientTicketComment>> =>
+    apiClient.post<ApiResponse<ClientTicketComment>>(`/client-portal/tickets/${id}/comments`, data),
 };
+

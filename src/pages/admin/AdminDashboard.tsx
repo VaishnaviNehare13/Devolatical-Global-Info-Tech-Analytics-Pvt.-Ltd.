@@ -27,6 +27,7 @@ import {
   FileText,
   CreditCard,
   Building2,
+  LifeBuoy,
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -235,6 +236,33 @@ export const AdminDashboard: React.FC = () => {
             )}
           </div>
         </Card>
+
+        {/* KPI 5: Support Desk Tickets */}
+        <Card className="hover:border-secondary/50 transition-colors cursor-pointer" onClick={() => window.location.href = '/admin/tickets'}>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Support Desk Tickets
+            </span>
+            <LifeBuoy className="h-5 w-5 text-amber-500" />
+          </div>
+          <div className="mt-4">
+            {isLoading ? (
+              <Skeleton className="h-8 w-28" />
+            ) : (
+              <>
+                <h3 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
+                  {metricsData?.metrics.tickets.open ?? 0} Open
+                </h3>
+                <p className="text-xs text-slate-400 font-mono mt-1 flex items-center justify-between">
+                  <span>{metricsData?.metrics.tickets.total ?? 0} Total Tickets</span>
+                  <span className="text-secondary font-semibold hover:underline flex items-center gap-0.5">
+                    Manage <ArrowRight className="h-3 w-3 inline" />
+                  </span>
+                </p>
+              </>
+            )}
+          </div>
+        </Card>
       </div>
 
       {/* Error Alert Box */}
@@ -348,6 +376,25 @@ export const AdminDashboard: React.FC = () => {
                     Tenant Isolated Accounts
                   </span>
                 </div>
+
+                <Link
+                  to="/admin/tickets"
+                  className="p-4 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/60 rounded-xl space-y-1.5 hover:border-amber-400 transition-colors block"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase">
+                      <LifeBuoy className="h-4 w-4 text-amber-500" />
+                      <span>Support Desk Console</span>
+                    </div>
+                    <ArrowRight className="h-3.5 w-3.5 text-amber-500" />
+                  </div>
+                  <span className="text-sm font-bold font-mono text-slate-900 dark:text-white block">
+                    {metricsData?.metrics.tickets.open ?? 0} Open ({metricsData?.metrics.tickets.total ?? 0} Total)
+                  </span>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    Manage Support Resolutions
+                  </span>
+                </Link>
               </div>
             )}
 

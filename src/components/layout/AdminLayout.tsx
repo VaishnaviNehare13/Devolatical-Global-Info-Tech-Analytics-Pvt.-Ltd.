@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X, Terminal, Users, Inbox, Briefcase } from 'lucide-react';
+import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X, Terminal, Users, Inbox, Briefcase, LifeBuoy } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
@@ -53,6 +53,7 @@ export const AdminLayout: React.FC = () => {
     { name: 'Admin Dashboard', path: '/admin', icon: <BarChart3 className="h-5 w-5" /> },
     { name: 'User Directory', path: '/admin/users', icon: <Users className="h-5 w-5" /> },
     { name: 'Lead Directory', path: '/admin/leads', icon: <Inbox className="h-5 w-5" /> },
+    { name: 'Support Tickets', path: '/admin/tickets', icon: <LifeBuoy className="h-5 w-5" /> },
     { name: 'Recruitment', path: '/admin/careers', icon: <Briefcase className="h-5 w-5" /> },
     { name: 'Data Pipelines', path: '/admin/pipelines', icon: <Database className="h-5 w-5" /> },
     { name: 'System Audit Logs', path: '/admin/audit', icon: <Terminal className="h-5 w-5" /> },

@@ -3,6 +3,7 @@ import type { ApiResponse, PaginatedResponse } from '../types/api';
 import type {
   TicketSummary,
   TicketDetail,
+  TicketComment,
   CreateTicketRequest,
   UpdateTicketRequest,
   FindTicketsQuery,
@@ -54,4 +55,22 @@ export const ticketsApi = {
    */
   restoreTicket: (id: string): Promise<ApiResponse<TicketDetail>> =>
     apiClient.post<ApiResponse<TicketDetail>>(`/tickets/${id}/restore`),
+
+  /**
+   * Get comments for a support ticket.
+   * GET /api/v1/tickets/:id/comments
+   */
+  getComments: (id: string): Promise<ApiResponse<TicketComment[]>> =>
+    apiClient.get<ApiResponse<TicketComment[]>>(`/tickets/${id}/comments`),
+
+  /**
+   * Create a comment / reply on a support ticket.
+   * POST /api/v1/tickets/:id/comments
+   */
+  createComment: (
+    id: string,
+    data: { message: string; isInternal?: boolean }
+  ): Promise<ApiResponse<TicketComment>> =>
+    apiClient.post<ApiResponse<TicketComment>>(`/tickets/${id}/comments`, data),
 };
+

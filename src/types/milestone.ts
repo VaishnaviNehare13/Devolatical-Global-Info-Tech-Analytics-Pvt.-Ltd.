@@ -15,6 +15,7 @@ export interface MilestoneSummary {
   projectId: string;
   dueDate: string | null;
   completedAt: string | null;
+  deletedAt?: string | null;
   createdAt: string;
 }
 
@@ -40,4 +41,5 @@ export interface UpdateMilestoneRequest {
 
 export interface FindMilestonesQuery extends BaseQueryParams {
   status?: string;
+  includeDeleted?: boolean;
 }

@@ -25,6 +25,7 @@ export interface ProjectSummary {
   startDate: string | null;
   endDate: string | null;
   budget: number | null;
+  deletedAt?: string | null;
   createdAt: string;
 }
 
@@ -61,4 +62,5 @@ export interface FindProjectsQuery extends BaseQueryParams {
   status?: string;
   clientId?: string;
   projectManagerId?: string;
+  includeDeleted?: boolean;
 }

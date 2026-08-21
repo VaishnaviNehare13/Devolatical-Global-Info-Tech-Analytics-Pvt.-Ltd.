@@ -51,6 +51,7 @@ const EmployeeProfile = lazy(() => import('./pages/employee/EmployeeProfile'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminAnalytics = lazy(() => import('./pages/admin/AdminAnalytics'));
 const AdminProjects = lazy(() => import('./pages/admin/AdminProjects'));
+const AdminClients = lazy(() => import('./pages/admin/AdminClients'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminLeads = lazy(() => import('./pages/admin/AdminLeads'));
 const AdminInvoices = lazy(() => import('./pages/admin/AdminInvoices'));
@@ -142,6 +143,7 @@ export const App: React.FC = () => {
                     <Route index element={<AdminDashboard />} />
                     <Route path="analytics" element={<AdminAnalytics />} />
                     <Route path="projects" element={<AdminProjects />} />
+                    <Route path="clients" element={<AdminClients />} />
                     <Route path="users" element={<AdminUsers />} />
                     <Route path="leads" element={<AdminLeads />} />
                     <Route path="invoices" element={<AdminInvoices />} />

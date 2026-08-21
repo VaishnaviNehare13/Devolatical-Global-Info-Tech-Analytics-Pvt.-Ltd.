@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, ChevronRight, Menu, X, Terminal, Users, Inbox, Briefcase, LifeBuoy, TrendingUp, Receipt, FolderGit2 } from 'lucide-react';
+import { BarChart3, Database, ShieldAlert, Settings, LogOut, Sun, Moon, ChevronRight, Menu, X, Terminal, Users, Inbox, Briefcase, LifeBuoy, TrendingUp, Receipt, FolderGit2, Building2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
@@ -54,6 +54,7 @@ export const AdminLayout: React.FC = () => {
     { name: 'Admin Dashboard', path: '/admin', icon: <BarChart3 className="h-5 w-5" /> },
     { name: 'Analytics & Reports', path: '/admin/analytics', icon: <TrendingUp className="h-5 w-5" /> },
     { name: 'Project Management', path: '/admin/projects', icon: <FolderGit2 className="h-5 w-5" /> },
+    { name: 'Client CRM', path: '/admin/clients', icon: <Building2 className="h-5 w-5" /> },
     { name: 'User Directory', path: '/admin/users', icon: <Users className="h-5 w-5" /> },
     { name: 'Lead Directory', path: '/admin/leads', icon: <Inbox className="h-5 w-5" /> },
     { name: 'Invoices & Billing', path: '/admin/invoices', icon: <Receipt className="h-5 w-5" /> },

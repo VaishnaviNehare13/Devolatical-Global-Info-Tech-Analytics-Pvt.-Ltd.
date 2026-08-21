@@ -7,6 +7,9 @@ export interface ClientSummary {
   email: string | null;
   phone: string | null;
   status: string;
+  accountManagerId?: string | null;
+  accountManager?: { id: string; displayName: string; email: string } | null;
+  deletedAt?: string | null;
   createdAt: string;
 }
 
@@ -19,7 +22,6 @@ export interface ClientDetail extends ClientSummary {
   country: string | null;
   postalCode: string | null;
   notes: string | null;
-  accountManagerId: string | null;
   updatedAt: string;
 }
 
@@ -53,7 +55,7 @@ export interface UpdateClientRequest {
   country?: string;
   postalCode?: string;
   notes?: string;
-  accountManagerId?: string;
+  accountManagerId?: string | null;
   status?: string;
 }
 
@@ -61,4 +63,5 @@ export interface FindClientsQuery extends BaseQueryParams {
   status?: string;
   code?: string;
   accountManagerId?: string;
+  includeDeleted?: boolean;
 }

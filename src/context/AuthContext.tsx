@@ -61,7 +61,7 @@ function normalizeRole(roleString: string): string {
 /**
  * Helper to evaluate whether a user possesses a target role code or name.
  */
-export function checkUserRole(user: CurrentUser | null, targetRole: string): boolean {
+function checkUserRole(user: CurrentUser | null, targetRole: string): boolean {
   if (!user || !user.roles || !Array.isArray(user.roles)) {
     return false;
   }
@@ -84,7 +84,7 @@ export function checkUserRole(user: CurrentUser | null, targetRole: string): boo
 /**
  * Helper to determine the authorized landing route based on authenticated roles.
  */
-export function getDestinationForUser(user: CurrentUser): string {
+function getDestinationForUser(user: CurrentUser): string {
   const isAdmin =
     checkUserRole(user, 'SUPER_ADMIN') ||
     checkUserRole(user, 'ADMIN') ||

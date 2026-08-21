@@ -181,7 +181,7 @@ export const AdminPipelines: React.FC = () => {
       if (res.data) {
         setPipelineDetail(res.data);
       }
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to fetch pipeline detail.', 'error');
     } finally {
       setIsLoadingDetail(false);

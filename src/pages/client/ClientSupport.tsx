@@ -133,7 +133,7 @@ export const ClientSupport: React.FC = () => {
       if (newTicket.data?.id) {
         setSelectedTicketId(newTicket.data.id);
       }
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to file support ticket. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);

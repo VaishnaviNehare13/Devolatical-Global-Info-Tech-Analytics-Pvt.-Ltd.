@@ -162,7 +162,7 @@ export const AdminTickets: React.FC = () => {
       showToast(`Ticket status updated to ${newStatus}.`, 'success');
       await fetchTicketDetail(selectedTicketId);
       fetchTickets();
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to update ticket status.', 'error');
     }
   };
@@ -174,7 +174,7 @@ export const AdminTickets: React.FC = () => {
       showToast(`Ticket priority updated to ${newPriority}.`, 'success');
       await fetchTicketDetail(selectedTicketId);
       fetchTickets();
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to update ticket priority.', 'error');
     }
   };
@@ -188,7 +188,7 @@ export const AdminTickets: React.FC = () => {
       showToast('Ticket assignee updated successfully.', 'success');
       await fetchTicketDetail(selectedTicketId);
       fetchTickets();
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to update ticket assignee.', 'error');
     }
   };
@@ -201,7 +201,7 @@ export const AdminTickets: React.FC = () => {
       showToast('Ticket archived successfully.', 'info');
       setSelectedTicketId(null);
       fetchTickets();
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to archive ticket.', 'error');
     }
   };
@@ -213,7 +213,7 @@ export const AdminTickets: React.FC = () => {
       showToast('Ticket restored to active status.', 'success');
       await fetchTicketDetail(selectedTicketId);
       fetchTickets();
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to restore ticket.', 'error');
     }
   };
@@ -250,7 +250,7 @@ export const AdminTickets: React.FC = () => {
       if (res.data?.id) {
         setSelectedTicketId(res.data.id);
       }
-    } catch (err: unknown) {
+    } catch {
       showToast('Failed to create support ticket.', 'error');
     } finally {
       setIsSubmittingCreate(false);

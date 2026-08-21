@@ -51,7 +51,7 @@ export function decryptSecret(cipherText: string): string {
 
     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
     return decrypted.toString('utf8');
-  } catch (_err) {
+  } catch {
     throw new Error('Failed to decrypt TOTP secret.');
   }
 }
@@ -110,7 +110,7 @@ export function verifyTotpToken(code: string, plainSecret: string): boolean {
       token: cleanCode,
       window: 1,
     });
-  } catch (_err) {
+  } catch {
     return false;
   }
 }

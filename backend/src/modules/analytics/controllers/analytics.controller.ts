@@ -17,7 +17,9 @@ export class AnalyticsController {
     if (!user) return query;
 
     const roles = user.roles || [];
-    const isClient = roles.includes('Client') || roles.includes('CLIENT');
+    const isClient = roles.some(
+      (r) => typeof r === 'string' && (r.toUpperCase() === 'CLIENT' || r.toLowerCase().includes('client'))
+    );
 
     if (isClient) {
       const client = await this.prisma.client.findFirst({

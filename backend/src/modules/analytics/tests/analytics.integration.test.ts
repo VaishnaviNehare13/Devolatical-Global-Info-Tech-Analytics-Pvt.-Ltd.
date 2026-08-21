@@ -42,12 +42,20 @@ describe('Domain Analytics, Reporting & CSV/PDF Exports Integration Tests', () =
     staffUserId = staffUser.id;
     staffToken = generateAccessToken({ sub: staffUser.id, email: staffUser.email });
 
-    const superAdminRole = await prisma.role.findFirst({ where: { code: 'SUPER_ADMIN' } });
-    if (superAdminRole) {
-      await prisma.userRole.create({
-        data: { userId: staffUserId, roleId: superAdminRole.id },
+    let superAdminRole = await prisma.role.findFirst({ where: { code: 'SUPER_ADMIN' } });
+    if (!superAdminRole) {
+      superAdminRole = await prisma.role.create({
+        data: {
+          code: 'SUPER_ADMIN',
+          name: 'Super Admin',
+          description: 'Super Admin role',
+          type: 'SYSTEM',
+        },
       });
     }
+    await prisma.userRole.create({
+      data: { userId: staffUserId, roleId: superAdminRole.id },
+    });
 
     // 2. Client A User & Org
     const clientAUser = await prisma.user.create({
@@ -73,12 +81,21 @@ describe('Domain Analytics, Reporting & CSV/PDF Exports Integration Tests', () =
     clientAOrgId = clientAOrg.id;
 
     // Client Role assignment for clientAUser
-    const clientRole = await prisma.role.findFirst({ where: { code: 'CLIENT' } });
-    if (clientRole) {
-      await prisma.userRole.create({
-        data: { userId: clientAUserId, roleId: clientRole.id },
+    let clientRole = await prisma.role.findFirst({ where: { code: 'CLIENT' } });
+    if (!clientRole) {
+      clientRole = await prisma.role.create({
+        data: {
+          code: 'CLIENT',
+          name: 'Client',
+          description: 'Client role',
+          type: 'SYSTEM',
+        },
       });
     }
+
+    await prisma.userRole.create({
+      data: { userId: clientAUserId, roleId: clientRole.id },
+    });
 
     // 3. Client B User & Org
     const clientBUser = await prisma.user.create({
@@ -103,11 +120,9 @@ describe('Domain Analytics, Reporting & CSV/PDF Exports Integration Tests', () =
     });
     clientBOrgId = clientBOrg.id;
 
-    if (clientRole) {
-      await prisma.userRole.create({
-        data: { userId: clientBUserId, roleId: clientRole.id },
-      });
-    }
+    await prisma.userRole.create({
+      data: { userId: clientBUserId, roleId: clientRole.id },
+    });
 
     // 4. Test Projects & Records
     const projectA = await prisma.project.create({

@@ -13,3 +13,4 @@ export * from './roles.api';
 export * from './permissions.api';
 export * from './pipelines.api';
 export * from './notifications.api';
+export * from './analytics.api';

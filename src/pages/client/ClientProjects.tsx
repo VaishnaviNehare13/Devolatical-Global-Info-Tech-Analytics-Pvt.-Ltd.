@@ -52,14 +52,6 @@ export const ClientProjects: React.FC = () => {
     }))
   );
 
-  // Fallback sample records if no tasks attached yet
-  const displayTasks: TaskRecord[] = taskRows.length > 0 ? taskRows : [
-    { id: '1', name: 'Establish AWS Direct Connect tunnel', category: 'Infrastructure', status: 'COMPLETED', assignee: 'Alex Rivera', dueDate: '2026-05-12' },
-    { id: '2', name: 'Integrate Snowflake OAuth validation parameters', category: 'Security', status: 'COMPLETED', assignee: 'Sarah Jenkins', dueDate: '2026-06-01' },
-    { id: '3', name: 'Build ingestion schema migrations pipeline', category: 'Data Science', status: 'IN_PROGRESS', assignee: 'Vikram Mehta', dueDate: '2026-07-20' },
-    { id: '4', name: 'Develop analytics metrics API routes', category: 'Software Dev', status: 'IN_PROGRESS', assignee: 'Jane Doe', dueDate: '2026-08-05' },
-  ];
-
   const columns = [
     { key: 'name' as keyof TaskRecord, header: 'Task Name' },
     { key: 'category' as keyof TaskRecord, header: 'Project Engagement' },
@@ -149,7 +141,13 @@ export const ClientProjects: React.FC = () => {
           <CardDescription>Track status, assignees, and deadlines for active enterprise sprints.</CardDescription>
         </CardHeader>
         <CardContent>
-          <DataTable columns={columns} data={displayTasks} searchKey="name" rowsPerPage={5} />
+          {taskRows.length > 0 ? (
+            <DataTable columns={columns} data={taskRows} searchKey="name" rowsPerPage={5} />
+          ) : (
+            <div className="py-8 text-center space-y-1 text-slate-400 text-xs font-mono">
+              <span>No active sprint tasks currently attached to your projects.</span>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

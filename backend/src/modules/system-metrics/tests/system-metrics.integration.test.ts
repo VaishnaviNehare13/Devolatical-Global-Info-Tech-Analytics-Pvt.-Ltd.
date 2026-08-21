@@ -2,44 +2,103 @@ import request from 'supertest';
 import app from '../../../app';
 import { prisma } from '../../../config/db';
 import { generateAccessToken } from '../../../shared/utils/jwt';
+import { SYSTEM_ROLES } from '../../../shared/constants/roles';
 
 describe('System Metrics Integration Tests', () => {
   let adminToken: string;
   let employeeToken: string;
   let clientToken: string;
 
+  let adminUserId: string;
+  let employeeUserId: string;
+  let clientUserId: string;
+
   beforeAll(async () => {
-    // Fetch seeded users by email
-    let adminUser = await prisma.user.findUnique({ where: { email: 'admin@devolatical.com' } });
-    if (!adminUser) {
-      adminUser = await prisma.user.findFirst({
-        where: { assignedRoles: { some: { role: { code: 'SUPER_ADMIN' } } } },
+    // 1. Setup Roles safely matching SYSTEM_ROLES
+    let adminRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'ADMIN' }, { name: SYSTEM_ROLES.ADMIN }] },
+    });
+    if (!adminRole) {
+      adminRole = await prisma.role.create({
+        data: { name: SYSTEM_ROLES.ADMIN, code: 'ADMIN', isSystem: true },
       });
     }
 
-    let employeeUser = await prisma.user.findUnique({ where: { email: 'employee@devolatical.com' } });
-    if (!employeeUser) {
-      employeeUser = await prisma.user.findFirst({
-        where: { assignedRoles: { some: { role: { code: 'EMPLOYEE' } } } },
+    let employeeRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'EMPLOYEE' }, { name: SYSTEM_ROLES.EMPLOYEE }] },
+    });
+    if (!employeeRole) {
+      employeeRole = await prisma.role.create({
+        data: { name: SYSTEM_ROLES.EMPLOYEE, code: 'EMPLOYEE', isSystem: true },
       });
     }
 
-    let clientUser = await prisma.user.findUnique({ where: { email: 'client@devolatical.com' } });
-    if (!clientUser) {
-      clientUser = await prisma.user.findFirst({
-        where: { assignedRoles: { some: { role: { code: 'CLIENT' } } } },
+    let clientRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'CLIENT' }, { name: SYSTEM_ROLES.CLIENT }] },
+    });
+    if (!clientRole) {
+      clientRole = await prisma.role.create({
+        data: { name: SYSTEM_ROLES.CLIENT, code: 'CLIENT', isSystem: true },
       });
     }
 
-    if (adminUser) {
-      adminToken = generateAccessToken({ sub: adminUser.id, email: adminUser.email });
+    if (adminRole.name !== SYSTEM_ROLES.ADMIN) {
+      adminRole = await prisma.role.update({
+        where: { id: adminRole.id },
+        data: { name: SYSTEM_ROLES.ADMIN },
+      });
     }
-    if (employeeUser) {
-      employeeToken = generateAccessToken({ sub: employeeUser.id, email: employeeUser.email });
-    }
-    if (clientUser) {
-      clientToken = generateAccessToken({ sub: clientUser.id, email: clientUser.email });
-    }
+
+    // 2. Setup Test Admin User
+    const adminUser = await prisma.user.create({
+      data: {
+        email: 'sys_metrics_admin@example.com',
+        firstName: 'SysAdmin',
+        lastName: 'User',
+        displayName: 'SysAdmin User',
+      },
+    });
+    adminUserId = adminUser.id;
+    await prisma.userRole.create({ data: { userId: adminUserId, roleId: adminRole.id } });
+
+    // 3. Setup Test Employee User
+    const employeeUser = await prisma.user.create({
+      data: {
+        email: 'sys_metrics_emp@example.com',
+        firstName: 'SysEmp',
+        lastName: 'User',
+        displayName: 'SysEmp User',
+      },
+    });
+    employeeUserId = employeeUser.id;
+    await prisma.userRole.create({ data: { userId: employeeUserId, roleId: employeeRole.id } });
+
+    // 4. Setup Test Client User
+    const clientUser = await prisma.user.create({
+      data: {
+        email: 'sys_metrics_client@example.com',
+        firstName: 'SysClient',
+        lastName: 'User',
+        displayName: 'SysClient User',
+      },
+    });
+    clientUserId = clientUser.id;
+    await prisma.userRole.create({ data: { userId: clientUserId, roleId: clientRole.id } });
+
+    // 5. Generate Tokens
+    adminToken = generateAccessToken({ sub: adminUserId, email: adminUser.email });
+    employeeToken = generateAccessToken({ sub: employeeUserId, email: employeeUser.email });
+    clientToken = generateAccessToken({ sub: clientUserId, email: clientUser.email });
+  });
+
+  afterAll(async () => {
+    // Clean up created test user roles and users
+    await prisma.userRole.deleteMany({
+      where: { userId: { in: [adminUserId, employeeUserId, clientUserId].filter(Boolean) } },
+    });
+    await prisma.user.deleteMany({
+      where: { id: { in: [adminUserId, employeeUserId, clientUserId].filter(Boolean) } },
+    });
   });
 
   describe('Authorization and RBAC Guards', () => {

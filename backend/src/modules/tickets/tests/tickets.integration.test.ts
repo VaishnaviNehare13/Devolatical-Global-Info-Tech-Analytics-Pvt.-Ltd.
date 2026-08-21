@@ -2,6 +2,7 @@ import request from 'supertest';
 import app from '../../../app';
 import { prisma } from '../../../config/db';
 import { generateAccessToken } from '../../../shared/utils/jwt';
+import { SYSTEM_ROLES } from '../../../shared/constants/roles';
 
 describe('Support Helpdesk & Ticket Conversation Integration Tests', () => {
   let adminToken: string;
@@ -19,18 +20,29 @@ describe('Support Helpdesk & Ticket Conversation Integration Tests', () => {
   let ticketBId: string;
 
   beforeAll(async () => {
-    // 1. Ensure Roles
-    let adminRole = await prisma.role.findUnique({ where: { code: 'ADMIN' } });
+    // 1. Ensure Roles matching SYSTEM_ROLES
+    let adminRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'ADMIN' }, { name: SYSTEM_ROLES.ADMIN }] },
+    });
     if (!adminRole) {
       adminRole = await prisma.role.create({
-        data: { name: 'Admin Role', code: 'ADMIN', isSystem: true },
+        data: { name: SYSTEM_ROLES.ADMIN, code: 'ADMIN', isSystem: true },
       });
     }
 
-    let clientRole = await prisma.role.findUnique({ where: { code: 'CLIENT' } });
+    let clientRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'CLIENT' }, { name: SYSTEM_ROLES.CLIENT }] },
+    });
     if (!clientRole) {
       clientRole = await prisma.role.create({
-        data: { name: 'Client Role', code: 'CLIENT', isSystem: true },
+        data: { name: SYSTEM_ROLES.CLIENT, code: 'CLIENT', isSystem: true },
+      });
+    }
+
+    if (adminRole.name !== SYSTEM_ROLES.ADMIN) {
+      adminRole = await prisma.role.update({
+        where: { id: adminRole.id },
+        data: { name: SYSTEM_ROLES.ADMIN },
       });
     }
 

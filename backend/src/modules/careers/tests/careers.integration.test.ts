@@ -2,27 +2,99 @@ import request from 'supertest';
 import app from '../../../app';
 import { prisma } from '../../../config/db';
 import { generateAccessToken } from '../../../shared/utils/jwt';
+import { SYSTEM_ROLES } from '../../../shared/constants/roles';
 
 describe('Careers & Recruitment Integration Tests', () => {
   let adminToken: string;
   let employeeToken: string;
   let clientToken: string;
 
+  let adminUserId: string;
+  let employeeUserId: string;
+  let clientUserId: string;
+
   let activeJobId: string;
   let inactiveJobId: string;
   let submittedApplicationId: string;
 
   beforeAll(async () => {
-    // 1. Fetch seeded users and generate tokens
-    const adminUser = await prisma.user.findUnique({ where: { email: 'admin@devolatical.com' } });
-    const employeeUser = await prisma.user.findUnique({ where: { email: 'employee@devolatical.com' } });
-    const clientUser = await prisma.user.findUnique({ where: { email: 'client@devolatical.com' } });
+    // 1. Setup Roles safely matching SYSTEM_ROLES
+    let adminRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'ADMIN' }, { name: SYSTEM_ROLES.ADMIN }] },
+    });
+    if (!adminRole) {
+      adminRole = await prisma.role.create({
+        data: { name: SYSTEM_ROLES.ADMIN, code: 'ADMIN', isSystem: true },
+      });
+    }
 
-    if (adminUser) adminToken = generateAccessToken({ sub: adminUser.id, email: adminUser.email });
-    if (employeeUser) employeeToken = generateAccessToken({ sub: employeeUser.id, email: employeeUser.email });
-    if (clientUser) clientToken = generateAccessToken({ sub: clientUser.id, email: clientUser.email });
+    let employeeRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'EMPLOYEE' }, { name: SYSTEM_ROLES.EMPLOYEE }] },
+    });
+    if (!employeeRole) {
+      employeeRole = await prisma.role.create({
+        data: { name: SYSTEM_ROLES.EMPLOYEE, code: 'EMPLOYEE', isSystem: true },
+      });
+    }
 
-    // 2. Ensure test job postings exist
+    let clientRole = await prisma.role.findFirst({
+      where: { OR: [{ code: 'CLIENT' }, { name: SYSTEM_ROLES.CLIENT }] },
+    });
+    if (!clientRole) {
+      clientRole = await prisma.role.create({
+        data: { name: SYSTEM_ROLES.CLIENT, code: 'CLIENT', isSystem: true },
+      });
+    }
+
+    if (adminRole.name !== SYSTEM_ROLES.ADMIN) {
+      adminRole = await prisma.role.update({
+        where: { id: adminRole.id },
+        data: { name: SYSTEM_ROLES.ADMIN },
+      });
+    }
+
+    // 2. Setup Test Admin User
+    const adminUser = await prisma.user.create({
+      data: {
+        email: 'careers_test_admin@example.com',
+        firstName: 'CareersAdmin',
+        lastName: 'User',
+        displayName: 'CareersAdmin User',
+      },
+    });
+    adminUserId = adminUser.id;
+    await prisma.userRole.create({ data: { userId: adminUserId, roleId: adminRole.id } });
+
+    // 3. Setup Test Employee User
+    const employeeUser = await prisma.user.create({
+      data: {
+        email: 'careers_test_emp@example.com',
+        firstName: 'CareersEmp',
+        lastName: 'User',
+        displayName: 'CareersEmp User',
+      },
+    });
+    employeeUserId = employeeUser.id;
+    await prisma.userRole.create({ data: { userId: employeeUserId, roleId: employeeRole.id } });
+
+    // 4. Setup Test Client User
+    const clientUser = await prisma.user.create({
+      data: {
+        email: 'careers_test_client@example.com',
+        firstName: 'CareersClient',
+        lastName: 'User',
+        displayName: 'CareersClient User',
+      },
+    });
+    clientUserId = clientUser.id;
+    await prisma.userRole.create({ data: { userId: clientUserId, roleId: clientRole.id } });
+
+    // 5. Generate Tokens
+    adminToken = generateAccessToken({ sub: adminUserId, email: adminUser.email });
+    employeeToken = generateAccessToken({ sub: employeeUserId, email: employeeUser.email });
+    clientToken = generateAccessToken({ sub: clientUserId, email: clientUser.email });
+
+    // 6. Ensure test job postings exist
     const activeJob = await prisma.job.create({
       data: {
         title: 'Integration Test Data Engineer',
@@ -61,6 +133,14 @@ describe('Careers & Recruitment Integration Tests', () => {
     if (inactiveJobId) {
       await prisma.job.deleteMany({ where: { id: inactiveJobId } });
     }
+
+    // Clean up created test user roles and users
+    await prisma.userRole.deleteMany({
+      where: { userId: { in: [adminUserId, employeeUserId, clientUserId].filter(Boolean) } },
+    });
+    await prisma.user.deleteMany({
+      where: { id: { in: [adminUserId, employeeUserId, clientUserId].filter(Boolean) } },
+    });
   });
 
   describe('Public Job & Application Endpoints', () => {

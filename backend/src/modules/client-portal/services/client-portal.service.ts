@@ -2,9 +2,20 @@ import path from 'path';
 import fs from 'fs';
 import { PrismaClient, TicketPriority, TicketStatus } from '@prisma/client';
 import { AppError } from '../../../utils/appError';
+import { NotificationService } from '../../notifications/services/notification.service';
+import { NotificationRepository } from '../../notifications/repositories/notification.repository';
 
 export class ClientPortalService {
-  constructor(private readonly prisma: PrismaClient) {}
+  private readonly notificationService: NotificationService;
+
+  constructor(
+    private readonly prisma: PrismaClient,
+    notificationService?: NotificationService
+  ) {
+    this.notificationService =
+      notificationService ||
+      new NotificationService(new NotificationRepository(prisma), prisma);
+  }
 
   public async getClientIdForUser(userId: string, userEmail: string): Promise<string> {
     const client = await this.prisma.client.findFirst({
@@ -304,5 +315,99 @@ export class ClientPortalService {
     }
 
     return invoice;
+  }
+
+  public async approveMilestone(userId: string, userEmail: string, milestoneId: string) {
+    const clientId = await this.getClientIdForUser(userId, userEmail);
+
+    const milestone = await this.prisma.milestone.findFirst({
+      where: {
+        id: milestoneId,
+        project: { clientId, deletedAt: null },
+        deletedAt: null,
+      },
+      include: {
+        project: { select: { id: true, name: true, clientId: true, projectManagerId: true } },
+      },
+    });
+
+    if (!milestone) {
+      throw new AppError('Milestone not found or access denied.', 404);
+    }
+
+    if (milestone.reviewStatus !== 'SUBMITTED') {
+      throw new AppError('Milestone is not currently pending client review.', 400);
+    }
+
+    const updated = await this.prisma.milestone.update({
+      where: { id: milestoneId },
+      data: {
+        reviewStatus: 'APPROVED',
+        approvedAt: new Date(),
+        approvedById: userId,
+        status: 'COMPLETED',
+      },
+    });
+
+    try {
+      await this.notificationService.notifyMilestoneApproved(updated, milestone.project);
+    } catch (notificationError) {
+      console.error('Failed to send milestone approval notification:', notificationError);
+    }
+
+    return updated;
+  }
+
+  public async requestMilestoneRevision(
+    userId: string,
+    userEmail: string,
+    milestoneId: string,
+    revisionNotes: string
+  ) {
+    if (!revisionNotes || !revisionNotes.trim() || revisionNotes.trim().length < 5) {
+      throw new AppError('Revision notes feedback is required (minimum 5 characters).', 400);
+    }
+
+    const clientId = await this.getClientIdForUser(userId, userEmail);
+
+    const milestone = await this.prisma.milestone.findFirst({
+      where: {
+        id: milestoneId,
+        project: { clientId, deletedAt: null },
+        deletedAt: null,
+      },
+      include: {
+        project: { select: { id: true, name: true, clientId: true, projectManagerId: true } },
+      },
+    });
+
+    if (!milestone) {
+      throw new AppError('Milestone not found or access denied.', 404);
+    }
+
+    if (milestone.reviewStatus !== 'SUBMITTED') {
+      throw new AppError('Milestone is not currently pending client review.', 400);
+    }
+
+    const updated = await this.prisma.milestone.update({
+      where: { id: milestoneId },
+      data: {
+        reviewStatus: 'REVISION_REQUESTED',
+        revisionNotes: revisionNotes.trim(),
+        status: 'IN_PROGRESS',
+      },
+    });
+
+    try {
+      await this.notificationService.notifyMilestoneRevisionRequested(
+        updated,
+        milestone.project,
+        revisionNotes.trim()
+      );
+    } catch (notificationError) {
+      console.error('Failed to send milestone revision request notification:', notificationError);
+    }
+
+    return updated;
   }
 }

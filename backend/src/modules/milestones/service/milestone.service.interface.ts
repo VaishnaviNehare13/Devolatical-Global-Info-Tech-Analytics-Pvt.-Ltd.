@@ -23,5 +23,6 @@ export interface IMilestoneService {
   ): Promise<MilestoneDetailOutput>;
   archiveMilestone(id: string, currentUserId: string): Promise<MilestoneDetailOutput>;
   restoreMilestone(id: string, currentUserId: string): Promise<MilestoneDetailOutput>;
+  submitReview(projectId: string, id: string, currentUserId: string): Promise<MilestoneDetailOutput>;
   countMilestones(filters: MilestoneFiltersInput): Promise<number>;
 }

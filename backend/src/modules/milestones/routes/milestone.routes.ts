@@ -64,5 +64,12 @@ export function createMilestonesRouter(
     milestoneController.restoreMilestone
   );
 
+  // Submit milestone for client deliverable review
+  router.post(
+    '/:id/submit-review',
+    validate({ params: MilestoneIdParamSchema }),
+    milestoneController.submitReview
+  );
+
   return router;
 }

@@ -143,6 +143,8 @@ model User {
 
   createdMilestones Milestone[] @relation("MilestoneCreator")
   updatedMilestones Milestone[] @relation("MilestoneUpdater")
+  submittedMilestoneReviews Milestone[] @relation("MilestoneReviewSubmitter")
+  approvedMilestones        Milestone[] @relation("MilestoneApprover")
 
   assignedLeads Lead[] @relation("LeadAssignee")
   createdLeads  Lead[] @relation("LeadCreator")
@@ -606,6 +608,13 @@ model Project {
   @@map("projects")
 }
 
+enum MilestoneReviewStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  APPROVED
+  REVISION_REQUESTED
+}
+
 enum MilestoneStatus {
   PENDING
   IN_PROGRESS
@@ -614,27 +623,36 @@ enum MilestoneStatus {
 }
 
 model Milestone {
-  id          String          @id @default(uuid())
-  title       String
-  description String?         @db.Text
-  status      MilestoneStatus @default(PENDING)
-  projectId   String
-  project     Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  dueDate     DateTime?
-  completedAt DateTime?
-  createdAt   DateTime        @default(now())
-  createdById String?
-  createdBy   User?           @relation("MilestoneCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  updatedAt   DateTime        @updatedAt
-  updatedById String?
-  updatedBy   User?           @relation("MilestoneUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
-  deletedAt   DateTime?
-  tasks       Task[]          @relation("MilestoneTasks")
-  documents   Document[]      @relation("MilestoneDocuments")
-  invoices    Invoice[]       @relation("MilestoneInvoices")
+  id                   String                @id @default(uuid())
+  title                String
+  description          String?               @db.Text
+  status               MilestoneStatus       @default(PENDING)
+  reviewStatus         MilestoneReviewStatus @default(NOT_SUBMITTED)
+  submittedForReviewAt DateTime?
+  submittedById        String?
+  submittedBy          User?                 @relation("MilestoneReviewSubmitter", fields: [submittedById], references: [id], onDelete: SetNull)
+  approvedAt           DateTime?
+  approvedById         String?
+  approvedBy           User?                 @relation("MilestoneApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  revisionNotes        String?               @db.Text
+  projectId            String
+  project              Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dueDate              DateTime?
+  completedAt          DateTime?
+  createdAt            DateTime              @default(now())
+  createdById          String?
+  createdBy            User?                 @relation("MilestoneCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedAt            DateTime              @updatedAt
+  updatedById          String?
+  updatedBy            User?                 @relation("MilestoneUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedAt            DateTime?
+  tasks                Task[]                @relation("MilestoneTasks")
+  documents            Document[]            @relation("MilestoneDocuments")
+  invoices             Invoice[]             @relation("MilestoneInvoices")
 
   @@index([projectId])
   @@index([status])
+  @@index([reviewStatus])
   @@index([deletedAt])
   @@map("milestones")
 }

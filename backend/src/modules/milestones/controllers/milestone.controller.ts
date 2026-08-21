@@ -171,6 +171,29 @@ export class MilestoneController {
   };
 
   /**
+   * Submits a milestone for client review (Staff / Admin endpoint).
+   */
+  public submitReview = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { projectId, id } = req.params;
+      const userId = req.user!.id;
+      const result = await this.milestoneService.submitReview(projectId, id, userId);
+
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'Milestone submitted for client review.',
+        data: MilestoneMapper.toDetailResponse(result),
+      });
+    } catch (error) {
+      this.handleControllerError(error, next);
+    }
+  };
+
+  /**
    * Helper to translate domain service exceptions into standard Express HTTP operational AppErrors.
    */
   private handleControllerError(error: unknown, next: NextFunction): void {

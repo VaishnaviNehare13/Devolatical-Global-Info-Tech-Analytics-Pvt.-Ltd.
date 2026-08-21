@@ -1,9 +1,10 @@
-import { MilestoneStatus } from '@prisma/client';
+import { MilestoneStatus, MilestoneReviewStatus } from '@prisma/client';
 
 export interface CreateMilestoneRepositoryInput {
   title: string;
   description?: string | null;
   status?: MilestoneStatus;
+  reviewStatus?: MilestoneReviewStatus;
   projectId: string;
   dueDate?: Date | null;
   createdById?: string | null;
@@ -13,6 +14,12 @@ export interface UpdateMilestoneRepositoryInput {
   title?: string;
   description?: string | null;
   status?: MilestoneStatus;
+  reviewStatus?: MilestoneReviewStatus;
+  submittedForReviewAt?: Date | null;
+  submittedById?: string | null;
+  approvedAt?: Date | null;
+  approvedById?: string | null;
+  revisionNotes?: string | null;
   dueDate?: Date | null;
   completedAt?: Date | null;
   updatedById?: string | null;
@@ -23,6 +30,12 @@ export interface MilestoneBaseOutput {
   id: string;
   title: string;
   status: MilestoneStatus;
+  reviewStatus: MilestoneReviewStatus;
+  submittedForReviewAt: Date | null;
+  submittedById: string | null;
+  approvedAt: Date | null;
+  approvedById: string | null;
+  revisionNotes: string | null;
   projectId: string;
   dueDate: Date | null;
   completedAt: Date | null;

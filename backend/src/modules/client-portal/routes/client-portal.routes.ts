@@ -19,6 +19,8 @@ export function createClientPortalRouter(
   router.post('/tickets/:id/comments', controller.createTicketComment);
   router.get('/documents', controller.getDocuments);
   router.get('/documents/:id/download', controller.downloadDocument);
+  router.post('/milestones/:id/approve', controller.approveMilestone);
+  router.post('/milestones/:id/request-revision', controller.requestMilestoneRevision);
 
   return router;
 }

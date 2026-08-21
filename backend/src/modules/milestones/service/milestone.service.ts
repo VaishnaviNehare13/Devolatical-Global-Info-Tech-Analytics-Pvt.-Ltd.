@@ -5,10 +5,14 @@ import {
   AuditStatus,
   AuditSeverity,
   MilestoneStatus,
+  MilestoneReviewStatus,
 } from '@prisma/client';
 import { IMilestoneRepository } from '../repository/milestone.repository.interface';
 import { IProjectRepository } from '../../projects/repository/project.repository.interface';
 import { IAuditLogService } from '../../audit-logs/service/audit-log.service';
+import { NotificationService } from '../../notifications/services/notification.service';
+import { NotificationRepository } from '../../notifications/repositories/notification.repository';
+import { prisma } from '../../../config/db';
 import {
   MilestoneDetailOutput,
   PaginatedMilestonesOutput,
@@ -31,11 +35,18 @@ import {
 } from './milestone.service.errors';
 
 export class MilestoneService implements IMilestoneService {
+  private readonly notificationService: NotificationService;
+
   constructor(
     private readonly milestoneRepository: IMilestoneRepository,
     private readonly projectRepository: IProjectRepository,
-    private readonly auditLogService: IAuditLogService
-  ) {}
+    private readonly auditLogService: IAuditLogService,
+    notificationService?: NotificationService
+  ) {
+    this.notificationService =
+      notificationService ||
+      new NotificationService(new NotificationRepository(prisma), prisma);
+  }
 
   public async createMilestone(
     data: CreateMilestoneServiceInput,
@@ -319,6 +330,74 @@ export class MilestoneService implements IMilestoneService {
       }
       throw new MilestoneServiceError(
         `Failed to restore milestone ${id}: ${(error as Error).message}`
+      );
+    }
+  }
+
+  public async submitReview(
+    projectId: string,
+    id: string,
+    currentUserId: string
+  ): Promise<MilestoneDetailOutput> {
+    try {
+      const milestone = await this.milestoneRepository.findById(id);
+      if (!milestone || milestone.projectId !== projectId) {
+        throw new MilestoneNotFoundError(id);
+      }
+
+      if (milestone.deletedAt !== null) {
+        throw new MilestoneArchivedError(id);
+      }
+
+      if (milestone.reviewStatus === MilestoneReviewStatus.APPROVED) {
+        throw new InvalidStatusTransitionError('Milestone has already been approved by client.');
+      }
+
+      const result = await this.milestoneRepository.update(id, {
+        reviewStatus: MilestoneReviewStatus.SUBMITTED,
+        submittedForReviewAt: new Date(),
+        submittedById: currentUserId,
+        status: MilestoneStatus.COMPLETED,
+        completedAt: milestone.completedAt || new Date(),
+        updatedById: currentUserId,
+      });
+
+      if (!result) {
+        throw new MilestoneNotFoundError(id);
+      }
+
+      try {
+        await this.auditLogService.record({
+          action: AuditAction.UPDATE,
+          module: AuditModule.MILESTONES,
+          status: AuditStatus.SUCCESS,
+          severity: AuditSeverity.INFO,
+          userId: currentUserId,
+          entityType: 'Milestone',
+          entityId: result.id,
+          resourceName: result.title,
+          newValues: { reviewStatus: 'SUBMITTED', status: 'COMPLETED' } as unknown as Prisma.InputJsonValue,
+        });
+      } catch (auditError) {
+        console.error('Failed to create audit log for milestone review submission:', auditError);
+      }
+
+      try {
+        const project = await this.projectRepository.findById(projectId);
+        if (project) {
+          await this.notificationService.notifyMilestoneSubmittedForReview(result, project);
+        }
+      } catch (notificationError) {
+        console.error('Failed to send milestone review submission notification:', notificationError);
+      }
+
+      return result;
+    } catch (error) {
+      if (error instanceof MilestoneServiceError) {
+        throw error;
+      }
+      throw new MilestoneServiceError(
+        `Failed to submit milestone ${id} for review: ${(error as Error).message}`
       );
     }
   }

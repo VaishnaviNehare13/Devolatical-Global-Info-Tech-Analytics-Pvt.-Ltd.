@@ -176,4 +176,42 @@ export class ClientPortalController {
       next(error);
     }
   };
+
+  public approveMilestone = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const userEmail = req.user!.email;
+      const milestoneId = req.params.id;
+      const data = await this.clientPortalService.approveMilestone(userId, userEmail, milestoneId);
+      res.status(200).json({
+        success: true,
+        message: 'Milestone deliverable approved successfully.',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public requestMilestoneRevision = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user!.id;
+      const userEmail = req.user!.email;
+      const milestoneId = req.params.id;
+      const { revisionNotes } = req.body;
+      const data = await this.clientPortalService.requestMilestoneRevision(
+        userId,
+        userEmail,
+        milestoneId,
+        revisionNotes
+      );
+      res.status(200).json({
+        success: true,
+        message: 'Revision requested successfully. Engineering notified.',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

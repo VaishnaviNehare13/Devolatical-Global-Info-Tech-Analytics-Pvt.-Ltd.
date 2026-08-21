@@ -217,6 +217,75 @@ export class NotificationService {
     });
   }
 
+  public async notifyMilestoneSubmittedForReview(milestone: any, project: any): Promise<void> {
+    const recipients = new Set<string>();
+    if (project.clientId) {
+      const client = await this.prisma.client.findUnique({
+        where: { id: project.clientId },
+        select: { accountManagerId: true, createdById: true },
+      });
+      if (client?.accountManagerId) recipients.add(client.accountManagerId);
+      if (client?.createdById) recipients.add(client.createdById);
+    }
+
+    await this.createNotifications(Array.from(recipients), {
+      type: NotificationType.MILESTONE,
+      title: 'Milestone Ready for Review',
+      message: `Milestone "${milestone.title}" for project "${project.name}" has been submitted for deliverable review.`,
+      entityType: 'Milestone',
+      entityId: milestone.id,
+      emailSubject: `[Milestone Review] ${milestone.title}`,
+    });
+  }
+
+  public async notifyMilestoneApproved(milestone: any, project: any): Promise<void> {
+    const recipients = new Set<string>();
+    if (milestone.createdById) recipients.add(milestone.createdById);
+    if (project.projectManagerId) recipients.add(project.projectManagerId);
+
+    const adminRoles = await this.prisma.userRole.findMany({
+      where: {
+        role: { code: { in: ['SUPER_ADMIN', 'ADMIN'] } },
+        user: { status: 'ACTIVE' },
+      },
+      select: { userId: true },
+    });
+    adminRoles.forEach((ur) => recipients.add(ur.userId));
+
+    await this.createNotifications(Array.from(recipients), {
+      type: NotificationType.MILESTONE,
+      title: 'Milestone Approved by Client',
+      message: `Client approved milestone "${milestone.title}" for project "${project.name}".`,
+      entityType: 'Milestone',
+      entityId: milestone.id,
+      emailSubject: `[Milestone Approved] ${milestone.title}`,
+    });
+  }
+
+  public async notifyMilestoneRevisionRequested(milestone: any, project: any, notes: string): Promise<void> {
+    const recipients = new Set<string>();
+    if (milestone.createdById) recipients.add(milestone.createdById);
+    if (project.projectManagerId) recipients.add(project.projectManagerId);
+
+    const adminRoles = await this.prisma.userRole.findMany({
+      where: {
+        role: { code: { in: ['SUPER_ADMIN', 'ADMIN'] } },
+        user: { status: 'ACTIVE' },
+      },
+      select: { userId: true },
+    });
+    adminRoles.forEach((ur) => recipients.add(ur.userId));
+
+    await this.createNotifications(Array.from(recipients), {
+      type: NotificationType.MILESTONE,
+      title: 'Milestone Revision Requested',
+      message: `Client requested revision on milestone "${milestone.title}". Feedback: ${notes}`,
+      entityType: 'Milestone',
+      entityId: milestone.id,
+      emailSubject: `[Milestone Revision] ${milestone.title}`,
+    });
+  }
+
   public async notifyLeadUpdated(lead: any): Promise<void> {
     const recipients = new Set<string>();
     if (lead.assignedToId) recipients.add(lead.assignedToId);

@@ -7,6 +7,12 @@ export interface MilestoneSummaryResponse {
   id: string;
   title: string;
   status: string;
+  reviewStatus: string;
+  submittedForReviewAt: string | null;
+  submittedById: string | null;
+  approvedAt: string | null;
+  approvedById: string | null;
+  revisionNotes: string | null;
   projectId: string;
   dueDate: string | null;
   completedAt: string | null;
@@ -38,6 +44,12 @@ export class MilestoneMapper {
       id: milestone.id,
       title: milestone.title,
       status: milestone.status,
+      reviewStatus: milestone.reviewStatus || 'NOT_SUBMITTED',
+      submittedForReviewAt: milestone.submittedForReviewAt ? milestone.submittedForReviewAt.toISOString() : null,
+      submittedById: milestone.submittedById || null,
+      approvedAt: milestone.approvedAt ? milestone.approvedAt.toISOString() : null,
+      approvedById: milestone.approvedById || null,
+      revisionNotes: milestone.revisionNotes || null,
       projectId: milestone.projectId,
       dueDate: milestone.dueDate ? milestone.dueDate.toISOString() : null,
       completedAt: milestone.completedAt ? milestone.completedAt.toISOString() : null,
@@ -54,6 +66,12 @@ export class MilestoneMapper {
       id: milestone.id,
       title: milestone.title,
       status: milestone.status,
+      reviewStatus: milestone.reviewStatus || 'NOT_SUBMITTED',
+      submittedForReviewAt: milestone.submittedForReviewAt ? milestone.submittedForReviewAt.toISOString() : null,
+      submittedById: milestone.submittedById || null,
+      approvedAt: milestone.approvedAt ? milestone.approvedAt.toISOString() : null,
+      approvedById: milestone.approvedById || null,
+      revisionNotes: milestone.revisionNotes || null,
       projectId: milestone.projectId,
       dueDate: milestone.dueDate ? milestone.dueDate.toISOString() : null,
       completedAt: milestone.completedAt ? milestone.completedAt.toISOString() : null,

@@ -11,3 +11,4 @@ export * from './audit.api';
 export * from './documents.api';
 export * from './roles.api';
 export * from './permissions.api';
+export * from './pipelines.api';

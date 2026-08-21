@@ -52,6 +52,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminAnalytics = lazy(() => import('./pages/admin/AdminAnalytics'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminLeads = lazy(() => import('./pages/admin/AdminLeads'));
+const AdminInvoices = lazy(() => import('./pages/admin/AdminInvoices'));
 const AdminTickets = lazy(() => import('./pages/admin/AdminTickets'));
 const AdminCareers = lazy(() => import('./pages/admin/AdminCareers'));
 const AdminPipelines = lazy(() => import('./pages/admin/AdminPipelines'));
@@ -141,6 +142,7 @@ export const App: React.FC = () => {
                     <Route path="analytics" element={<AdminAnalytics />} />
                     <Route path="users" element={<AdminUsers />} />
                     <Route path="leads" element={<AdminLeads />} />
+                    <Route path="invoices" element={<AdminInvoices />} />
                     <Route path="tickets" element={<AdminTickets />} />
                     <Route path="careers" element={<AdminCareers />} />
                     <Route path="pipelines" element={<AdminPipelines />} />

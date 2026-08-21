@@ -4,11 +4,14 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { DataTable } from '../../components/ui/DataTable';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { useToast } from '../../components/ui/Toast';
 import { clientPortalApi, type ClientInvoiceItem } from '../../api/client-portal.api';
-import { RefreshCw, AlertCircle, FileText } from 'lucide-react';
+import { ApiError } from '../../types/api';
+import { RefreshCw, AlertCircle, FileText, Download } from 'lucide-react';
 
 interface InvoiceRecord {
   id: string;
+  rawInvoice: ClientInvoiceItem;
   invoiceNumber: string;
   project: string;
   amount: string;
@@ -17,8 +20,11 @@ interface InvoiceRecord {
 }
 
 export const ClientInvoices: React.FC = () => {
+  const { showToast } = useToast();
   const [invoices, setInvoices] = useState<ClientInvoiceItem[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fetchInvoices = useCallback(async () => {
@@ -29,8 +35,13 @@ export const ClientInvoices: React.FC = () => {
       if (res.data) {
         setInvoices(res.data);
       }
-    } catch {
-      setError('Failed to fetch invoice ledger from server.');
+    } catch (err: unknown) {
+      const message = ApiError.isApiError(err)
+        ? err.message
+        : err instanceof Error
+        ? err.message
+        : 'Failed to fetch invoice ledger from server.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -40,13 +51,39 @@ export const ClientInvoices: React.FC = () => {
     fetchInvoices();
   }, [fetchInvoices]);
 
-  const displayData: InvoiceRecord[] = invoices.map((inv) => ({
+  const handleDownloadPdf = async (inv: ClientInvoiceItem) => {
+    setDownloadingId(inv.id);
+    try {
+      showToast(`Initiating download for Invoice ${inv.invoiceNumber}...`, 'info');
+      await clientPortalApi.downloadInvoicePdf(inv.id, inv.invoiceNumber);
+      showToast(`Invoice ${inv.invoiceNumber} PDF downloaded successfully.`, 'success');
+    } catch (err: unknown) {
+      const message = ApiError.isApiError(err)
+        ? err.message
+        : err instanceof Error
+        ? err.message
+        : 'Failed to download invoice PDF statement.';
+      showToast(message, 'error');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  const filteredInvoices = invoices.filter((inv) => {
+    if (!statusFilter) return true;
+    return inv.status?.toUpperCase() === statusFilter.toUpperCase();
+  });
+
+  const displayData: InvoiceRecord[] = filteredInvoices.map((inv) => ({
     id: inv.id,
+    rawInvoice: inv,
     invoiceNumber: inv.invoiceNumber,
-    project: inv.description || inv.project?.name || 'Enterprise Deliverable Service',
+    project: inv.description || inv.project?.name || 'Enterprise Service Deliverable',
     amount: `$${Number(inv.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
     status: inv.status,
-    date: inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : new Date(inv.createdAt).toLocaleDateString(),
+    date: inv.dueDate
+      ? new Date(inv.dueDate).toLocaleDateString()
+      : new Date(inv.createdAt).toLocaleDateString(),
   }));
 
   const columns = [
@@ -68,6 +105,28 @@ export const ClientInvoices: React.FC = () => {
         };
         return <Badge variant={variants[row.status] || 'outline'}>{row.status}</Badge>;
       },
+    },
+    {
+      key: 'id' as keyof InvoiceRecord,
+      header: 'Statement PDF',
+      render: (row: InvoiceRecord) => (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleDownloadPdf(row.rawInvoice)}
+          disabled={downloadingId === row.id}
+          className="h-8 text-xs font-semibold px-2.5"
+        >
+          {downloadingId === row.id ? (
+            <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Download className="h-3.5 w-3.5 text-secondary" />
+          )}
+          <span className="ml-1 hidden sm:inline">
+            {downloadingId === row.id ? 'Downloading...' : 'PDF Statement'}
+          </span>
+        </Button>
+      ),
     },
   ];
 
@@ -98,6 +157,26 @@ export const ClientInvoices: React.FC = () => {
         </div>
       )}
 
+      {/* Filter Tabs Bar */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        {[
+          { label: 'All Invoices', value: '' },
+          { label: 'Pending', value: 'PENDING' },
+          { label: 'Paid', value: 'PAID' },
+          { label: 'Overdue', value: 'OVERDUE' },
+        ].map((tab) => (
+          <Button
+            key={tab.value}
+            variant={statusFilter === tab.value ? 'secondary' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter(tab.value)}
+            className="text-xs shrink-0"
+          >
+            {tab.label}
+          </Button>
+        ))}
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>Invoice Ledger</CardTitle>
@@ -118,6 +197,11 @@ export const ClientInvoices: React.FC = () => {
               <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">
                 No invoices found in account ledger
               </p>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                {statusFilter
+                  ? `No ${statusFilter.toLowerCase()} invoice statements matched your filter.`
+                  : 'New billing statements and invoice receipts will appear here once generated.'}
+              </p>
             </div>
           )}
         </CardContent>
@@ -125,4 +209,5 @@ export const ClientInvoices: React.FC = () => {
     </div>
   );
 };
+
 export default ClientInvoices;

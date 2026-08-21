@@ -1,5 +1,41 @@
-import { apiClient } from './client';
+import { apiClient, getApiBaseUrl, getAccessToken, buildQueryString } from './client';
 import type { ApiResponse } from '../types/api';
+
+/**
+ * Helper function to fetch binary/blob file response with auth header.
+ */
+async function fetchBlob(endpoint: string, params?: Record<string, unknown>): Promise<Blob> {
+  const baseUrl = getApiBaseUrl();
+  const queryString = buildQueryString(params);
+  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const fullUrl = `${baseUrl.replace(/\/+$/, '')}${normalizedEndpoint}${queryString}`;
+  const token = getAccessToken();
+
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(fullUrl, { headers });
+  if (!response.ok) {
+    throw new Error(`Invoice PDF download request failed with status ${response.status} (${response.statusText})`);
+  }
+  return response.blob();
+}
+
+/**
+ * Helper function to trigger browser file download from Blob response.
+ */
+function triggerBlobDownload(blob: Blob, fallbackFilename: string) {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', fallbackFilename);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
 
 export interface ClientOverviewData {
   systemStatus: string;
@@ -93,6 +129,11 @@ export const clientPortalApi = {
   getInvoices: (): Promise<ApiResponse<ClientInvoiceItem[]>> =>
     apiClient.get<ApiResponse<ClientInvoiceItem[]>>('/client-portal/invoices'),
 
+  downloadInvoicePdf: async (id: string, invoiceNumber?: string): Promise<void> => {
+    const blob = await fetchBlob(`/client-portal/invoices/${id}/pdf`);
+    triggerBlobDownload(blob, `Invoice-${invoiceNumber || id}.pdf`);
+  },
+
   getTickets: (): Promise<ApiResponse<ClientTicketItem[]>> =>
     apiClient.get<ApiResponse<ClientTicketItem[]>>('/client-portal/tickets'),
 
@@ -108,4 +149,3 @@ export const clientPortalApi = {
   ): Promise<ApiResponse<ClientTicketComment>> =>
     apiClient.post<ApiResponse<ClientTicketComment>>(`/client-portal/tickets/${id}/comments`, data),
 };
-

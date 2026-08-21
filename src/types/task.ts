@@ -15,6 +15,9 @@ export interface TaskSummary {
   dueDate: string | null;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
+  project?: { id: string; name: string; code: string };
+  assignedTo?: { id: string; displayName?: string; firstName?: string; lastName?: string; email: string };
 }
 
 export interface TaskDetail extends TaskSummary {
@@ -52,10 +55,12 @@ export interface UpdateTaskRequest {
 }
 
 export interface FindTasksQuery extends BaseQueryParams {
+  code?: string;
   status?: string;
   priority?: string;
   projectId?: string;
   milestoneId?: string;
   assignedToId?: string;
   parentId?: string;
+  includeDeleted?: boolean;
 }

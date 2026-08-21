@@ -85,4 +85,16 @@ export const milestonesApi = {
     apiClient.post<ApiResponse<MilestoneDetail>>(
       `/projects/${projectId}/milestones/${id}/restore`
     ),
+
+  /**
+   * Submit milestone for client deliverable review.
+   * POST /api/v1/projects/:projectId/milestones/:id/submit-review
+   */
+  submitReview: (
+    projectId: string,
+    id: string
+  ): Promise<ApiResponse<MilestoneDetail>> =>
+    apiClient.post<ApiResponse<MilestoneDetail>>(
+      `/projects/${projectId}/milestones/${id}/submit-review`
+    ),
 };

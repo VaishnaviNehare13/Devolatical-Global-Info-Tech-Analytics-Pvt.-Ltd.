@@ -7,7 +7,9 @@ import { Modal } from '../../components/ui/Modal';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { useToast } from '../../components/ui/Toast';
 import { projectsApi } from '../../api/projects.api';
+import { milestonesApi } from '../../api/milestones.api';
 import type { ProjectSummary, ProjectDetail, FindProjectsQuery } from '../../types/project';
+import type { MilestoneSummary } from '../../types/milestone';
 import { ApiError } from '../../types/api';
 import {
   Search,
@@ -19,6 +21,9 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  Send,
+  CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react';
 
 export const EmployeeProjects: React.FC = () => {
@@ -38,8 +43,11 @@ export const EmployeeProjects: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Project Detail Modal
+  // Project Detail Modal & Milestones
   const [detailProject, setDetailProject] = useState<ProjectDetail | ProjectSummary | null>(null);
+  const [projectMilestones, setProjectMilestones] = useState<MilestoneSummary[]>([]);
+  const [isLoadingMilestones, setIsLoadingMilestones] = useState<boolean>(false);
+  const [submittingMilestoneId, setSubmittingMilestoneId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -71,56 +79,83 @@ export const EmployeeProjects: React.FC = () => {
         const res = await projectsApi.listProjects(queryParams);
         const data = res.data;
 
-
         setProjects(data?.items || []);
         setTotalCount(data?.total ?? data?.items?.length ?? 0);
         setTotalPages(data?.pages ?? Math.ceil((data?.total ?? 1) / pageSize) ?? 1);
       } catch (err: unknown) {
         const message = ApiError.isApiError(err)
           ? err.message
-          : err instanceof Error
-          ? err.message
-          : 'Failed to fetch projects from server.';
+          : 'Failed to retrieve projects list from server.';
         setLoadError(message);
-        showToast(message, 'error');
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
       }
     },
-    [currentPage, pageSize, debouncedSearch, statusFilter, showToast]
+    [currentPage, pageSize, debouncedSearch, statusFilter]
   );
 
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
-  const handleOpenDetail = async (project: ProjectSummary) => {
-    setDetailProject(project);
+  const fetchMilestonesForProject = async (projectId: string) => {
+    setIsLoadingMilestones(true);
     try {
-      const res = await projectsApi.getProjectById(project.id);
-      if (res.data) {
-        setDetailProject(res.data);
-      }
+      const res = await milestonesApi.listMilestones(projectId, { limit: 50 });
+      setProjectMilestones(res.data?.items || []);
     } catch {
-      // Keep summary if detail route requires elevated admin permissions
+      setProjectMilestones([]);
+    } finally {
+      setIsLoadingMilestones(false);
     }
   };
 
+  const handleOpenDetail = (project: ProjectSummary) => {
+    setDetailProject(project);
+    fetchMilestonesForProject(project.id);
+  };
+
+  const handleSubmitMilestoneReview = async (projectId: string, milestoneId: string) => {
+    setSubmittingMilestoneId(milestoneId);
+    try {
+      await milestonesApi.submitReview(projectId, milestoneId);
+      showToast('Milestone submitted for client review successfully.', 'success');
+      await fetchMilestonesForProject(projectId);
+    } catch (err: unknown) {
+      const msg = ApiError.isApiError(err) ? err.message : 'Failed to submit milestone for review.';
+      showToast(msg, 'error');
+    } finally {
+      setSubmittingMilestoneId(null);
+    }
+  };
 
   const statusBadgeVariant = (status: string) => {
     switch (status?.toUpperCase()) {
       case 'ACTIVE':
-      case 'IN_PROGRESS':
+      case 'COMPLETED':
         return 'success';
+      case 'IN_PROGRESS':
       case 'PLANNING':
         return 'secondary';
       case 'ON_HOLD':
-        return 'warning';
-      case 'COMPLETED':
-        return 'outline';
+      case 'CANCELLED':
+        return 'danger';
       default:
+        return 'outline';
+    }
+  };
+
+  const reviewBadgeVariant = (reviewStatus?: string) => {
+    switch (reviewStatus?.toUpperCase()) {
+      case 'APPROVED':
+        return 'success';
+      case 'SUBMITTED':
         return 'secondary';
+      case 'REVISION_REQUESTED':
+        return 'warning';
+      default:
+        return 'outline';
     }
   };
 
@@ -129,17 +164,11 @@ export const EmployeeProjects: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">Active Projects & Engagements</h1>
-            <Badge variant="secondary" className="font-mono text-xs">
-              {totalCount} Total
-            </Badge>
-          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Enterprise Projects</h1>
           <p className="text-sm text-slate-500">
-            Enterprise client projects, data lakehouse implementations, and cloud delivery workstreams.
+            Monitor client engagements, track milestone review status, and manage engineering deliverables.
           </p>
         </div>
-
         <Button
           variant="outline"
           size="sm"
@@ -250,10 +279,10 @@ export const EmployeeProjects: React.FC = () => {
 
                     <div className="space-y-1.5 pt-2">
                       <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                        <span>Milestone Progress</span>
-                        <span>Phase Active</span>
+                        <span>Engagement Active</span>
+                        <span>Phase Tracking</span>
                       </div>
-                      <ProgressBar value={65} />
+                      <ProgressBar value={project.status === 'COMPLETED' ? 100 : 65} />
                     </div>
                   </div>
 
@@ -314,7 +343,10 @@ export const EmployeeProjects: React.FC = () => {
       {/* Project Detail Modal */}
       <Modal
         isOpen={!!detailProject}
-        onClose={() => setDetailProject(null)}
+        onClose={() => {
+          setDetailProject(null);
+          setProjectMilestones([]);
+        }}
         title={detailProject?.name || 'Project Overview'}
       >
         {detailProject && (
@@ -361,25 +393,82 @@ export const EmployeeProjects: React.FC = () => {
               </div>
             </div>
 
-            {/* Execution Phasing */}
-            <div className="space-y-2 border-t border-slate-100 dark:border-slate-800 pt-4">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
-                Deliverable Phasing
-              </label>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs p-2.5 bg-slate-50 dark:bg-dark rounded-lg">
-                  <span className="font-semibold">Phase 1: Architecture & ETL Pipeline Setup</span>
-                  <Badge variant="success" className="text-[9px]">Completed</Badge>
-                </div>
-                <div className="flex items-center justify-between text-xs p-2.5 bg-slate-50 dark:bg-dark rounded-lg">
-                  <span className="font-semibold">Phase 2: Data Ingestion & Transformation</span>
-                  <Badge variant="secondary" className="text-[9px]">In Progress</Badge>
-                </div>
-                <div className="flex items-center justify-between text-xs p-2.5 bg-slate-50 dark:bg-dark rounded-lg">
-                  <span className="font-semibold">Phase 3: Analytics Dashboard & Client Sign-off</span>
-                  <Badge variant="outline" className="text-[9px]">Scheduled</Badge>
-                </div>
+            {/* Real Project Milestones List & Review Submissions */}
+            <div className="space-y-3 border-t border-slate-100 dark:border-slate-800 pt-4">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                  Project Milestones & Deliverable Review
+                </label>
+                {isLoadingMilestones && <Skeleton className="h-4 w-16" />}
               </div>
+
+              {isLoadingMilestones ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+              ) : projectMilestones.length > 0 ? (
+                <div className="space-y-3">
+                  {projectMilestones.map((m) => (
+                    <div
+                      key={m.id}
+                      className="p-3 bg-slate-50 dark:bg-dark rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="space-y-0.5">
+                          <h4 className="font-bold text-xs text-slate-900 dark:text-white">{m.title}</h4>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
+                            <span>Status: {m.status}</span>
+                            {m.dueDate && <span>• Due: {new Date(m.dueDate).toLocaleDateString()}</span>}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Badge variant={reviewBadgeVariant(m.reviewStatus)}>
+                            {m.reviewStatus || 'NOT_SUBMITTED'}
+                          </Badge>
+
+                          {(m.reviewStatus === 'NOT_SUBMITTED' || m.reviewStatus === 'REVISION_REQUESTED') && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="text-[10px] h-7 px-2.5 bg-blue-600 hover:bg-blue-700 text-white"
+                              disabled={submittingMilestoneId === m.id}
+                              onClick={() => handleSubmitMilestoneReview(detailProject.id, m.id)}
+                            >
+                              <Send className="h-3 w-3 mr-1" />
+                              {submittingMilestoneId === m.id ? 'Submitting...' : 'Submit for Client Review'}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Display Client Revision Feedback Notes if present */}
+                      {m.reviewStatus === 'REVISION_REQUESTED' && m.revisionNotes && (
+                        <div className="mt-2 p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-900 dark:text-amber-200 text-xs space-y-1">
+                          <div className="flex items-center gap-1.5 font-semibold text-[11px]">
+                            <AlertTriangle className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
+                            <span>Client Revision Feedback:</span>
+                          </div>
+                          <p className="pl-5 text-slate-700 dark:text-slate-300 italic">{m.revisionNotes}</p>
+                        </div>
+                      )}
+
+                      {/* Display Approval Info */}
+                      {m.reviewStatus === 'APPROVED' && (
+                        <div className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-mono">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>Approved by client {m.approvedAt ? `on ${new Date(m.approvedAt).toLocaleDateString()}` : ''}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-4 bg-slate-50 dark:bg-dark text-center text-xs text-slate-400 rounded-xl font-mono">
+                  No active milestones registered for this project.
+                </div>
+              )}
             </div>
           </div>
         )}

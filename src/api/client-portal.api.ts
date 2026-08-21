@@ -57,6 +57,21 @@ export interface ClientOverviewData {
   }>;
 }
 
+export interface ClientProjectMilestoneItem {
+  id: string;
+  title: string;
+  status: string;
+  reviewStatus?: string;
+  submittedForReviewAt?: string | null;
+  submittedById?: string | null;
+  approvedAt?: string | null;
+  approvedById?: string | null;
+  revisionNotes?: string | null;
+  description?: string | null;
+  dueDate?: string | null;
+  completedAt?: string | null;
+}
+
 export interface ClientProjectItem {
   id: string;
   name: string;
@@ -65,7 +80,7 @@ export interface ClientProjectItem {
   startDate?: string;
   endDate?: string;
   client?: { id: string; name: string };
-  milestones?: Array<{ id: string; title: string; status: string }>;
+  milestones?: ClientProjectMilestoneItem[];
   tasks?: Array<{ id: string; title: string; status: string; priority: string; dueDate?: string }>;
 }
 
@@ -148,4 +163,15 @@ export const clientPortalApi = {
     data: { message: string }
   ): Promise<ApiResponse<ClientTicketComment>> =>
     apiClient.post<ApiResponse<ClientTicketComment>>(`/client-portal/tickets/${id}/comments`, data),
+
+  approveMilestone: (id: string): Promise<ApiResponse<ClientProjectMilestoneItem>> =>
+    apiClient.post<ApiResponse<ClientProjectMilestoneItem>>(`/client-portal/milestones/${id}/approve`),
+
+  requestMilestoneRevision: (
+    id: string,
+    revisionNotes: string
+  ): Promise<ApiResponse<ClientProjectMilestoneItem>> =>
+    apiClient.post<ApiResponse<ClientProjectMilestoneItem>>(`/client-portal/milestones/${id}/request-revision`, {
+      revisionNotes,
+    }),
 };

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, User, LogOut, Sun, Moon, Bell, ChevronRight, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, ClipboardList, LifeBuoy, User, LogOut, Sun, Moon, ChevronRight, Menu, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
+import { NotificationBell } from '../common/NotificationBell';
 import logo from '../../assets/logo.png';
 
 
@@ -203,10 +204,7 @@ export const ClientPortalLayout: React.FC = () => {
           </h2>
           <div className="flex items-center space-x-6">
             {/* Notification Bell */}
-            <button className="relative p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 cursor-pointer">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-danger rounded-full ring-2 ring-white dark:ring-dark-card" />
-            </button>
+            <NotificationBell role="client" />
             
             {/* Client Avatar Info */}
             <Link to="/portal/profile" className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 cursor-pointer group">

@@ -10,7 +10,6 @@ import {
   LogOut,
   Sun,
   Moon,
-  Bell,
   ChevronRight,
   Menu,
   X,
@@ -19,6 +18,7 @@ import {
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../ui/Toast';
+import { NotificationBell } from '../common/NotificationBell';
 import logo from '../../assets/logo.png';
 
 export const EmployeeLayout: React.FC = () => {
@@ -28,7 +28,6 @@ export const EmployeeLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
 
   const handleLogout = async () => {
@@ -243,56 +242,7 @@ export const EmployeeLayout: React.FC = () => {
 
           <div className="flex items-center space-x-6 relative">
             {/* Notification Bell */}
-            <div className="relative">
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 cursor-pointer transition-colors"
-                aria-label="View notifications"
-              >
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accent rounded-full ring-2 ring-white dark:ring-dark-card" />
-              </button>
-
-              <AnimatePresence>
-                {showNotifications && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-80 bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 p-4 text-left space-y-3"
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-                      <h4 className="text-xs font-bold font-heading uppercase tracking-wider text-slate-900 dark:text-white">
-                        Notifications Hub
-                      </h4>
-                      <span className="text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded">
-                        0 Unread
-                      </span>
-                    </div>
-
-                    <div className="py-4 text-center space-y-1.5">
-                      <Bell className="h-6 w-6 text-slate-300 dark:text-slate-600 mx-auto" />
-                      <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                        No pending unread alerts
-                      </p>
-                      <p className="text-[10px] text-slate-400 max-w-xs mx-auto">
-                        All project assignments and sprint task updates are active in real-time.
-                      </p>
-                    </div>
-
-                    <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex justify-end">
-                      <button
-                        onClick={() => setShowNotifications(false)}
-                        className="text-[11px] font-semibold text-secondary hover:underline cursor-pointer"
-                      >
-                        Dismiss
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <NotificationBell role="employee" />
 
             {/* Employee Avatar Info */}
             <div className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 text-left">

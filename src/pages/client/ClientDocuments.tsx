@@ -5,8 +5,8 @@ import { Badge } from '../../components/ui/Badge';
 import { DataTable } from '../../components/ui/DataTable';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { useToast } from '../../components/ui/Toast';
-import { documentsApi } from '../../api/documents.api';
-import type { DocumentSummary, FindDocumentsQuery } from '../../types/document';
+import { clientPortalApi } from '../../api/client-portal.api';
+import type { DocumentSummary } from '../../types/document';
 import { ApiError } from '../../types/api';
 import {
   FileText,
@@ -63,20 +63,24 @@ export const ClientDocuments: React.FC = () => {
       setLoadError(null);
 
       try {
-        const queryParams: FindDocumentsQuery = {
-          page: currentPage,
-          limit: pageSize,
-          search: debouncedSearch || undefined,
-          mimeType: mimeFilter !== 'ALL' ? mimeFilter : undefined,
-          sortField: 'createdAt',
-          sortOrder: 'desc',
-        };
+        const res = await clientPortalApi.getDocuments();
+        let items: DocumentSummary[] = res.data || [];
 
-        const res = await documentsApi.listDocuments(queryParams);
-        const data = res.data;
+        if (debouncedSearch) {
+          const lower = debouncedSearch.toLowerCase();
+          items = items.filter(
+            (d) =>
+              d.title?.toLowerCase().includes(lower) ||
+              d.fileName?.toLowerCase().includes(lower)
+          );
+        }
+        if (mimeFilter !== 'ALL') {
+          items = items.filter((d) => d.mimeType?.toLowerCase().includes(mimeFilter.toLowerCase()));
+        }
 
-        setDocuments(data?.items || []);
-        setTotalDocuments(data?.total ?? data?.items?.length ?? 0);
+        setTotalDocuments(items.length);
+        const startIndex = (currentPage - 1) * pageSize;
+        setDocuments(items.slice(startIndex, startIndex + pageSize));
       } catch (err: unknown) {
         const msg = ApiError.isApiError(err) ? err.message : 'Failed to load document vault.';
         setLoadError(msg);
@@ -96,7 +100,7 @@ export const ClientDocuments: React.FC = () => {
   const handleDownload = async (doc: DocumentSummary) => {
     setDownloadingId(doc.id);
     try {
-      await documentsApi.downloadDocument(doc.id, doc.fileName || doc.title);
+      await clientPortalApi.downloadDocument(doc.id, doc.fileName || doc.title);
       showToast(`Started download for "${doc.title}".`, 'success');
     } catch (err: unknown) {
       const msg = ApiError.isApiError(err) ? err.message : 'Failed to download document file.';

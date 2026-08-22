@@ -5,6 +5,7 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { Button } from '../../components/ui/Button';
 import { clientPortalApi, type ClientOverviewData } from '../../api/client-portal.api';
+import { formatCurrency } from '../../utils/formatters';
 import { Database, Activity, CheckCircle, Clock, RefreshCw, AlertCircle } from 'lucide-react';
 
 export const ClientOverview: React.FC = () => {
@@ -116,7 +117,7 @@ export const ClientOverview: React.FC = () => {
               <Skeleton className="h-8 w-24 mb-1" />
             ) : (
               <h3 className="text-2xl font-bold">
-                ${data?.pendingInvoiceTotal ? data.pendingInvoiceTotal.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
+                {formatCurrency(data?.pendingInvoiceTotal)}
               </h3>
             )}
             <p className="text-xs text-green-500 mt-1">✓ Account ledger active</p>

@@ -145,15 +145,15 @@ export class AnalyticsService {
         filtersSummary: filters.clientId ? `Client Organization ID: ${filters.clientId}` : 'All Accounts',
         kpis: [
           { label: 'Total Invoices', value: fin.totalInvoices },
-          { label: 'Total Invoiced', value: `$${fin.totalInvoicedAmount.toLocaleString()}` },
-          { label: 'Paid Revenue', value: `$${fin.paidAmount.toLocaleString()}` },
-          { label: 'Pending Ledger', value: `$${fin.pendingAmount.toLocaleString()}` },
+          { label: 'Total Invoiced', value: `₹${fin.totalInvoicedAmount.toLocaleString('en-IN')}` },
+          { label: 'Paid Revenue', value: `₹${fin.paidAmount.toLocaleString('en-IN')}` },
+          { label: 'Pending Ledger', value: `₹${fin.pendingAmount.toLocaleString('en-IN')}` },
         ],
         tableHeaders: ['Status', 'Invoice Count', 'Total Value'],
         tableRows: Object.entries(fin.invoicesByStatus).map(([status, item]) => [
           status,
           item.count,
-          `$${item.totalAmount.toLocaleString()}`,
+          `₹${item.totalAmount.toLocaleString('en-IN')}`,
         ]),
       };
       const pdfBuffer = await generateReportPdf(pdfData);
@@ -169,14 +169,14 @@ export class AnalyticsService {
       filtersSummary: 'Global System Metrics',
       kpis: [
         { label: 'Total Leads', value: overview.summary.totalLeads },
-        { label: 'Invoiced Value', value: `$${overview.summary.totalInvoicedAmount.toLocaleString()}` },
+        { label: 'Invoiced Value', value: `₹${overview.summary.totalInvoicedAmount.toLocaleString('en-IN')}` },
         { label: 'Open Tickets', value: overview.summary.openTickets },
         { label: 'Active Projects', value: overview.summary.activeProjects },
       ],
       tableHeaders: ['Domain', 'Primary Metric', 'Secondary Metric', 'Health Status'],
       tableRows: [
         ['CRM Leads', `${overview.summary.totalLeads} Total`, `${overview.summary.wonLeads} Won`, 'Operational'],
-        ['Financials', `$${overview.summary.paidAmount.toLocaleString()} Paid`, `$${overview.domains.financials.pendingAmount.toLocaleString()} Pending`, 'Optimal'],
+        ['Financials', `₹${overview.summary.paidAmount.toLocaleString('en-IN')} Paid`, `₹${overview.domains.financials.pendingAmount.toLocaleString('en-IN')} Pending`, 'Optimal'],
         ['Support Desk', `${overview.summary.openTickets} Open`, `${overview.summary.totalTickets} Total`, 'Active'],
         ['Projects', `${overview.summary.activeProjects} Active`, `${overview.summary.totalProjects} Total`, 'On Schedule'],
         ['Data Pipelines', `${overview.summary.activePipelines} Active`, `${overview.summary.totalPipelines} Total`, 'Healthy'],

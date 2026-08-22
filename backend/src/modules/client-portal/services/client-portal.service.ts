@@ -1,9 +1,9 @@
-import path from 'path';
-import fs from 'fs';
 import { PrismaClient, TicketPriority, TicketStatus } from '@prisma/client';
 import { AppError } from '../../../utils/appError';
 import { NotificationService } from '../../notifications/services/notification.service';
 import { NotificationRepository } from '../../notifications/repositories/notification.repository';
+
+import { resolveDocumentPhysicalPath } from '../../documents/utils/document-file.util';
 
 export class ClientPortalService {
   private readonly notificationService: NotificationService;
@@ -284,13 +284,7 @@ export class ClientPortalService {
       throw new AppError('Document not found or access denied.', 404);
     }
 
-    const absolutePath = path.isAbsolute(document.fileUrl)
-      ? document.fileUrl
-      : path.resolve(process.cwd(), document.fileUrl);
-
-    if (!fs.existsSync(absolutePath)) {
-      throw new AppError('Physical document file not found on server disk.', 404);
-    }
+    const absolutePath = await resolveDocumentPhysicalPath(document);
 
     return {
       document,

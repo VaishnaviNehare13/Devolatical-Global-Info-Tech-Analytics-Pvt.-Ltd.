@@ -13,6 +13,7 @@ import {
   type ClientTicketDetail,
   type ClientProjectItem,
 } from '../../api/client-portal.api';
+import { ApiError } from '../../types/api';
 import TicketConversation from '../../components/tickets/TicketConversation';
 import { RefreshCw, AlertCircle, ArrowLeft, Plus, Briefcase, Tag, Clock } from 'lucide-react';
 
@@ -133,8 +134,13 @@ export const ClientSupport: React.FC = () => {
       if (newTicket.data?.id) {
         setSelectedTicketId(newTicket.data.id);
       }
-    } catch {
-      showToast('Failed to file support ticket. Please try again.', 'error');
+    } catch (err: unknown) {
+      const msg = ApiError.isApiError(err)
+        ? err.message
+        : err instanceof Error
+        ? err.message
+        : 'Failed to file support ticket. Please try again.';
+      showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);
     }

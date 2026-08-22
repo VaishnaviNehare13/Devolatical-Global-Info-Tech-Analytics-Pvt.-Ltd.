@@ -111,7 +111,7 @@ export async function generateInvoicePdf(invoice: any): Promise<Buffer> {
     doc.font('Helvetica').fontSize(9).fillColor('#334155');
     const itemDescription = invoice.description || (invoice.milestone ? `Billing for Milestone: ${invoice.milestone.title}` : `Professional Services - Invoice ${invoice.invoiceNumber}`);
     doc.text(itemDescription, 60, y, { width: 350 });
-    const amountFormatted = `${invoice.currency} ${Number(invoice.amount).toFixed(2)}`;
+    const amountFormatted = `${invoice.currency || 'INR'} ${Number(invoice.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     doc.text(amountFormatted, 430, y, { align: 'right', width: 105 });
 
     y += 35;

@@ -15,6 +15,7 @@ import { clientsApi } from '../../api/clients.api';
 import { usersApi } from '../../api/users.api';
 import type { ClientSummary } from '../../types/client';
 import type { UserSummary } from '../../types/user';
+import { formatCurrency } from '../../utils/formatters';
 import type {
   ProjectSummary,
   ProjectDetail,
@@ -514,7 +515,7 @@ export const AdminProjects: React.FC = () => {
       header: 'Budget',
       render: (p: ProjectSummary) => (
         <span className="font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">
-          {p.budget ? `$${p.budget.toLocaleString()}` : 'N/A'}
+          {p.budget ? formatCurrency(p.budget) : 'N/A'}
         </span>
       ),
     },
@@ -631,7 +632,7 @@ export const AdminProjects: React.FC = () => {
             <DollarSign className="h-4 w-4 text-amber-500" />
           </div>
           <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
-            ${totalBudget.toLocaleString()}
+            {formatCurrency(totalBudget)}
           </div>
           <div className="text-[10px] text-slate-400">Active portfolio budget</div>
         </Card>
@@ -817,7 +818,7 @@ export const AdminProjects: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="font-semibold text-slate-700 dark:text-slate-300 block">Budget ($ USD)</label>
+              <label className="font-semibold text-slate-700 dark:text-slate-300 block">Budget (₹ INR)</label>
               <Input
                 type="number"
                 placeholder="50000"
@@ -941,7 +942,7 @@ export const AdminProjects: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="font-semibold text-slate-700 dark:text-slate-300 block">Budget ($ USD)</label>
+              <label className="font-semibold text-slate-700 dark:text-slate-300 block">Budget (₹ INR)</label>
               <Input
                 type="number"
                 value={projectForm.budget || ''}

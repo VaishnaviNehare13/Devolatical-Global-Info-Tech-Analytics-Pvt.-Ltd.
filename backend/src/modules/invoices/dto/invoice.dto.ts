@@ -9,7 +9,7 @@ export const CreateInvoiceSchema = z.object({
   invoiceNumber: z.string().min(3, { message: 'Invoice number must be at least 3 characters long.' }),
   description: z.string().optional(),
   amount: z.coerce.number().positive({ message: 'Invoice amount must be positive.' }),
-  currency: z.string().default('USD'),
+  currency: z.string().default('INR'),
   status: z.nativeEnum(InvoiceStatus).default(InvoiceStatus.PENDING),
   dueDate: z.coerce.date().optional(),
   clientId: z.string().uuid({ message: 'Client ID must be a valid UUID.' }),

@@ -7,7 +7,8 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { useToast } from '../../components/ui/Toast';
 import { clientPortalApi, type ClientInvoiceItem } from '../../api/client-portal.api';
 import { ApiError } from '../../types/api';
-import { RefreshCw, AlertCircle, FileText, Download } from 'lucide-react';
+import { formatCurrency } from '../../utils/formatters';
+import { FileText, Download, RefreshCw, AlertCircle } from 'lucide-react';
 
 interface InvoiceRecord {
   id: string;
@@ -79,7 +80,7 @@ export const ClientInvoices: React.FC = () => {
     rawInvoice: inv,
     invoiceNumber: inv.invoiceNumber,
     project: inv.description || inv.project?.name || 'Enterprise Service Deliverable',
-    amount: `$${Number(inv.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+    amount: formatCurrency(inv.amount, inv.currency),
     status: inv.status,
     date: inv.dueDate
       ? new Date(inv.dueDate).toLocaleDateString()

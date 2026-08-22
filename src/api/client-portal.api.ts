@@ -1,5 +1,6 @@
 import { apiClient, getApiBaseUrl, getAccessToken, buildQueryString } from './client';
 import type { ApiResponse } from '../types/api';
+import type { DocumentSummary } from '../types/document';
 
 /**
  * Helper function to fetch binary/blob file response with auth header.
@@ -163,6 +164,14 @@ export const clientPortalApi = {
     data: { message: string }
   ): Promise<ApiResponse<ClientTicketComment>> =>
     apiClient.post<ApiResponse<ClientTicketComment>>(`/client-portal/tickets/${id}/comments`, data),
+
+  getDocuments: (): Promise<ApiResponse<DocumentSummary[]>> =>
+    apiClient.get<ApiResponse<DocumentSummary[]>>('/client-portal/documents'),
+
+  downloadDocument: async (id: string, fileName?: string): Promise<void> => {
+    const blob = await fetchBlob(`/client-portal/documents/${id}/download`);
+    triggerBlobDownload(blob, fileName || `document-${id}`);
+  },
 
   approveMilestone: (id: string): Promise<ApiResponse<ClientProjectMilestoneItem>> =>
     apiClient.post<ApiResponse<ClientProjectMilestoneItem>>(`/client-portal/milestones/${id}/approve`),

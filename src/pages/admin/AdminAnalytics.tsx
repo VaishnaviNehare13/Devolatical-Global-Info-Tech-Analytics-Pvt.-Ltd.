@@ -16,6 +16,7 @@ import type {
   AnalyticsQueryFilters,
 } from '../../types/analytics';
 import { ApiError } from '../../types/api';
+import { formatCurrency } from '../../utils/formatters';
 import {
   BarChart3,
   TrendingUp,
@@ -177,9 +178,6 @@ export const AdminAnalytics: React.FC = () => {
       setExportingType(null);
     }
   };
-
-  const formatCurrency = (val?: number) =>
-    `$${Number(val || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
   return (
     <div className="space-y-6 text-left">

@@ -2,8 +2,12 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { z } from 'zod';
 
-// Load environment variables from the .env file in the backend root
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+// Load environment variables (.env.test when NODE_ENV is 'test', else .env)
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: path.join(__dirname, '../../.env.test'), override: true });
+} else {
+  dotenv.config({ path: path.join(__dirname, '../../.env') });
+}
 
 export const envSchema = z.object({
   // Application

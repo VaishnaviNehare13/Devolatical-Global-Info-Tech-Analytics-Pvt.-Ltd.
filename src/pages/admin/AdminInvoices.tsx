@@ -14,6 +14,7 @@ import type { InvoiceItem, FindInvoicesQuery } from '../../types/invoice';
 import type { ClientSummary } from '../../types/client';
 import type { ProjectSummary } from '../../types/project';
 import { ApiError } from '../../types/api';
+import { formatCurrency } from '../../utils/formatters';
 import {
   FileText,
   Search,
@@ -64,7 +65,7 @@ export const AdminInvoices: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [createInvoiceNumber, setCreateInvoiceNumber] = useState<string>('');
   const [createAmount, setCreateAmount] = useState<string>('');
-  const [createCurrency, setCreateCurrency] = useState<string>('USD');
+  const [createCurrency, setCreateCurrency] = useState<string>('INR');
   const [createStatus, setCreateStatus] = useState<string>('PENDING');
   const [createDueDate, setCreateDueDate] = useState<string>('');
   const [createClientId, setCreateClientId] = useState<string>('');
@@ -209,7 +210,7 @@ export const AdminInvoices: React.FC = () => {
     const dateCode = new Date().toISOString().slice(0, 7).replace('-', '');
     setCreateInvoiceNumber(`INV-${dateCode}-${randomSuffix}`);
     setCreateAmount('');
-    setCreateCurrency('USD');
+    setCreateCurrency('INR');
     setCreateStatus('PENDING');
     setCreateDueDate('');
     setCreateClientId('');
@@ -237,7 +238,7 @@ export const AdminInvoices: React.FC = () => {
       await invoicesApi.createInvoice({
         invoiceNumber: createInvoiceNumber.trim(),
         amount: numericAmount,
-        currency: createCurrency || 'USD',
+        currency: createCurrency || 'INR',
         status: createStatus || 'PENDING',
         dueDate: createDueDate || undefined,
         clientId: createClientId,
@@ -381,7 +382,7 @@ export const AdminInvoices: React.FC = () => {
           <div>
             <p className="text-xs text-slate-500 font-medium">Page Total Invoiced</p>
             <h3 className="text-lg font-bold font-mono text-slate-900 dark:text-white">
-              ${stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(stats.totalRevenue)}
             </h3>
           </div>
         </Card>
@@ -393,7 +394,7 @@ export const AdminInvoices: React.FC = () => {
           <div>
             <p className="text-xs text-slate-500 font-medium">Settled / Paid</p>
             <h3 className="text-lg font-bold font-mono text-slate-900 dark:text-white">
-              ${stats.paidTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(stats.paidTotal)}
             </h3>
           </div>
         </Card>
@@ -405,7 +406,7 @@ export const AdminInvoices: React.FC = () => {
           <div>
             <p className="text-xs text-slate-500 font-medium">Pending Balance</p>
             <h3 className="text-lg font-bold font-mono text-slate-900 dark:text-white">
-              ${stats.pendingTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatCurrency(stats.pendingTotal)}
             </h3>
           </div>
         </Card>
@@ -590,10 +591,7 @@ export const AdminInvoices: React.FC = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 font-mono font-bold text-sm text-slate-900 dark:text-white">
-                            ${Number(inv.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                            <span className="text-[10px] text-slate-400 font-normal ml-1">
-                              {inv.currency || 'USD'}
-                            </span>
+                            {formatCurrency(inv.amount, inv.currency || 'INR')}
                           </td>
                           <td className="px-6 py-4 text-xs font-mono text-slate-500 dark:text-slate-400 space-y-0.5">
                             <div>Issued: {new Date(inv.createdAt).toLocaleDateString()}</div>
@@ -758,7 +756,7 @@ export const AdminInvoices: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="Amount ($) *"
+              label="Amount (₹) *"
               type="number"
               step="0.01"
               value={createAmount}
@@ -827,7 +825,7 @@ export const AdminInvoices: React.FC = () => {
       >
         <form onSubmit={handleEditSubmit} className="space-y-4 text-left">
           <Input
-            label="Amount ($)"
+            label="Amount (₹)"
             type="number"
             step="0.01"
             value={editAmount}

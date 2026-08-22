@@ -1,6 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import path from 'path';
-import fs from 'fs';
 import { IDocumentService } from '../service/document.service.interface';
 import { DocumentMapper } from '../mappers/document.mapper';
 import { UploadDocumentDto } from '../dto/upload-document.dto';
@@ -8,6 +6,7 @@ import { UpdateDocumentDto } from '../dto/update-document.dto';
 import { FindDocumentsDto } from '../dto/find-documents.dto';
 import { HttpStatus } from '../../../constants/httpStatus';
 import { AppError } from '../../../utils/appError';
+import { resolveDocumentPhysicalPath } from '../utils/document-file.util';
 import {
   DocumentNotFoundError,
   DocumentArchivedError,
@@ -104,13 +103,7 @@ export class DocumentController {
       const id = req.params.id;
       const result = await this.documentService.getDocumentById(id);
 
-      const absolutePath = path.isAbsolute(result.fileUrl)
-        ? result.fileUrl
-        : path.resolve(process.cwd(), result.fileUrl);
-
-      if (!fs.existsSync(absolutePath)) {
-        throw new AppError('Physical document file not found on server disk.', HttpStatus.NOT_FOUND);
-      }
+      const absolutePath = await resolveDocumentPhysicalPath(result);
 
       res.setHeader('Content-Type', result.mimeType);
       res.download(absolutePath, result.fileName, (err) => {

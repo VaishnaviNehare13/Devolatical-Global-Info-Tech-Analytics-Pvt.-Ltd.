@@ -244,20 +244,24 @@ export const EmployeeLayout: React.FC = () => {
             {/* Notification Bell */}
             <NotificationBell role="employee" />
 
-            {/* Employee Avatar Info */}
-            <div className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 text-left">
-              <div className="h-9 w-9 rounded-full bg-secondary/15 text-secondary border border-secondary/30 flex items-center justify-center font-bold text-sm font-heading">
+            {/* Employee Avatar Info - Clickable Navigation to Profile & Settings */}
+            <Link
+              to="/employee/profile"
+              aria-label="View Employee Profile & Settings"
+              className="flex items-center space-x-3 border-l border-slate-100 dark:border-slate-800/60 pl-6 text-left group cursor-pointer focus:outline-none focus:ring-2 focus:ring-secondary/50 rounded-lg py-1 transition-colors"
+            >
+              <div className="h-9 w-9 rounded-full bg-secondary/15 text-secondary border border-secondary/30 flex items-center justify-center font-bold text-sm font-heading group-hover:scale-105 transition-transform">
                 {initials}
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-950 dark:text-white leading-tight">
+                <span className="text-sm font-bold text-slate-950 dark:text-white leading-tight group-hover:text-secondary transition-colors">
                   {displayName}
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium font-mono">
                   Clearance: Technical Ops
                 </span>
               </div>
-            </div>
+            </Link>
           </div>
 
         </header>
